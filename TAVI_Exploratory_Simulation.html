@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TAVI Exploratory Simulation — UK vs Germany | Determinants of TAVI Utilisation</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --border:#2a2f3a;
+    --text:#e7e9ee; --muted:#9aa3b2; --uk:#4f8cff; --de:#ffb84f;
+    --good:#3ecf8e; --warn:#e0b84a; --bad:#e0664a; --accent:#8b7bff;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.45;}
+  .wrap{max-width:1280px;margin:0 auto;padding:24px 20px 80px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  h2{font-size:16px;margin:0 0 12px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+  h3{font-size:13.5px;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:18px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  @media (max-width:900px){.grid2,.grid3{grid-template-columns:1fr;}}
+  .country-card{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;}
+  .country-card.uk{border-top:3px solid var(--uk);}
+  .country-card.de{border-top:3px solid var(--de);}
+  .country-title{font-weight:600;font-size:14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .dot.uk{background:var(--uk);} .dot.de{background:var(--de);}
+  label{display:block;font-size:12.5px;color:var(--muted);margin:10px 0 3px;}
+  input[type=range]{width:100%;accent-color:var(--accent);}
+  input[type=number]{width:100%;background:#11141a;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 7px;font-size:13px;}
+  select{width:100%;background:#11141a;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 7px;font-size:13px;}
+  .row-val{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
+  .row-val b{color:var(--text);}
+  .badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:6px;vertical-align:middle;font-weight:600;}
+  .badge.confirmed{background:#1d3b2c;color:var(--good);}
+  .badge.caveat{background:#3a3418;color:var(--warn);}
+  .badge.assumption{background:#3a1f1a;color:var(--bad);}
+  .badge.derived{background:#1c2b3a;color:#6fb3ff;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;}
+  .outputs{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;}
+  .stat{background:#11141a;border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:150px;flex:1;}
+  .stat .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  .stat .v{font-size:22px;font-weight:700;margin-top:4px;}
+  .stat.uk .v{color:var(--uk);} .stat.de .v{color:var(--de);}
+  canvas{width:100%;background:#11141a;border-radius:8px;border:1px solid var(--border);}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:6px;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .swatch{width:14px;height:3px;border-radius:2px;display:inline-block;}
+  button{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;}
+  button:hover{opacity:.9;}
+  button.secondary{background:#2a2f3a;}
+  .note{font-size:12px;color:var(--muted);background:#11141a;border:1px dashed var(--border);border-radius:8px;padding:10px 12px;margin-top:10px;}
+  .toggle-row{display:flex;align-items:center;gap:8px;margin:10px 0;}
+  .toggle-row input{width:auto;accent-color:var(--accent);}
+  .tag{font-size:11px;color:var(--muted);}
+  .flex-between{display:flex;justify-content:space-between;align-items:center;}
+  #optResults td.dist{font-weight:700;}
+  .footer-note{font-size:11.5px;color:var(--muted);margin-top:30px;border-top:1px solid var(--border);padding-top:14px;}
+  a{color:#8fb4ff;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>TAVI Exploratory Simulation — UK vs Germany</h1>
+  <div class="sub">
+    Supplementary Digital Tool for: <i>Determinants of TAVI Utilisation: A Study of Operational Drivers in the UK Health System</i>
+    — Ibrahim Diab, MSc Healthcare Operational Management, WMG, University of Warwick.
+    <br>This is an <b>illustrative / exploratory</b> tool, not a validated predictive model. It extends the published methodology of
+    Stickels, C.P., Nadarajah, R., Gale, C.P. et al. (2022) <i>'Aortic stenosis post-COVID-19: a mathematical model on waiting lists and mortality'</i>, BMJ Open, 12, e059309,
+    parameterised with the four determinant-pillar research passes underlying this dissertation. Every input is source-tagged
+    (<span class="badge confirmed">Confirmed</span> <span class="badge caveat">Caveat</span> <span class="badge derived">Derived</span> <span class="badge assumption">Assumption</span>) — hover any label for its source.
+  </div>
+
+  <!-- ============ LAYER A: COMPOSITE SCORE ============ -->
+  <div class="panel">
+    <h2>Layer A — Composite Access Determinants Score (static, structural)</h2>
+    <p class="tag">Reproduces <code>TAVI_Access_Score_Model.xlsx</code> logic: min-max normalisation to 1–5 per indicator, equal 25% domain weights, primary aggregation by geometric mean (bottleneck-sensitive, per Penchansky &amp; Thomas's 1981 treatment of the five access dimensions as independently necessary — mirrors the UN HDI's 2010 switch to a geometric mean, Klugman, Rodriguez &amp; Choi, 2011).</p>
+    <div id="domainTables"></div>
+    <div class="outputs" id="compositeOutputs"></div>
+
+    <h3>Robustness checks (mirrors the Excel workbook's Composite_Score sheet)</h3>
+    <p class="tag">Primary result above uses an equal-weight (25% each) geometric mean. The checks below test whether the UK-vs-Germany conclusion is an artefact of that specific choice.</p>
+    <div class="grid2">
+      <div>
+        <div class="row-val"><span>Adjustable weights (must sum to 100%) — Acceptability / Accessibility / Availability / Affordability</span></div>
+        <div class="grid3" style="grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px;">
+          <input type="number" id="w1" value="25" min="0" max="100">
+          <input type="number" id="w2" value="25" min="0" max="100">
+          <input type="number" id="w3" value="25" min="0" max="100">
+          <input type="number" id="w4" value="25" min="0" max="100">
+        </div>
+        <div class="tag" id="weightSum" style="margin-top:4px;"></div>
+      </div>
+      <div class="outputs" id="exportComposite" style="align-items:flex-end;">
+        <button class="secondary" id="exportCompositeCsv">Export composite table (CSV)</button>
+      </div>
+    </div>
+    <div class="outputs" id="robustnessOutputs"></div>
+  </div>
+
+  <!-- ============ LAYER B/C: DYNAMIC ENGINE ============ -->
+  <div class="panel">
+    <h2>Layer B + C — Demand Funnel &amp; Dynamic Waiting-List Engine</h2>
+    <p class="tag">Core equations (Stickels et al., 2022): dW/dt = f − r<sub>T</sub> − r<sub>S</sub> − μW &nbsp;→&nbsp;
+      t<sub>c</sub> = ln(1 + μW₀/T<sub>e</sub>) / μ &nbsp;&nbsp; m(t<sub>c</sub>) = W₀ − T<sub>e</sub>·t<sub>c</sub></p>
+
+    <div class="note">
+      <b>Validation against the published paper</b> — this tool uses a simplified, linear time-slot-swap formula for T<sub>e</sub>
+      (capacity increase + conversion), rather than Stickels et al.'s full nonlinear supplementary treatment (which compounds converted
+      capacity with newly-added capacity). Checked against all four of the paper's reported scenarios: capacity+20%/conversion+40%
+      (headline, cited elsewhere in this dissertation) → 328.5 days / 765 deaths vs published 343 (281–410) / 784 (292–1324), both
+      within the paper's own 95% CI; 5%-capacity-only and 20%-capacity-only scenarios also reproduce within CI; the 50%-conversion-only
+      edge case reproduces to within ~20% but falls just outside the paper's CI at that specific extreme. Treat this tool's absolute
+      day/death counts as illustrative, not a certified re-implementation of Stickels et al.'s exact numerical method — the qualitative
+      pattern (diminishing returns to capacity, conversion helping less than capacity alone) matches throughout.
+    </div>
+
+    <label>Baseline calibration mode</label>
+    <select id="calMode">
+      <option value="gale">Stickels (2019/20) calibration — validates directly against the published paper</option>
+      <option value="current">Current (~2026) UK throughput estimate (Pillar 3)</option>
+    </select>
+
+    <div class="grid2" style="margin-top:14px;">
+      <div class="country-card uk">
+        <div class="country-title"><span class="dot uk"></span> United Kingdom</div>
+        <label title="Excess backlog / unmet demand. Stickels et al. default: 4,989 (95% CI 4,020–5,959).">W₀ — backlog size <span class="badge confirmed">Confirmed</span></label>
+        <input type="number" id="uk_W0" value="4989">
+        <label title="Stickels et al.'s own annual mortality-while-waiting parameter, 36%/yr (95% CI 12–60%). Cross-checks closely against this dissertation's own ~50%-at-2-years figure, which implies an equivalent constant annual hazard of ln(2)/2 ≈ 34.7%/yr.">μ — annual mortality while waiting <span class="badge confirmed">Confirmed</span></label>
+        <input type="number" id="uk_mu" value="0.36" step="0.01">
+        <label>Baseline annual throughput — SAVR <span class="badge confirmed">Confirmed</span></label>
+        <input type="number" id="uk_rS0" value="7830">
+        <label>Baseline annual throughput — TAVI <span class="badge confirmed">Confirmed</span></label>
+        <input type="number" id="uk_rT0" value="5197">
+        <label>Capacity increase (%) <span class="badge assumption">Lever</span></label>
+        <input type="range" id="uk_capPct" min="0" max="50" value="20"><div class="row-val"><span>0%</span><b id="uk_capPct_v">20%</b><span>50%</span></div>
+        <label title="Auto-suggests a conversion ceiling from the Pillar 1 guidance comparison (NICE NG208 vs ESC/EACTS 2025), instead of a free-floating slider disconnected from the eligibility research. Anchors are illustrative directional suggestions — a precise risk-stratified eligibility-swing figure would require patient-level EuroSCORE data not available in the reviewed literature (see Pillar 1 report, row 31 note) — you can still override manually via the slider below.">Guidance regime (Pillar 1 link) <span class="badge derived">Derived</span></label>
+        <select id="uk_regime">
+          <option value="nice">NICE NG208 — risk-gated (current UK)</option>
+          <option value="esc">ESC/EACTS 2025 — age ≥70, unconditional</option>
+          <option value="manual">Manual (slider below, no auto-suggestion)</option>
+        </select>
+        <label>SAVR→TAVI conversion (%) <span class="badge assumption">Lever</span></label>
+        <input type="range" id="uk_convPct" min="0" max="50" value="40"><div class="row-val"><span>0%</span><b id="uk_convPct_v">40%</b><span>50%</span></div>
+        <div class="note" id="regimeNote" style="margin-top:4px;"></div>
+        <label title="Fraction of theoretical extra capacity that cannot be realised due to commissioner case caps (35% of UK centres, Ali et al. 2021) and Blueteq-style prior approval. Default 0.275 = midpoint of an illustrative 0.20–0.35 range.">Funding rigidity ρ (0–0.6) <span class="badge assumption">Assumption</span></label>
+        <input type="range" id="uk_rho" min="0" max="0.6" step="0.01" value="0.275"><div class="row-val"><span>0</span><b id="uk_rho_v">0.275</b><span>0.6</span></div>
+        <div class="toggle-row"><input type="checkbox" id="uk_regional"><label style="margin:0;">Enable 3-tier geographic disaggregation <span class="badge derived">Derived</span></label></div>
+      </div>
+
+      <div class="country-card de">
+        <div class="country-title"><span class="dot de"></span> Germany</div>
+        <label title="No published excess-backlog figure exists for Germany. Default = UK W0 scaled by population ratio (83.47M / 69.49M), assuming equal underlying prevalence per Pillar 3 (rows 75–76).">W₀ — backlog size (scaled) <span class="badge assumption">Assumption</span></label>
+        <input type="number" id="de_W0" value="5993">
+        <label title="Assumed identical to the UK: disease-based, not health-system-based (Pillar 3, rows 75–77).">μ — annual mortality while waiting <span class="badge assumption">Assumption</span></label>
+        <input type="number" id="de_mu" value="0.36" step="0.01">
+        <label title="Beckmann et al. (2023), German Heart Surgery Report 2022 — floor estimate, excludes cardiology-department (non-surgical) TAVI.">Baseline annual throughput — SAVR <span class="badge caveat">Caveat</span></label>
+        <input type="number" id="de_rS0" value="7798">
+        <label title="Beckmann et al. (2023) — floor estimate; true rate likely higher as cardiology-performed TAVI is excluded.">Baseline annual throughput — TAVI <span class="badge caveat">Caveat</span></label>
+        <input type="number" id="de_rT0" value="17818">
+        <label>Capacity increase (%) <span class="badge assumption">Lever</span></label>
+        <input type="range" id="de_capPct" min="0" max="50" value="0"><div class="row-val"><span>0%</span><b id="de_capPct_v">0%</b><span>50%</span></div>
+        <label>SAVR→TAVI conversion (%) <span class="badge assumption">Lever</span></label>
+        <input type="range" id="de_convPct" min="0" max="50" value="0"><div class="row-val"><span>0%</span><b id="de_convPct_v">0%</b><span>50%</span></div>
+        <label title="Default 0: Germany's G-DRG financing is volume-linked with no evidenced case-cap mechanism; KHVVG (2024) is moving toward capacity-based Vorhaltepauschale payment. Structural assumption, not a measured absence (Pillar 4).">Funding rigidity ρ (0–0.6) <span class="badge assumption">Assumption</span></label>
+        <input type="range" id="de_rho" min="0" max="0.6" step="0.01" value="0"><div class="row-val"><span>0</span><b id="de_rho_v">0</b><span>0.6</span></div>
+        <div class="note" style="margin-top:12px;">No German regional-variation study was identified despite the mandatory AQUA/IQTIG registry (Pillar 2, evidence gap) — Germany is modelled as a single national compartment only.</div>
+      </div>
+    </div>
+
+    <h3>Geographic disaggregation (UK, 3-tier — calibrated to Aktaa et al., 2024)</h3>
+    <div class="grid3" id="regionalCards"></div>
+
+    <div class="outputs" id="dynamicOutputs"></div>
+    <canvas id="chart" height="280"></canvas>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--uk);"></span> UK — backlog W(t)</span>
+      <span><span class="swatch" style="background:var(--de);"></span> Germany — backlog W(t)</span>
+    </div>
+
+    <h3>Monte Carlo uncertainty (Stickels et al.'s own method: Normal resampling of μ and W₀)</h3>
+    <div class="flex-between">
+      <div class="tag">N = 2,000 draws · μ ~ Normal(mean, sd from 95% CI) · W₀ ~ Normal(mean, sd from 95% CI)</div>
+      <button id="runMC">Run Monte Carlo</button>
+    </div>
+    <div class="outputs" id="mcOutputs"></div>
+
+    <h3>Sensitivity analysis (UK) — which of the four pillars moves the outcome most?</h3>
+    <p class="tag">One-at-a-time (OAT) tornado analysis: each parameter is swung across its literature-reported range (or ±15pp for pure levers) while holding all others at the current UK slider settings, and the resulting change in t<sub>c</sub> (days) is recorded. Directly addresses the dissertation's core research question — which determinant pillar explains the most variation. Bars sorted by swing size (largest = most influential).</p>
+    <div id="tornado"></div>
+
+    <h3>Save &amp; compare named scenarios (UK)</h3>
+    <div class="flex-between">
+      <input type="text" id="scenarioName" placeholder="e.g. NICE status quo / ESC-aligned / Germany-equivalent capacity" style="flex:1;margin-right:10px;">
+      <button id="saveScenario">Save current UK settings as scenario</button>
+    </div>
+    <table id="scenarioTable" style="margin-top:10px;">
+      <thead><tr><th>Scenario</th><th>Regime</th><th>Capacity+%</th><th>Conversion%</th><th>ρ</th><th>t_c (days)</th><th>Deaths</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- ============ OPTIMISATION ============ -->
+  <div class="panel">
+    <h2>Optimisation — cheapest UK lever combination closest to the Germany-scenario outcome</h2>
+    <p class="tag">Brute-force grid search (not a black-box solver — chosen for transparency and defensibility in an MSc dissertation) over capacity increase (0–50%, step 10), conversion (0–50%, step 10) and funding-rigidity relaxation (0 → current ρ, step 0.1). Ranked by closeness to the Germany-scenario (t<sub>c</sub>, deaths) computed from the panel above — <b>not</b> a fixed budget or fixed mortality target, per the agreed design decision. Cost is shown alongside each option, not used as a filter.</p>
+    <div class="flex-between">
+      <div class="tag">Illustrative cost model: staffing = ⌈extra annual procedures ÷ 100 per-operator standard, Hildick-Smith et al. 2026⌉ × £161,600 fully-loaded consultant cost; + procedure cost = extra annual procedures × £26,145 (NHS FY2022 elective TAVI reference cost, via Blackman et al., 2024).</div>
+      <button id="runOpt">Run optimisation</button>
+    </div>
+    <div class="outputs" style="margin-top:10px;">
+      <button class="secondary" id="exportOptCsv">Export results table (CSV)</button>
+      <button class="secondary" id="exportChartPng">Export backlog chart (PNG)</button>
+    </div>
+    <div id="optNote"></div>
+    <table id="optResults" style="margin-top:12px;">
+      <thead><tr><th>#</th><th>Capacity +%</th><th>Conversion %</th><th>Δρ (rigidity relaxed)</th><th>t_c (days)</th><th>Deaths</th><th>Est. annual cost</th><th>Distance to DE outcome</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- ============ NARRATIVE REPORT ============ -->
+  <div class="panel">
+    <h2>Narrative Report — current scenario, in words</h2>
+    <p class="tag">Generates a plain-language summary of exactly what you've set on this page right now, plus a waterfall table showing the marginal effect of each lever, added one at a time. Deterministic and rule-based (built from the same equations as the rest of the tool) — not an AI-written summary — so every sentence traces back to a number you can re-check above.</p>
+    <div class="flex-between">
+      <input type="text" id="reportTitle" placeholder="Optional scenario label for this report, e.g. 'Scenario A — ESC-aligned + 20% capacity'" style="flex:1;margin-right:10px;">
+      <div>
+        <button id="genReport">Generate report</button>
+        <button class="secondary" id="exportReportTxt">Export report (.txt)</button>
+      </div>
+    </div>
+    <div id="reportOutput" style="margin-top:14px;"></div>
+  </div>
+
+  <div class="footer-note">
+    Built as a supplementary digital tool, referenced in Chapter 5 and Appendix. All UK/Germany input defaults are drawn from the
+    Pillar 1–4 Simulation Data Reports and <code>TAVI_Access_Score_Model.xlsx</code> prepared for this dissertation; hover any labelled
+    field for its source and evidentiary status. Absolute outputs — especially any Germany-side figure — should be read as illustrative;
+    relative, within-tool comparisons (UK vs Germany; before vs after a lever change) are more robust to the underlying evidence gaps
+    than any single absolute number. Not for clinical or commissioning decision-making.
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   LAYER A — COMPOSITE ACCESS DETERMINANTS SCORE
+   (transcribed 1:1 from TAVI_Access_Score_Model.xlsx)
+   ============================================================ */
+function clip(x,a,b){return Math.max(a,Math.min(b,x));}
+function mmScore(val, aWorst, aBest){
+  if(val===null||val===undefined||isNaN(val)) return null;
+  return clip(1+4*(val-aWorst)/(aBest-aWorst),1,5);
+}
+const domains = {
+  D1_Acceptability: {
+    label:"Acceptability (Clinical Guidance)",
+    rows:[
+      {p:"Eligibility basis (ordinal: risk-gated=2, age/anatomy-gated=4)", ordinal:true, uk:2, de:4, status:"confirmed"},
+      {p:"Age threshold for unconditional TAVI (yrs, lower=less restrictive)", uk:75, de:70, aW:75, aB:65, status:"confirmed"},
+      {p:"Guideline currency vs latest trial evidence (ordinal 1-5)", ordinal:true, uk:2, de:5, status:"confirmed"}
+    ]
+  },
+  D2_Accessibility: {
+    label:"Accessibility (Geographic Variation)",
+    rows:[
+      {p:"National TAVI rate (per million)", uk:136, de:292, aW:50, aB:300, status:"confirmed"},
+      {p:"Sub-national fold-variation in TAVI rate (lower=better)", uk:15, de:null, aW:20, aB:1, status:"confirmed"},
+      {p:"TAVI centre density (per million)", uk:0.63, de:0.78, aW:0.3, aB:1, status:"derived"},
+      {p:"Deprivation-adjusted OR of receiving AVR (closer to 1=better)", uk:0.73, de:null, aW:0.5, aB:1, status:"caveat"}
+    ]
+  },
+  D3_Availability: {
+    label:"Availability (Capacity & Resources)",
+    rows:[
+      {p:"Mean referral-to-treatment interval (days, lower=better)", uk:155, de:null, aW:210, aB:126, status:"confirmed"},
+      {p:"% of centres/region meeting pathway benchmark", uk:47.8, de:100, aW:0, aB:100, status:"caveat"},
+      {p:"Dedicated TAVI clinic prevalence (%)", uk:31, de:null, aW:0, aB:100, status:"confirmed"},
+      {p:"TAVI-specific MDT prevalence (%)", uk:37, de:null, aW:0, aB:100, status:"confirmed"}
+    ]
+  },
+  D4_Affordability: {
+    label:"Affordability (Funding & Commissioning)",
+    rows:[
+      {p:"National ICER ceiling (£/QALY; no ceiling scored best=5)", uk:30000, de:"noceil", aW:15000, aB:50000, status:"confirmed"},
+      {p:"Most favourable published cost-utility estimate (£/QALY, lower=better)", uk:16979, de:null, aW:30000, aB:0, status:"caveat"},
+      {p:"Case-by-case prior-approval decline rate proxy (%, lower=better)", uk:71, de:null, aW:90, aB:0, status:"caveat"}
+    ]
+  }
+};
+function scoreRow(row, country){
+  const val = row[country];
+  if(row.ordinal) return val;
+  if(val==="noceil") return 5;
+  if(val===null||val===undefined) return null;
+  return mmScore(val, row.aW, row.aB);
+}
+function domainScore(domain, country){
+  const scores = domain.rows.map(r=>scoreRow(r,country)).filter(s=>s!==null);
+  return scores.reduce((a,b)=>a+b,0)/scores.length;
+}
+function renderDomains(){
+  const container = document.getElementById('domainTables');
+  container.innerHTML='';
+  const scores = {};
+  Object.entries(domains).forEach(([key,d])=>{
+    const ukS = domainScore(d,'uk'), deS = domainScore(d,'de');
+    scores[key]={uk:ukS,de:deS};
+    const div = document.createElement('div');
+    div.innerHTML = `<h3>${d.label} — UK ${ukS.toFixed(2)} · DE ${deS.toFixed(2)}</h3>
+      <table><thead><tr><th>Parameter</th><th>UK</th><th>DE</th><th>UK score</th><th>DE score</th></tr></thead><tbody>
+      ${d.rows.map(r=>{
+        const badge = {confirmed:'confirmed',caveat:'caveat',derived:'derived',assumption:'assumption'}[r.status]||'confirmed';
+        const ukScore = scoreRow(r,'uk'), deScore = scoreRow(r,'de');
+        return `<tr><td>${r.p} <span class="badge ${badge}">${r.status}</span></td>
+          <td>${r.uk===null?'—':r.uk}</td><td>${r.de===null?'N/A':(r.de==='noceil'?'no ceiling':r.de)}</td>
+          <td>${ukScore===null?'—':ukScore.toFixed(2)}</td><td>${deScore===null?'—':deScore.toFixed(2)}</td></tr>`;
+      }).join('')}
+      </tbody></table>`;
+    container.appendChild(div);
+  });
+  const geo = (a,b,c,d)=>Math.exp((Math.log(a)+Math.log(b)+Math.log(c)+Math.log(d))/4);
+  const ukComposite = geo(scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk);
+  const deComposite = geo(scores.D1_Acceptability.de,scores.D2_Accessibility.de,scores.D3_Availability.de,scores.D4_Affordability.de);
+  document.getElementById('compositeOutputs').innerHTML = `
+    <div class="stat uk"><div class="k">UK composite score (geometric mean)</div><div class="v">${ukComposite.toFixed(2)} / 5</div></div>
+    <div class="stat de"><div class="k">Germany composite score (geometric mean)</div><div class="v">${deComposite.toFixed(2)} / 5</div></div>
+    <div class="stat"><div class="k">Widest domain gap (bottleneck indicator)</div><div class="v">UK ${(Math.max(scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk)-Math.min(scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk)).toFixed(2)}</div></div>
+  `;
+  window._lastDomainScores = scores;
+  renderRobustness();
+}
+function renderRobustness(){
+  const scores = window._lastDomainScores; if(!scores) return;
+  const ws = ['w1','w2','w3','w4'].map(id=>parseFloat(document.getElementById(id).value)||0);
+  const sum = ws.reduce((a,b)=>a+b,0);
+  document.getElementById('weightSum').textContent = `Weights sum to: ${sum}% ${sum!==100?'⚠ must equal 100%':'✓'}`;
+  const ukVals = [scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk];
+  const deVals = [scores.D1_Acceptability.de,scores.D2_Accessibility.de,scores.D3_Availability.de,scores.D4_Affordability.de];
+  const arith = v => v.reduce((a,b)=>a+b,0)/v.length;
+  const wgeo = (v,w) => { const W=w.reduce((a,b)=>a+b,0); return Math.exp(v.reduce((s,vi,i)=>s+w[i]*Math.log(vi),0)/W); };
+  const ukArith = arith(ukVals), deArith = arith(deVals);
+  const ukWGeo = sum>0 ? wgeo(ukVals, ws) : NaN, deWGeo = sum>0 ? wgeo(deVals, ws) : NaN;
+  document.getElementById('robustnessOutputs').innerHTML = `
+    <div class="stat"><div class="k">UK — arithmetic mean (robustness check 1)</div><div class="v">${ukArith.toFixed(2)}</div></div>
+    <div class="stat"><div class="k">DE — arithmetic mean (robustness check 1)</div><div class="v">${deArith.toFixed(2)}</div></div>
+    <div class="stat"><div class="k">UK — weighted geometric mean (robustness check 2)</div><div class="v">${isNaN(ukWGeo)?'—':ukWGeo.toFixed(2)}</div></div>
+    <div class="stat"><div class="k">DE — weighted geometric mean (robustness check 2)</div><div class="v">${isNaN(deWGeo)?'—':deWGeo.toFixed(2)}</div></div>
+  `;
+}
+['w1','w2','w3','w4'].forEach(id=>document.getElementById(id).addEventListener('input', renderRobustness));
+document.getElementById('exportCompositeCsv').addEventListener('click', ()=>{
+  const rows=[['Domain','Parameter','UK value','DE value','UK score','DE score','Status']];
+  Object.values(domains).forEach(d=>d.rows.forEach(r=>{
+    rows.push([d.label, r.p, r.uk===null?'':r.uk, (r.de===null?'N/A':r.de), scoreRow(r,'uk')??'', scoreRow(r,'de')??'', r.status]);
+  }));
+  downloadCsv(rows, 'composite_access_score.csv');
+});
+function downloadCsv(rows, filename){
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+}
+renderDomains();
+
+/* ============================================================
+   LAYER B/C — GALE DYNAMIC ENGINE + 4 EXTENSIONS
+   ============================================================ */
+function galeSolve(W0, mu, Te){
+  // Te and mu must be in the same time unit (here: per year)
+  if(Te<=0) return {tc:Infinity, deaths:W0};
+  const tc = Math.log(1 + (mu*W0)/Te) / mu; // years
+  const deaths = Math.max(0, W0 - Te*tc);
+  return {tc, deaths};
+}
+function computeTe(rS0, rT0, capPct, convPct, rho){
+  const baseline = rS0 + rT0;
+  const TAVI_PER_SAVR_TIME_RATIO = 5/3; // Stickels et al. Methods: within time for 2 SAVR, 3 TAVI could be done => 3 SAVR-slots ~ 5 TAVI-slots
+  const fromCapacity = capPct * baseline;
+  const fromConversion = convPct * rS0 * (TAVI_PER_SAVR_TIME_RATIO - 1);
+  const Te_theoretical = fromCapacity + fromConversion;
+  const Te_realised = Te_theoretical * (1 - rho);
+  return {Te_theoretical, Te_realised};
+}
+// Regional tiers (UK only) — calibrated to Aktaa et al. (2024)
+const REGIONS = [
+  {name:"Low-access (<75 pmp, ~30 CCGs)", ccgShare:30/106, ratePmp:50},
+  {name:"Median-band (75-150 pmp)", ccgShare:54/106, ratePmp:112},
+  {name:"High-access (>150 pmp, ~22 CCGs)", ccgShare:22/106, ratePmp:180}
+];
+function regionalSplit(W0, Te_realised, mu){
+  const totalWeighted = REGIONS.reduce((s,r)=>s+r.ccgShare*r.ratePmp,0);
+  return REGIONS.map(r=>{
+    const capShare = (r.ccgShare*r.ratePmp)/totalWeighted;
+    const W0_i = W0 * r.ccgShare; // demand assumed population/CCG-share proportional (Pillar 2: burden not lower in underserved areas)
+    const Te_i = Te_realised * capShare;
+    const sol = galeSolve(W0_i, mu, Te_i);
+    return {...r, W0_i, Te_i, ...sol};
+  });
+}
+function getInputs(prefix){
+  return {
+    W0: parseFloat(document.getElementById(prefix+'_W0').value),
+    mu: parseFloat(document.getElementById(prefix+'_mu').value),
+    rS0: parseFloat(document.getElementById(prefix+'_rS0').value),
+    rT0: parseFloat(document.getElementById(prefix+'_rT0').value),
+    capPct: parseFloat(document.getElementById(prefix+'_capPct').value)/100,
+    convPct: parseFloat(document.getElementById(prefix+'_convPct').value)/100,
+    rho: parseFloat(document.getElementById(prefix+'_rho').value)
+  };
+}
+let lastUK=null, lastDE=null;
+function runDynamic(){
+  ['uk','de'].forEach(p=>{
+    document.getElementById(p+'_capPct_v').textContent = document.getElementById(p+'_capPct').value+'%';
+    document.getElementById(p+'_convPct_v').textContent = document.getElementById(p+'_convPct').value+'%';
+    document.getElementById(p+'_rho_v').textContent = document.getElementById(p+'_rho').value;
+  });
+  const uk = getInputs('uk'), de = getInputs('de');
+  const ukTe = computeTe(uk.rS0, uk.rT0, uk.capPct, uk.convPct, uk.rho);
+  const deTe = computeTe(de.rS0, de.rT0, de.capPct, de.convPct, de.rho);
+  const ukSol = galeSolve(uk.W0, uk.mu, ukTe.Te_realised);
+  const deSol = galeSolve(de.W0, de.mu, deTe.Te_realised);
+  lastUK = {...uk, ...ukTe, ...ukSol};
+  lastDE = {...de, ...deTe, ...deSol};
+
+  let regionalHtml='';
+  const regionalOn = document.getElementById('uk_regional').checked;
+  if(regionalOn){
+    const regions = regionalSplit(uk.W0, ukTe.Te_realised, uk.mu);
+    regionalHtml = regions.map(r=>`
+      <div class="country-card uk">
+        <div class="country-title">${r.name}</div>
+        <div class="row-val"><span>W₀ (region)</span><b>${r.W0_i.toFixed(0)}</b></div>
+        <div class="row-val"><span>T_e (region, /yr)</span><b>${r.Te_i.toFixed(0)}</b></div>
+        <div class="row-val"><span>Time to clear</span><b>${isFinite(r.tc)?(r.tc*365).toFixed(0)+' days':'never (Te≤0)'}</b></div>
+        <div class="row-val"><span>Deaths while waiting</span><b>${r.deaths.toFixed(0)}</b></div>
+      </div>`).join('');
+    const tcs = regions.map(r=>r.tc*365).filter(isFinite);
+    const inequity = tcs.length? (Math.max(...tcs)-Math.min(...tcs)) : null;
+    regionalHtml += `<div class="note" style="grid-column:1/-1;">Inequity metric — spread between fastest- and slowest-clearing tier: <b>${inequity?inequity.toFixed(0)+' days':'n/a'}</b>. This range, not any single national figure, is the operational analogue of the CCG fold-variation documented in Pillar 2.</div>`;
+  } else {
+    regionalHtml = '<div class="note">Enable the toggle above (UK card) to disaggregate the national backlog into the 3 access tiers.</div>';
+  }
+  document.getElementById('regionalCards').innerHTML = regionalHtml;
+
+  document.getElementById('dynamicOutputs').innerHTML = `
+    <div class="stat uk"><div class="k">UK — time to clear backlog</div><div class="v">${isFinite(ukSol.tc)?(ukSol.tc*365).toFixed(0)+' days':'never'}</div></div>
+    <div class="stat uk"><div class="k">UK — deaths while waiting</div><div class="v">${ukSol.deaths.toFixed(0)}</div></div>
+    <div class="stat de"><div class="k">Germany — time to clear backlog</div><div class="v">${isFinite(deSol.tc)?(deSol.tc*365).toFixed(0)+' days':'never'}</div></div>
+    <div class="stat de"><div class="k">Germany — deaths while waiting</div><div class="v">${deSol.deaths.toFixed(0)}</div></div>
+  `;
+  drawChart(uk, ukTe.Te_realised, de, deTe.Te_realised);
+}
+
+function drawChart(uk, ukTe, de, deTe){
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width = canvas.clientWidth;
+  const h = canvas.height = 280;
+  ctx.clearRect(0,0,w,h);
+  const maxDays = Math.max(
+    isFinite(lastUK.tc)?lastUK.tc*365:0,
+    isFinite(lastDE.tc)?lastDE.tc*365:0, 30) * 1.15;
+  const pad = {l:50,r:16,t:14,b:26};
+  const plotW = w-pad.l-pad.r, plotH = h-pad.t-pad.b;
+  function seriesFor(W0, mu, Te){
+    const pts=[];
+    const tcYears = Te>0 ? Math.log(1+(mu*W0)/Te)/mu : Infinity;
+    const steps=100;
+    for(let i=0;i<=steps;i++){
+      const t = (maxDays/365) * (i/steps);
+      let Wt;
+      if(t>=tcYears){ Wt=0; } else {
+        // W(t) from closed form: derived by inverting tc(W) => W(t) = ((f-rT-rS-... )) use: from tc formula rearranged
+        // dW/dt = -Te - mu*W  => W(t) = (W0 + Te/mu)*exp(-mu t) - Te/mu
+        Wt = (W0 + Te/mu)*Math.exp(-mu*t) - Te/mu;
+        Wt = Math.max(0,Wt);
+      }
+      pts.push({t:t*365, W:Wt});
+    }
+    return pts;
+  }
+  const maxW = Math.max(lastUK.W0, lastDE.W0)*1.05;
+  function X(days){ return pad.l + (days/maxDays)*plotW; }
+  function Y(val){ return pad.t + plotH - (val/maxW)*plotH; }
+  // axes
+  ctx.strokeStyle = '#2a2f3a'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+plotH); ctx.lineTo(pad.l+plotW,pad.t+plotH); ctx.stroke();
+  ctx.fillStyle = '#9aa3b2'; ctx.font='11px sans-serif';
+  ctx.fillText('0', pad.l-4, pad.t+plotH+14);
+  ctx.fillText(Math.round(maxDays)+' days', pad.l+plotW-40, pad.t+plotH+14);
+  ctx.save(); ctx.translate(14, pad.t+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('Backlog W(t)',0,0); ctx.restore();
+
+  function plot(pts, color){
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.beginPath();
+    pts.forEach((p,i)=>{ const x=X(p.t), y=Y(p.W); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+  }
+  plot(seriesFor(lastUK.W0, lastUK.mu, ukTe), getComputedStyle(document.documentElement).getPropertyValue('--uk'));
+  plot(seriesFor(lastDE.W0, lastDE.mu, deTe), getComputedStyle(document.documentElement).getPropertyValue('--de'));
+}
+
+['uk','de'].forEach(p=>{
+  ['W0','mu','rS0','rT0','capPct','convPct','rho'].forEach(f=>{
+    document.getElementById(p+'_'+f).addEventListener('input', runDynamic);
+  });
+});
+document.getElementById('uk_regional').addEventListener('change', runDynamic);
+
+/* Guidance-regime -> conversion% link (Pillar 1) */
+const REGIME_NOTES = {
+  nice: "NICE NG208 (Confirmed): TAVI reserved for high surgical risk (EuroSCORE II >8%) or surgery-unsuitable patients — a narrower, risk-gated eligible pool. Suggested conversion ceiling: 15% (illustrative anchor, low end of the range Stickels et al. themselves tested).",
+  esc: "ESC/EACTS 2025 (Confirmed): TAVI recommended from age ≥70 essentially irrespective of formal risk score — a materially wider eligible pool, informed by DEDICATE-DZHK6 and extended low-risk trial follow-up. Suggested conversion ceiling: 40% (illustrative anchor, close to Stickels et al.'s own tested upper range).",
+  manual: "Manual mode — slider is fully user-controlled, no auto-suggestion applied."
+};
+function applyRegime(){
+  const regime = document.getElementById('uk_regime').value;
+  document.getElementById('regimeNote').textContent = REGIME_NOTES[regime];
+  if(regime==='nice') document.getElementById('uk_convPct').value = 15;
+  if(regime==='esc') document.getElementById('uk_convPct').value = 40;
+  runDynamic();
+}
+document.getElementById('uk_regime').addEventListener('change', applyRegime);
+document.getElementById('uk_convPct').addEventListener('input', ()=>{
+  document.getElementById('uk_regime').value = 'manual';
+  document.getElementById('regimeNote').textContent = REGIME_NOTES.manual;
+});
+applyRegime();
+document.getElementById('calMode').addEventListener('change', ()=>{
+  const mode = document.getElementById('calMode').value;
+  if(mode==='current'){
+    document.getElementById('uk_rS0').value = 3030;   // 30.3% of ~10,000/yr, TAVI:SAVR ratio 2.3 (Aktaa et al., 2024)
+    document.getElementById('uk_rT0').value = 6970;
+    document.getElementById('uk_W0').value = 4989;    // still user-editable; no current-day backlog stock is published
+  } else {
+    document.getElementById('uk_rS0').value = 7830;
+    document.getElementById('uk_rT0').value = 5197;
+    document.getElementById('uk_W0').value = 4989;
+  }
+  runDynamic();
+  try{runTornado();}catch(e){}
+});
+runDynamic();
+
+/* ============================================================
+   MONTE CARLO (mirrors Stickels et al.'s own method)
+   ============================================================ */
+function randNormal(mean, sd){
+  let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random();
+  return mean + sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+function percentile(arr, p){
+  if(!arr || arr.length===0) return null;
+  const s=[...arr].sort((a,b)=>a-b); const idx=(s.length-1)*p; const lo=Math.floor(idx),hi=Math.ceil(idx);
+  return lo===hi? s[lo] : s[lo]+(s[hi]-s[lo])*(idx-lo);
+}
+function pfmt(v){ return (v===null||v===undefined||!isFinite(v)) ? 'n/a' : v.toFixed(0); }
+document.getElementById('runMC').addEventListener('click', ()=>{
+  const N=2000;
+  const uk = getInputs('uk'), de = getInputs('de');
+  const ukTe = computeTe(uk.rS0,uk.rT0,uk.capPct,uk.convPct,uk.rho).Te_realised;
+  const deTe = computeTe(de.rS0,de.rT0,de.capPct,de.convPct,de.rho).Te_realised;
+  // sd derived from 95% CI width: sd = (upper-lower)/(2*1.96)
+  const uk_mu_sd = (0.60-0.12)/(2*1.96), uk_W0_sd = (5959-4020)/(2*1.96);
+  const results_uk_tc=[], results_uk_d=[], results_de_tc=[], results_de_d=[];
+  for(let i=0;i<N;i++){
+    const muS = Math.max(0.01, randNormal(uk.mu, uk_mu_sd));
+    const W0S = Math.max(1, randNormal(uk.W0, uk_W0_sd));
+    const sol = galeSolve(W0S, muS, ukTe);
+    if(isFinite(sol.tc)){ results_uk_tc.push(sol.tc*365); results_uk_d.push(sol.deaths); }
+    const deW0S = Math.max(1, randNormal(de.W0, uk_W0_sd*(de.W0/uk.W0)));
+    const solDE = galeSolve(deW0S, muS, deTe);
+    if(isFinite(solDE.tc)){ results_de_tc.push(solDE.tc*365); results_de_d.push(solDE.deaths); }
+  }
+  const deNote = results_de_tc.length===0 ? `<div class="note" style="grid-column:1/-1;">Germany columns show "n/a": with Germany's capacity/conversion levers both at 0% (no intervention configured), T_e = 0 and the closed-form backlog never clears (t_c → ∞) — this is a structural feature of the model (see the UK/DE panel above, which shows "never" in the same situation), not a computation error. Set Germany's capacity or conversion sliders above 0% to run a Monte Carlo comparison against a defined German intervention scenario.</div>` : '';
+  document.getElementById('mcOutputs').innerHTML = `
+    <div class="stat uk"><div class="k">UK t_c — median (95% interval)</div><div class="v">${pfmt(percentile(results_uk_tc,0.5))}d</div><div class="tag">(${pfmt(percentile(results_uk_tc,0.025))}–${pfmt(percentile(results_uk_tc,0.975))}d)</div></div>
+    <div class="stat uk"><div class="k">UK deaths — median (95% interval)</div><div class="v">${pfmt(percentile(results_uk_d,0.5))}</div><div class="tag">(${pfmt(percentile(results_uk_d,0.025))}–${pfmt(percentile(results_uk_d,0.975))})</div></div>
+    <div class="stat de"><div class="k">DE t_c — median (95% interval)</div><div class="v">${pfmt(percentile(results_de_tc,0.5))}d</div><div class="tag">(${pfmt(percentile(results_de_tc,0.025))}–${pfmt(percentile(results_de_tc,0.975))}d)</div></div>
+    <div class="stat de"><div class="k">DE deaths — median (95% interval)</div><div class="v">${pfmt(percentile(results_de_d,0.5))}</div><div class="tag">(${pfmt(percentile(results_de_d,0.025))}–${pfmt(percentile(results_de_d,0.975))})</div></div>
+    ${deNote}
+  `;
+});
+
+/* ============================================================
+   SENSITIVITY ANALYSIS (tornado) — UK, one-at-a-time
+   ============================================================ */
+function runTornado(){
+  const uk = getInputs('uk');
+  function tcFor(overrides){
+    const p = {...uk, ...overrides};
+    const te = computeTe(p.rS0,p.rT0,p.capPct,p.convPct,p.rho).Te_realised;
+    const sol = galeSolve(p.W0,p.mu,te);
+    return isFinite(sol.tc) ? sol.tc*365 : null;
+  }
+  const base = tcFor({});
+  const params = [
+    {name:"μ — mortality rate", low:tcFor({mu:0.12}), high:tcFor({mu:0.60}), note:"Stickels et al. 95% CI (12%–60%/yr)"},
+    {name:"W₀ — backlog size", low:tcFor({W0:4020}), high:tcFor({W0:5959}), note:"Stickels et al. 95% CI"},
+    {name:"Capacity increase %", low:tcFor({capPct:Math.max(0,uk.capPct-0.15)}), high:tcFor({capPct:Math.min(0.5,uk.capPct+0.15)}), note:"±15pp around current setting (Pillar 3)"},
+    {name:"Conversion % (Pillar 1 link)", low:tcFor({convPct:Math.max(0,uk.convPct-0.15)}), high:tcFor({convPct:Math.min(0.5,uk.convPct+0.15)}), note:"±15pp — NICE↔ESC/EACTS regime range"},
+    {name:"Funding rigidity ρ (Pillar 4)", low:tcFor({rho:Math.max(0,uk.rho-0.15)}), high:tcFor({rho:Math.min(0.6,uk.rho+0.15)}), note:"±0.15 around current setting"}
+  ].map(p=>({...p, swing: p.low!==null&&p.high!==null ? Math.abs(p.high-p.low) : 0}));
+  params.sort((a,b)=>b.swing-a.swing);
+  window._lastTornado = params;
+  const maxSwing = Math.max(...params.map(p=>p.swing),1);
+  document.getElementById('tornado').innerHTML = `<div class="tag" style="margin-bottom:8px;">Baseline t_c at current settings: <b>${base?base.toFixed(0):'—'} days</b></div>` +
+    params.map(p=>`
+      <div style="margin-bottom:10px;">
+        <div class="row-val"><span>${p.name}</span><span>${p.low?.toFixed(0)}d – ${p.high?.toFixed(0)}d (swing ${p.swing.toFixed(0)}d)</span></div>
+        <div style="background:#11141a;border:1px solid var(--border);border-radius:5px;height:14px;overflow:hidden;">
+          <div style="width:${(p.swing/maxSwing*100).toFixed(1)}%;height:100%;background:var(--accent);"></div>
+        </div>
+        <div class="tag">${p.note}</div>
+      </div>`).join('');
+}
+['uk_W0','uk_mu','uk_rS0','uk_rT0','uk_capPct','uk_convPct','uk_rho'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{ try{runTornado();}catch(e){} });
+});
+
+/* ============================================================
+   SCENARIO SAVE & COMPARE
+   ============================================================ */
+const savedScenarios = [];
+function renderScenarios(){
+  document.querySelector('#scenarioTable tbody').innerHTML = savedScenarios.map((s,i)=>`
+    <tr><td>${s.name}</td><td>${s.regime}</td><td>${(s.capPct*100).toFixed(0)}%</td><td>${(s.convPct*100).toFixed(0)}%</td>
+    <td>${s.rho.toFixed(2)}</td><td>${s.tc?.toFixed(0)??'—'}</td><td>${s.deaths?.toFixed(0)??'—'}</td>
+    <td><button class="secondary" onclick="removeScenario(${i})">Remove</button></td></tr>`).join('');
+}
+function removeScenario(i){ savedScenarios.splice(i,1); renderScenarios(); }
+document.getElementById('saveScenario').addEventListener('click', ()=>{
+  const name = document.getElementById('scenarioName').value.trim() || `Scenario ${savedScenarios.length+1}`;
+  const uk = getInputs('uk');
+  const te = computeTe(uk.rS0,uk.rT0,uk.capPct,uk.convPct,uk.rho).Te_realised;
+  const sol = galeSolve(uk.W0,uk.mu,te);
+  savedScenarios.push({name, regime: document.getElementById('uk_regime').value, capPct:uk.capPct, convPct:uk.convPct, rho:uk.rho, tc: isFinite(sol.tc)?sol.tc*365:null, deaths: sol.deaths});
+  document.getElementById('scenarioName').value='';
+  renderScenarios();
+});
+
+/* ============================================================
+   OPTIMISATION — grid search toward Germany-scenario outcome
+   ============================================================ */
+document.getElementById('runOpt').addEventListener('click', ()=>{
+  const uk = getInputs('uk'), de = getInputs('de');
+  const deTe = computeTe(de.rS0,de.rT0,de.capPct,de.convPct,de.rho).Te_realised;
+  const deTarget = galeSolve(de.W0, de.mu, deTe); // Germany-scenario outcome = optimisation target
+  const deTargetValid = isFinite(deTarget.tc);
+  const CONSULTANT_COST = 161600, PROCEDURES_PER_OPERATOR = 100, UNIT_COST = 26145;
+  const results=[];
+  for(let capPct=0; capPct<=0.5; capPct+=0.10){
+    for(let convPct=0; convPct<=0.5; convPct+=0.10){
+      for(let dRho=0; dRho<=uk.rho+1e-9; dRho+=0.10){
+        const rho = Math.max(0, uk.rho - dRho);
+        const teObj = computeTe(uk.rS0, uk.rT0, capPct, convPct, rho);
+        const sol = galeSolve(uk.W0, uk.mu, teObj.Te_realised);
+        if(!isFinite(sol.tc)) continue;
+        const tcDays = sol.tc*365;
+        const extraProcedures = teObj.Te_realised; // per year
+        const operators = Math.ceil(Math.max(0,extraProcedures)/PROCEDURES_PER_OPERATOR);
+        const cost = operators*CONSULTANT_COST + Math.max(0,extraProcedures)*UNIT_COST;
+        // If Germany's reference scenario has no configured intervention (t_c -> Infinity),
+        // there is no defined backlog-clearance target to compare against, so rank on the
+        // mortality term alone rather than producing NaN from an Infinity-valued t_c term.
+        const distance = deTargetValid
+          ? Math.sqrt(Math.pow((tcDays-deTarget.tc*365)/(deTarget.tc*365||1),2) + Math.pow((sol.deaths-deTarget.deaths)/(deTarget.deaths||1),2))
+          : Math.abs((sol.deaths-deTarget.deaths)/(deTarget.deaths||1));
+        results.push({capPct,convPct,dRho,tcDays,deaths:sol.deaths,cost,distance});
+      }
+    }
+  }
+  results.sort((a,b)=>a.distance-b.distance);
+  const top = results.slice(0,8);
+  window._lastOptResults = top;
+  document.getElementById('optNote').innerHTML = deTargetValid ? '' :
+    `<div class="note" style="margin-top:8px;">Germany's reference scenario has no intervention configured (capacity/conversion levers at 0%), so it has no finite backlog-clearance time to target — the closed-form model has t_c → ∞ in this state, consistent with the panel above. Ranking below is therefore based on distance to Germany's death toll alone. Set Germany's capacity or conversion sliders above 0% for a full two-metric (time and deaths) optimisation target.</div>`;
+  document.querySelector('#optResults tbody').innerHTML = top.map((r,i)=>`
+    <tr><td>${i+1}</td><td>${(r.capPct*100).toFixed(0)}%</td><td>${(r.convPct*100).toFixed(0)}%</td>
+    <td>${r.dRho.toFixed(2)}</td><td>${r.tcDays.toFixed(0)}</td><td>${r.deaths.toFixed(0)}</td>
+    <td>£${r.cost.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+    <td class="dist">${r.distance.toFixed(3)}</td></tr>`).join('');
+});
+document.getElementById('exportOptCsv').addEventListener('click', ()=>{
+  const top = window._lastOptResults || [];
+  const rows = [['Rank','Capacity +%','Conversion %','Δρ relaxed','t_c (days)','Deaths','Est. annual cost (£)','Distance to DE outcome']];
+  top.forEach((r,i)=>rows.push([i+1,(r.capPct*100).toFixed(0),(r.convPct*100).toFixed(0),r.dRho.toFixed(2),r.tcDays.toFixed(0),r.deaths.toFixed(0),r.cost.toFixed(0),r.distance.toFixed(4)]));
+  if(top.length===0){ alert('Run the optimisation first.'); return; }
+  downloadCsv(rows, 'optimisation_results.csv');
+});
+document.getElementById('exportChartPng').addEventListener('click', ()=>{
+  const canvas = document.getElementById('chart');
+  const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = 'tavi_backlog_chart.png'; a.click();
+});
+
+/* ============================================================
+   NARRATIVE REPORT — deterministic, rule-based (not AI-written)
+   ============================================================ */
+function fmtPct(x){ return (x*100).toFixed(0)+'%'; }
+function buildWaterfall(uk){
+  const steps = [
+    {label:"Baseline — no operational change (current funding environment)", capPct:0, convPct:0, rho:uk.rho},
+    {label:`+ Capacity lever only (+${fmtPct(uk.capPct)})`, capPct:uk.capPct, convPct:0, rho:uk.rho},
+    {label:`+ Conversion lever (+${fmtPct(uk.convPct)} SAVR→TAVI)`, capPct:uk.capPct, convPct:uk.convPct, rho:uk.rho},
+    {label:`+ Remove funding rigidity (ρ ${uk.rho.toFixed(2)} → 0)`, capPct:uk.capPct, convPct:uk.convPct, rho:0}
+  ];
+  let prevTc=null, prevDeaths=null;
+  return steps.map(s=>{
+    const te = computeTe(uk.rS0, uk.rT0, s.capPct, s.convPct, s.rho).Te_realised;
+    const sol = galeSolve(uk.W0, uk.mu, te);
+    const tcDays = isFinite(sol.tc) ? sol.tc*365 : null;
+    const row = {...s, tcDays, deaths:sol.deaths,
+      dTc: prevTc!==null && tcDays!==null ? tcDays-prevTc : null,
+      dDeaths: prevDeaths!==null ? sol.deaths-prevDeaths : null};
+    prevTc = tcDays; prevDeaths = sol.deaths;
+    return row;
+  });
+}
+function generateReport(){
+  const uk = getInputs('uk'), de = getInputs('de');
+  const ukTe = computeTe(uk.rS0,uk.rT0,uk.capPct,uk.convPct,uk.rho).Te_realised;
+  const deTe = computeTe(de.rS0,de.rT0,de.capPct,de.convPct,de.rho).Te_realised;
+  const ukSol = galeSolve(uk.W0, uk.mu, ukTe);
+  const deSol = galeSolve(de.W0, de.mu, deTe);
+  const regime = document.getElementById('uk_regime').value;
+  const regimeLabel = {nice:"NICE NG208 (risk-gated)", esc:"ESC/EACTS 2025 (age ≥70, unconditional)", manual:"manually set (not tied to a named guidance regime)"}[regime];
+  const wf = buildWaterfall(uk);
+  const tornado = window._lastTornado || [];
+  const topDriver = tornado[0];
+  const scores = window._lastDomainScores;
+  const title = document.getElementById('reportTitle').value.trim() || 'Untitled scenario';
+
+  let prose = '';
+  prose += `SCENARIO: ${title}\nGenerated: ${new Date().toISOString().slice(0,16).replace('T',' ')}\n\n`;
+  prose += `STRUCTURAL COMPARISON (Layer A). At baseline, the composite Access Determinants Score stands at ${scores? Math.exp((Math.log(scores.D1_Acceptability.uk)+Math.log(scores.D2_Accessibility.uk)+Math.log(scores.D3_Availability.uk)+Math.log(scores.D4_Affordability.uk))/4).toFixed(2):'—'}/5 for the UK versus ${scores? Math.exp((Math.log(scores.D1_Acceptability.de)+Math.log(scores.D2_Accessibility.de)+Math.log(scores.D3_Availability.de)+Math.log(scores.D4_Affordability.de))/4).toFixed(2):'—'}/5 for Germany (equal-weight geometric mean across the four Penchansky & Thomas dimensions). This is a structural snapshot, independent of the scenario levers below.\n\n`;
+  prose += `CURRENT SCENARIO (Layer B/C). The UK guidance regime is set to ${regimeLabel}. On top of that, capacity has been increased by ${fmtPct(uk.capPct)}, ${fmtPct(uk.convPct)} of SAVR cases are converted to TAVI, and a funding-rigidity of ρ=${uk.rho.toFixed(2)} is applied (i.e. ${(uk.rho*100).toFixed(0)}% of the theoretical extra capacity is not realised, reflecting commissioner case caps / prior-approval frictions). Under these settings, the UK backlog clears in ${isFinite(ukSol.tc)?(ukSol.tc*365).toFixed(0)+' days':'an indeterminate period (no net extra capacity)'} with an estimated ${ukSol.deaths.toFixed(0)} deaths while waiting. The equivalent Germany scenario (capacity +${fmtPct(de.capPct)}, conversion +${fmtPct(de.convPct)}, ρ=${de.rho.toFixed(2)}) clears in ${isFinite(deSol.tc)?(deSol.tc*365).toFixed(0)+' days':'an indeterminate period'} with ${deSol.deaths.toFixed(0)} deaths.\n\n`;
+  if(topDriver){
+    prose += `SENSITIVITY. Of the parameters tested, "${topDriver.name}" produces the largest swing in backlog-clearance time (${topDriver.swing.toFixed(0)} days across its tested range) — this is, on the current settings, the single most influential lever on the outcome. See the Sensitivity panel above for the full ranking.\n\n`;
+  }
+  prose += `HOW EACH LEVER CONTRIBUTES (waterfall, UK). Starting from no operational change and adding one lever at a time, holding the others fixed:\n`;
+  const table = wf.map(r=>`  - ${r.label}: ${r.tcDays?.toFixed(0)??'—'} days, ${r.deaths.toFixed(0)} deaths` + (r.dTc!==null? ` (Δ ${r.dTc>=0?'+':''}${r.dTc.toFixed(0)} days, Δ ${r.dDeaths>=0?'+':''}${r.dDeaths.toFixed(0)} deaths vs previous step)`:'')).join('\n');
+  prose += table + '\n\n';
+  prose += `CAVEATS. This report is generated from an illustrative/exploratory tool, not a validated predictive model (see methodology note at the top of the page). Any figure drawn from a Germany-side input, or from an Assumption-needed / Confirmed-with-caveat parameter, should be treated as directional rather than precise — hover the relevant input above for its exact evidentiary status.\n`;
+
+  document.getElementById('reportOutput').innerHTML = `
+    <table style="margin-bottom:12px;">
+      <thead><tr><th>Step</th><th>Capacity+%</th><th>Conversion%</th><th>ρ</th><th>t_c (days)</th><th>Deaths</th><th>Δ t_c</th><th>Δ deaths</th></tr></thead>
+      <tbody>${wf.map(r=>`<tr><td>${r.label}</td><td>${fmtPct(r.capPct)}</td><td>${fmtPct(r.convPct)}</td><td>${r.rho.toFixed(2)}</td><td>${r.tcDays?.toFixed(0)??'—'}</td><td>${r.deaths.toFixed(0)}</td><td>${r.dTc!==null?(r.dTc>=0?'+':'')+r.dTc.toFixed(0):'—'}</td><td>${r.dDeaths!==null?(r.dDeaths>=0?'+':'')+r.dDeaths.toFixed(0):'—'}</td></tr>`).join('')}</tbody>
+    </table>
+    <pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;background:#11141a;border:1px solid var(--border);border-radius:8px;padding:14px 16px;">${prose}</pre>
+  `;
+  window._lastReportText = prose;
+}
+document.getElementById('genReport').addEventListener('click', generateReport);
+document.getElementById('exportReportTxt').addEventListener('click', ()=>{
+  if(!window._lastReportText){ alert('Click "Generate report" first.'); return; }
+  const blob = new Blob([window._lastReportText], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = (document.getElementById('reportTitle').value.trim() || 'tavi_scenario_report').replace(/\s+/g,'_') + '.txt';
+  a.click();
+});
+
+try{ runTornado(); }catch(e){ console.warn('tornado init deferred', e); }
+try{ generateReport(); }catch(e){ console.warn('report init deferred', e); }
+
+/* ============================================================
+   SELF-CHECK: reproduce Stickels et al.'s headline scenario
+   (capacity +20%, conversion 40%, no funding-rigidity concept
+   in the original paper => rho=0) — logged to console.
+   ============================================================ */
+(function selfCheck(){
+  const te = computeTe(7830,5197,0.20,0.40,0);
+  const sol = galeSolve(4989,0.36,te.Te_realised);
+  console.log('Self-check vs Stickels et al. (2022) published result: 343 days / 784 deaths.');
+  console.log('This tool (simplified additive Te formula):', (sol.tc*365).toFixed(0)+' days', sol.deaths.toFixed(0)+' deaths');
+})();
+</script>
+</body>
+</html>
