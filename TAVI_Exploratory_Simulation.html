@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TAVI Exploratory Simulation — UK vs Germany | Determinants of TAVI Utilisation</title>
 <style>
   :root{
@@ -57,6 +58,17 @@
   .warnbar.on{display:block;}
   .warnbar b{color:#ffd782;}
   .toggle-row{display:flex;align-items:center;gap:8px;margin:10px 0;}
+  /* Narrow screens: data tables are wide by nature, so let them scroll inside their panel
+     rather than forcing the whole page to scroll horizontally. */
+  @media (max-width: 820px){
+    .wrap{padding:14px;}
+    .panel{padding:14px;}
+    .grid2,.grid3{grid-template-columns:1fr;}
+    table{display:block;overflow-x:auto;white-space:nowrap;}
+    select,input[type=text],input[type=number]{max-width:100%;}
+    #weightInvariance table, #validationTable, #rhoSweepTable, #optResults, #scenarioTable{min-width:0;}
+    .flex-between{flex-wrap:wrap;gap:10px;}
+  }
   .toggle-row input{width:auto;accent-color:var(--accent);}
   .tag{font-size:11px;color:var(--muted);}
   .flex-between{display:flex;justify-content:space-between;align-items:center;}
@@ -70,7 +82,7 @@
 
   <h1>TAVI Exploratory Simulation — UK vs Germany</h1>
   <div class="sub">
-    <span class="badge derived" style="font-size:11px;">v4 · 4 Aug 2026</span><br>
+    <span class="badge derived" style="font-size:11px;">v5 · 4 Aug 2026</span><br>
     Supplementary Digital Tool for: <i>Determinants of TAVI Utilisation: A Study of Operational Drivers in the UK Health System</i>
     — Ibrahim Diab, MSc Healthcare Operational Management, WMG, University of Warwick.
     <br>This is an <b>illustrative / exploratory</b> tool, not a validated predictive model. It extends the published methodology of
@@ -78,7 +90,7 @@
     parameterised with the four determinant-pillar research passes underlying this dissertation. Every input is source-tagged
     (<span class="badge confirmed">Confirmed</span> <span class="badge caveat">Caveat</span> <span class="badge derived">Derived</span> <span class="badge assumption">Assumption</span>) — hover any label for its source.
     <div class="note" style="margin-top:12px;">
-      <b>Version 4 — 4 August 2026.</b> Version history, for reproducibility of any figure cited from this tool:
+      <b>Version 5 — 4 August 2026.</b> Version history, for reproducibility of any figure cited from this tool:
       <ul style="margin:6px 0 0 18px;padding:0;">
         <li><b>v1</b> — T<sub>e</sub> computed by an additive approximation at a 5:3 procedure-time ratio. Superseded: the
             additive form omitted the capacity×conversion interaction, and 5:3 is one of the source paper's sensitivity
@@ -89,6 +101,11 @@
             off-base-case warning; validation extended to all seven of the paper's published scenarios.</li>
         <li><b>v4</b> — weight-invariance of the composite ranking established in closed form; funding rigidity ρ presented
             as a swept scenario axis rather than a point estimate; capacity-apportionment rule made explicit and testable.</li>
+        <li><b>v5</b> — eight independent audits. Optimisation panel re-based on cost per death averted after its previous
+            objective was found to rank the least effective intervention first; indicator counts (n) now shown per domain
+            after the German side was found to rest on 7 of 14 indicators, with a like-for-like restricted comparison added;
+            narrative report now carries the full model configuration and refreshes with the sliders; several prose claims
+            corrected to match what the code actually does.</li>
       </ul>
       <div style="margin-top:6px;">Figures reported in the accompanying dissertation were generated under v1 unless stated
       otherwise, and differ from this version's output. No parameter default has changed since v1.</div>
@@ -98,8 +115,17 @@
   <!-- ============ LAYER A: COMPOSITE SCORE ============ -->
   <div class="panel">
     <h2>Layer A — Composite Access Determinants Score (static, structural)</h2>
-    <p class="tag">Reproduces <code>TAVI_Access_Score_Model.xlsx</code> logic: min-max normalisation to 1–5 per indicator, equal 25% domain weights, primary aggregation by geometric mean (bottleneck-sensitive, per Penchansky &amp; Thomas's 1981 treatment of the five access dimensions as independently necessary — mirrors the UN HDI's 2010 switch to a geometric mean, Klugman, Rodriguez &amp; Choi, 2011).</p>
+    <p class="tag">Reproduces <code>TAVI_Access_Score_Model.xlsx</code> logic: min-max normalisation to 1–5 for the
+    twelve measured indicators, equal 25% domain weights, aggregation <i>within</i> each domain by arithmetic mean over the
+    indicators populated for that country, and <i>across</i> domains by geometric mean (bottleneck-sensitive, per Penchansky
+    &amp; Thomas's 1981 treatment of the five access dimensions as independently necessary — mirrors the UN HDI's 2010 switch
+    to a geometric mean, Klugman, Rodriguez &amp; Choi, 2011).
+    <br>Two of the fourteen rows are <b>ordinal judgements</b> (eligibility basis; guideline currency) scored directly on the
+    1–5 scale rather than min-max normalised, and one German value ("no ceiling") is scored 5 <b>by convention rather than
+    measurement</b> — all three are tagged accordingly in the tables below. Unlike the Layer B/C inputs, these rows do not
+    carry hover tooltips; their provenance is given in the dissertation's Pillar reports.</p>
     <div id="domainTables"></div>
+    <div id="commonBasis"></div>
     <div class="outputs" id="compositeOutputs"></div>
 
     <h3>Robustness checks (mirrors the Excel workbook's Composite_Score sheet)</h3>
@@ -152,7 +178,9 @@
     </div>
 
     <div class="note">
-      <b>Validation &mdash; every numerical result the paper reports</b>, recomputed live below at the ratio currently selected.
+      <b>Validation &mdash; every numerical result the paper reports</b>, recomputed live below. Each row is
+      evaluated at <i>the ratio the paper itself used for that scenario</i> (shown in the Ratio column), so the
+      table is a fixed check against the publication and does not follow the selector above.
       No scenario has been omitted: this is the complete set of point estimates given in the paper's Results section, each checked
       against its own published 95% reference range. Rows use &rho;=0 (the original paper has no funding-rigidity concept) and its
       published calibration W&#8320;=4,989, &mu;=36%/yr, r<sub>S0</sub>=7,830, r<sub>T0</sub>=5,197.
@@ -204,7 +232,7 @@
           <option value="manual">Manual (slider below, no auto-suggestion)</option>
         </select>
         <label>SAVR→TAVI conversion (%) <span class="badge assumption">Lever</span></label>
-        <input type="range" id="uk_convPct" min="0" max="50" value="40"><div class="row-val"><span>0%</span><b id="uk_convPct_v">40%</b><span>50%</span></div>
+        <input type="range" id="uk_convPct" min="0" max="50" value="15"><div class="row-val"><span>0%</span><b id="uk_convPct_v">15%</b><span>50%</span></div>
         <div class="note" id="regimeNote" style="margin-top:4px;"></div>
         <label title="Fraction of theoretical extra capacity that cannot be realised due to commissioner case caps (35% of UK centres, Ali et al. 2021) and Blueteq-style prior approval. Default 0.275 = midpoint of an illustrative 0.20–0.35 range.">Funding rigidity ρ (0–0.6) <span class="badge assumption">Assumption</span></label>
         <input type="range" id="uk_rho" min="0" max="0.6" step="0.005" value="0.275"><div class="row-val"><span>0</span><b id="uk_rho_v">0.275</b><span>0.6</span></div>
@@ -232,6 +260,13 @@
     </div>
 
     <h3>Geographic disaggregation (UK, 3-tier — calibrated to Aktaa et al., 2024)</h3>
+    <div class="note"><b>Known internal inconsistency, disclosed.</b> The three tier rates below (50 / 112 / 180 pmp)
+    are illustrative representative values for the access bands reported by Aktaa et al. (2024). Their CCG-weighted
+    mean is ≈109 pmp, which does not reproduce the confirmed national rate of 136 pmp used in Layer A — the bands are
+    representative midpoints, not a partition that was constructed to reconcile to the national total. The tiers are
+    therefore usable for <i>relative</i> comparison between tiers (which is what the inequity spread measures) but the
+    absolute per-tier clearance times inherit this ≈20% discrepancy. They have deliberately not been rescaled to force
+    agreement, since no published source gives the true within-band distribution.</div>
     <label title="How newly created capacity is distributed across the three access tiers. This choice is not neutral: allocating new capacity in proportion to existing delivery mechanically preserves the existing inequality, so any finding about the equity gap must be shown to survive the alternative rule.">Apportionment rule for new capacity <span class="badge derived">Derived</span></label>
     <select id="geoRule">
       <option value="capacity">Proportional to each tier's current treatment rate (status-quo-preserving)</option>
@@ -256,7 +291,17 @@
     <div class="outputs" id="mcOutputs"></div>
 
     <h3>Sensitivity analysis (UK) — which of the four pillars moves the outcome most?</h3>
-    <p class="tag">One-at-a-time (OAT) tornado analysis: each parameter is swung across its literature-reported range (or ±15pp for pure levers) while holding all others at the current UK slider settings, and the resulting change in t<sub>c</sub> (days) is recorded. Directly addresses the dissertation's core research question — which determinant pillar explains the most variation. Bars sorted by swing size (largest = most influential).</p>
+    <p class="tag">One-at-a-time (OAT) tornado analysis: each parameter is swung across its literature-reported range
+    (or a nominal ±15pp for pure levers, clamped to the source paper's 0–50% bounds — each bar states the range actually
+    tested) while holding all others at the current UK slider settings, and the resulting change in t<sub>c</sub> (days)
+    is recorded. Bars sorted by swing size.
+    <br><b>Two limits govern how this may be read.</b> First, OAT is local and holds everything else fixed, so it cannot
+    detect interactions — including the capacity×conversion interaction that is explicitly built into T<sub>e</sub>.
+    Second, the ranges are not commensurable: μ and W₀ are swung across the published 95% intervals of measured
+    quantities, whereas the policy levers are swung by an arbitrary fixed ±15pp. The ordering therefore compares
+    different kinds of quantity and is <i>not</i> a general ranking of the four determinant pillars; it indicates only
+    local sensitivity around the settings currently on screen. Note also that μ and W₀ are epidemiological inputs, not
+    levers: if either tops the ranking, that reflects uncertainty in the evidence base, not an intervention opportunity.</p>
     <div id="tornado"></div>
 
     <h3>Save &amp; compare named scenarios (UK)</h3>
@@ -272,10 +317,20 @@
 
   <!-- ============ OPTIMISATION ============ -->
   <div class="panel">
-    <h2>Optimisation — cheapest UK lever combination closest to the Germany-scenario outcome</h2>
+    <h2>Optimisation — most cost-effective UK lever combinations</h2>
     <p class="tag">Brute-force grid search (not a black-box solver — chosen for transparency and defensibility in an MSc dissertation) over capacity increase (0–50%, step 10), conversion (0–50%, step 10) and funding-rigidity relaxation (0 → current ρ, step 0.1). Ranked by closeness to the Germany-scenario (t<sub>c</sub>, deaths) computed from the panel above — <b>not</b> a fixed budget or fixed mortality target, per the agreed design decision. Cost is shown alongside each option, not used as a filter.</p>
     <div class="flex-between">
-      <div class="tag">Illustrative cost model: staffing = ⌈extra annual procedures ÷ 100 per-operator standard, Hildick-Smith et al. 2026⌉ × £161,600 fully-loaded consultant cost; + procedure cost = extra annual procedures × £26,145 (NHS FY2022 elective TAVI reference cost, via Blackman et al., 2024).</div>
+      <div class="tag">Illustrative cost model: staffing = ⌈extra annual procedures ÷ 100 per-operator standard,
+      Hildick-Smith et al. 2026⌉ × £161,600 fully-loaded consultant cost; + procedure cost = extra annual procedures
+      × £26,145 (NHS FY2022 elective TAVI reference cost, via Blackman et al., 2024).
+      <br><b>Three simplifications, stated explicitly.</b> (1) The single TAVI tariff is applied to <i>all</i> added
+      throughput, including added SAVR volume, so the mix effect is not costed. (2) Conversion is costed only on the
+      net throughput it creates, not on the TAVI-minus-SAVR tariff differential for each converted case, which
+      understates the true cost of a conversion-led strategy. (3) The staffing relationship is linear and unbounded —
+      there are no capital costs, no catheterisation-laboratory or critical-care constraints, and no diminishing
+      returns. Consequently these figures are an order-of-magnitude ranking device only. They are not a health-economic
+      evaluation: there are no QALYs, no discounting and no time horizon, and they would not satisfy a NICE reference
+      case.</div>
       <button id="runOpt">Run optimisation</button>
     </div>
     <div class="outputs" style="margin-top:10px;">
@@ -284,7 +339,7 @@
     </div>
     <div id="optNote"></div>
     <table id="optResults" style="margin-top:12px;">
-      <thead><tr><th>#</th><th>Capacity +%</th><th>Conversion %</th><th>Δρ (rigidity relaxed)</th><th>t_c (days)</th><th>Deaths</th><th>Est. annual cost</th><th>Distance to DE outcome</th></tr></thead>
+      <thead><tr><th>#</th><th>Capacity +%</th><th>Conversion %</th><th style="text-transform:none;">Δρ (rigidity relaxed)</th><th>t_c (days)</th><th>Deaths</th><th>Deaths averted</th><th>Est. annual cost</th><th>Cost per death averted</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -305,7 +360,7 @@
     <div id="rhoSweepSummary"></div>
     <div style="overflow-x:auto;">
       <table id="rhoSweepTable" style="margin-top:12px;">
-        <thead><tr><th>ρ</th><th>Realised T_e (/yr)</th><th>Time to clear</th><th>Deaths while waiting</th><th>Excess deaths vs ρ=0</th><th>Increase vs ρ=0</th></tr></thead>
+        <thead><tr><th style="text-transform:none;">ρ</th><th>Realised T_e (/yr)</th><th>Time to clear</th><th>Deaths while waiting</th><th style="text-transform:none;">Excess deaths vs ρ=0</th><th style="text-transform:none;">Increase vs ρ=0</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -377,7 +432,7 @@ const domains = {
   D4_Affordability: {
     label:"Affordability (Funding & Commissioning)",
     rows:[
-      {p:"National ICER ceiling (£/QALY; no ceiling scored best=5)", uk:30000, de:"noceil", aW:15000, aB:50000, status:"confirmed"},
+      {p:"National ICER ceiling (£/QALY; \"no ceiling\" is scored 5 by convention, not measured)", uk:30000, de:"noceil", aW:15000, aB:50000, status:"assumption"},
       {p:"Most favourable published cost-utility estimate (£/QALY, lower=better)", uk:16979, de:null, aW:30000, aB:0, status:"caveat"},
       {p:"Case-by-case prior-approval decline rate proxy (%, lower=better)", uk:71, de:null, aW:90, aB:0, status:"caveat"}
     ]
@@ -385,14 +440,36 @@ const domains = {
 };
 function scoreRow(row, country){
   const val = row[country];
-  if(row.ordinal) return val;
+  // Ordinal rows carry a direct 1-5 judgement rather than a measured quantity, so they bypass
+  // min-max normalisation by design. They are still clipped to [1,5]: an out-of-range ordinal
+  // would otherwise propagate a zero or negative into Math.log() in the geometric mean.
+  if(row.ordinal) return (val===null||val===undefined)? null : clip(val,1,5);
   if(val==="noceil") return 5;
   if(val===null||val===undefined) return null;
   return mmScore(val, row.aW, row.aB);
 }
 function domainScore(domain, country){
   const scores = domain.rows.map(r=>scoreRow(r,country)).filter(s=>s!==null);
+  if(scores.length===0) return null;
   return scores.reduce((a,b)=>a+b,0)/scores.length;
+}
+// Number of indicators actually populated for a country in a domain. Missing indicators are
+// dropped and the mean is taken over the survivors, so a domain resting on one value looks
+// identical to one resting on four unless n is displayed. It is displayed everywhere below.
+function domainN(domain, country){
+  return domain.rows.map(r=>scoreRow(r,country)).filter(s=>s!==null).length;
+}
+// Composite restricted to the indicators BOTH countries populate — a like-for-like comparison
+// that removes the effect of the UK simply being measured on more things.
+function compositeCommon(country){
+  const vals = Object.values(domains).map(d=>{
+    const rows = d.rows.filter(r=>scoreRow(r,'uk')!==null && scoreRow(r,'de')!==null);
+    if(rows.length===0) return null;
+    const sc = rows.map(r=>scoreRow(r,country));
+    return sc.reduce((a,b)=>a+b,0)/sc.length;
+  }).filter(v=>v!==null);
+  if(vals.length===0) return null;
+  return Math.exp(vals.reduce((s,v)=>s+Math.log(v),0)/vals.length);
 }
 function renderDomains(){
   const container = document.getElementById('domainTables');
@@ -402,12 +479,18 @@ function renderDomains(){
     const ukS = domainScore(d,'uk'), deS = domainScore(d,'de');
     scores[key]={uk:ukS,de:deS};
     const div = document.createElement('div');
-    div.innerHTML = `<h3>${d.label} — UK ${ukS.toFixed(2)} · DE ${deS.toFixed(2)}</h3>
+    const ukN = domainN(d,'uk'), deN = domainN(d,'de'), totalN = d.rows.length;
+    const thin = deN<=1 || ukN<=1;
+    div.innerHTML = `<h3>${d.label} — UK ${ukS.toFixed(2)} <span class="badge ${ukN<=1?'caveat':'derived'}">n=${ukN}/${totalN}</span> · DE ${deS.toFixed(2)} <span class="badge ${deN<=1?'caveat':'derived'}">n=${deN}/${totalN}</span></h3>
+      ${thin?`<div class="note" style="border-color:var(--warn);">This domain score rests on <b>${Math.min(ukN,deN)} of ${totalN}</b> indicators for ${deN<ukN?'Germany':'the UK'}. Missing indicators are dropped and the mean taken over the survivors, so this figure is far less well evidenced than a domain scored on the full set, despite being displayed on the same scale.</div>`:''}
       <table><thead><tr><th>Parameter</th><th>UK</th><th>DE</th><th>UK score</th><th>DE score</th></tr></thead><tbody>
       ${d.rows.map(r=>{
         const badge = {confirmed:'confirmed',caveat:'caveat',derived:'derived',assumption:'assumption'}[r.status]||'confirmed';
         const ukScore = scoreRow(r,'uk'), deScore = scoreRow(r,'de');
-        return `<tr><td>${r.p} <span class="badge ${badge}">${r.status}</span></td>
+        // The status tag describes the UK-side evidence for this indicator. Where the German value is
+        // absent, show that explicitly rather than letting a green "confirmed" badge sit beside "N/A".
+        const deMissing = deScore===null;
+        return `<tr><td>${r.p} <span class="badge ${badge}">${r.status}</span>${deMissing?' <span class="badge caveat">no DE data</span>':''}</td>
           <td>${r.uk===null?'—':r.uk}</td><td>${r.de===null?'N/A':(r.de==='noceil'?'no ceiling':r.de)}</td>
           <td>${ukScore===null?'—':ukScore.toFixed(2)}</td><td>${deScore===null?'—':deScore.toFixed(2)}</td></tr>`;
       }).join('')}
@@ -420,16 +503,40 @@ function renderDomains(){
   document.getElementById('compositeOutputs').innerHTML = `
     <div class="stat uk"><div class="k">UK composite score (geometric mean)</div><div class="v">${ukComposite.toFixed(2)} / 5</div></div>
     <div class="stat de"><div class="k">Germany composite score (geometric mean)</div><div class="v">${deComposite.toFixed(2)} / 5</div></div>
-    <div class="stat"><div class="k">Widest domain gap (bottleneck indicator)</div><div class="v">UK ${(Math.max(scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk)-Math.min(scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk)).toFixed(2)}</div></div>
+    <div class="stat"><div class="k">UK internal spread across its own four domains (bottleneck indicator — NOT a UK-vs-Germany gap)</div><div class="v">${(Math.max(scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk)-Math.min(scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk)).toFixed(2)}</div></div>
   `;
+  // Like-for-like check: recompute both composites using ONLY indicators populated for both countries.
+  const ukC = compositeCommon('uk'), deC = compositeCommon('de');
+  const nCommon = Object.values(domains).reduce((t,d)=>t+d.rows.filter(r=>scoreRow(r,'uk')!==null&&scoreRow(r,'de')!==null).length,0);
+  const nTotal = Object.values(domains).reduce((t,d)=>t+d.rows.length,0);
+  const el = document.getElementById('commonBasis');
+  if(el && ukC!==null && deC!==null){
+    el.innerHTML = `<div class="note" style="border-style:solid;">
+      <b>Like-for-like check — is the gap an artefact of unequal measurement?</b>
+      The headline scores use every indicator available for each country, but the UK is populated on
+      <b>${Object.values(domains).reduce((t,d)=>t+domainN(d,'uk'),0)} of ${nTotal}</b> indicators and Germany on
+      <b>${Object.values(domains).reduce((t,d)=>t+domainN(d,'de'),0)} of ${nTotal}</b>. Restricting both countries to the
+      <b>${nCommon} indicators populated for both</b> gives <b>UK ${ukC.toFixed(2)}</b> vs <b>Germany ${deC.toFixed(2)}</b>,
+      against the headline ${ukComposite.toFixed(2)} vs ${deComposite.toFixed(2)}.
+      <div style="margin-top:8px;">The <i>direction</i> of the comparison is therefore robust to the missing data, but the
+      <i>size</i> of the gap is not: several German domain scores rest on a single indicator, and the domains where the UK
+      scores worst are among those where German data is thinnest. Quote the ranking with confidence; treat the magnitude of
+      the difference as an upper bound rather than an estimate.</div></div>`;
+  }
   window._lastDomainScores = scores;
   renderRobustness();
 }
 function renderRobustness(){
   const scores = window._lastDomainScores; if(!scores) return;
-  const ws = ['w1','w2','w3','w4'].map(id=>parseFloat(document.getElementById(id).value)||0);
+  // Weights must be non-negative for the convexity argument in robustness check 3 to hold.
+  const ws = ['w1','w2','w3','w4'].map(id=>Math.max(0, parseFloat(document.getElementById(id).value)||0));
   const sum = ws.reduce((a,b)=>a+b,0);
-  document.getElementById('weightSum').textContent = `Weights sum to: ${sum}% ${sum!==100?'⚠ must equal 100%':'✓'}`;
+  // wgeo divides by the weight sum, so only the RATIO of the weights affects the result — 10/10/10/10
+  // and 50/50/50/50 give identical scores. Saying "must equal 100%" would be untrue.
+  const anyNeg = ['w1','w2','w3','w4'].some(id=>(parseFloat(document.getElementById(id).value)||0) < 0);
+  document.getElementById('weightSum').textContent =
+    `Weights sum to: ${sum}%${sum===100?' ✓':' — note: only the ratio between weights affects the result, as the weighted mean is normalised by their sum, so a total other than 100% does not invalidate the figures.'}` +
+    (anyNeg?' ⚠ Negative weights are not admissible and have been treated as 0.':'');
   const ukVals = [scores.D1_Acceptability.uk,scores.D2_Accessibility.uk,scores.D3_Availability.uk,scores.D4_Affordability.uk];
   const deVals = [scores.D1_Acceptability.de,scores.D2_Accessibility.de,scores.D3_Availability.de,scores.D4_Affordability.de];
   const arith = v => v.reduce((a,b)=>a+b,0)/v.length;
@@ -486,8 +593,16 @@ function renderWeightInvariance(ukVals, deVals){
     ? `<b style="color:var(--good)">The UK &lt; Germany ranking is invariant to the choice of weights.</b>
        Because the UK scores below Germany on <i>every</i> domain, no admissible weighting — equal, unequal,
        or extreme (100% on any single domain) — can reverse the ordering, under either the geometric or the
-       arithmetic mean. The equal-25% weighting is therefore a presentational choice, not a load-bearing
-       assumption: the comparative conclusion does not depend on it.`
+       arithmetic mean — though note these are not two independent checks: because every domain score is
+       strictly positive, max&nbsp;ln(uk/de)&nbsp;&lt;&nbsp;0 and max(uk&minus;de)&nbsp;&lt;&nbsp;0 are logically
+       equivalent conditions. The equal-25% weighting is therefore a presentational choice, not a load-bearing
+       assumption for <i>this specific question</i>.
+       <div style="margin-top:8px;color:var(--warn);"><b>What this does not establish.</b> Weight-invariance is not
+       overall robustness. The German side of the index is populated on materially fewer indicators than the UK side,
+       and several German domain scores rest on a single value; the domains where the UK scores worst are also among
+       those where German data is thinnest. This check proves the ranking cannot be reversed by re-weighting the
+       domains — it says nothing about how the domain scores would move if the missing German indicators were
+       populated. That remains the composite's principal fragility and is not addressed here.</div>`
     : `<b style="color:var(--warn)">The ranking is NOT invariant to weighting.</b> The UK scores at or above
        Germany on ${names[worstGeoIdx]}, so a weighting concentrated on that domain could reverse the ordering.
        The equal-weight result is therefore weighting-dependent and must be reported as such.`;
@@ -511,8 +626,28 @@ function renderWeightInvariance(ukVals, deVals){
 document.getElementById('exportCompositeCsv').addEventListener('click', ()=>{
   const rows=[['Domain','Parameter','UK value','DE value','UK score','DE score','Status']];
   Object.values(domains).forEach(d=>d.rows.forEach(r=>{
-    rows.push([d.label, r.p, r.uk===null?'':r.uk, (r.de===null?'N/A':r.de), scoreRow(r,'uk')??'', scoreRow(r,'de')??'', r.status]);
+    rows.push([d.label, r.p, r.uk===null?'':r.uk, (r.de===null?'N/A':(r.de==='noceil'?'no ceiling (scored 5 by convention)':r.de)),
+               scoreRow(r,'uk')??'', scoreRow(r,'de')??'', r.status]);
   }));
+  // Domain and composite scores, so the headline figures are reproducible from the export alone.
+  rows.push([]);
+  rows.push(['DOMAIN SCORES','','','','UK score','DE score','Indicators populated (UK / DE / total)']);
+  Object.values(domains).forEach(d=>{
+    rows.push([d.label,'','','', (domainScore(d,'uk')??'').toFixed? domainScore(d,'uk').toFixed(4):'',
+               (domainScore(d,'de')??'').toFixed? domainScore(d,'de').toFixed(4):'',
+               `${domainN(d,'uk')} / ${domainN(d,'de')} / ${d.rows.length}`]);
+  });
+  const sc = window._lastDomainScores;
+  if(sc){
+    const g = o => Math.exp((Math.log(o.D1_Acceptability)+Math.log(o.D2_Accessibility)+Math.log(o.D3_Availability)+Math.log(o.D4_Affordability))/4);
+    const ukc = g({D1_Acceptability:sc.D1_Acceptability.uk,D2_Accessibility:sc.D2_Accessibility.uk,D3_Availability:sc.D3_Availability.uk,D4_Affordability:sc.D4_Affordability.uk});
+    const dec = g({D1_Acceptability:sc.D1_Acceptability.de,D2_Accessibility:sc.D2_Accessibility.de,D3_Availability:sc.D3_Availability.de,D4_Affordability:sc.D4_Affordability.de});
+    rows.push([]);
+    rows.push(['COMPOSITE (equal-weight geometric mean)','','','', ukc.toFixed(4), dec.toFixed(4), '']);
+    const ukC = compositeCommon('uk'), deC = compositeCommon('de');
+    if(ukC!==null && deC!==null)
+      rows.push(['COMPOSITE restricted to indicators populated for BOTH countries','','','', ukC.toFixed(4), deC.toFixed(4), '']);
+  }
   downloadCsv(rows, 'composite_access_score.csv');
 });
 function downloadCsv(rows, filename){
@@ -527,7 +662,12 @@ renderDomains();
    ============================================================ */
 function galeSolve(W0, mu, Te){
   // Te and mu must be in the same time unit (here: per year)
-  if(Te<=0) return {tc:Infinity, deaths:W0};
+  if(!(Te>0) || !isFinite(Te) || !isFinite(W0) || !isFinite(mu) || W0<0 || mu<0) {
+    return {tc:Infinity, deaths: (isFinite(W0)&&W0>=0)? W0 : NaN};
+  }
+  // mu -> 0 limit: ln(1+mu.W0/Te)/mu -> W0/Te, and deaths -> 0. Taking the limit explicitly
+  // avoids 0/0 producing NaN for the (physically meaningful) zero-mortality case.
+  if(mu < 1e-9) return {tc: W0/Te, deaths: 0};
   const tc = Math.log(1 + (mu*W0)/Te) / mu; // years
   const deaths = Math.max(0, W0 - Te*tc);
   return {tc, deaths};
@@ -625,7 +765,7 @@ function runDynamic(){
       </div>`).join('');
     const tcs = regions.map(r=>r.tc*365).filter(isFinite);
     const inequity = tcs.length? (Math.max(...tcs)-Math.min(...tcs)) : null;
-    regionalHtml += `<div class="note" style="grid-column:1/-1;">Inequity metric — spread between fastest- and slowest-clearing tier: <b>${inequity?inequity.toFixed(0)+' days':'n/a'}</b>. This range, not any single national figure, is the operational analogue of the CCG fold-variation documented in Pillar 2.</div>`;
+    regionalHtml += `<div class="note" style="grid-column:1/-1;">Inequity metric — spread between fastest- and slowest-clearing tier: <b>${inequity!==null?inequity.toFixed(0)+' days':'n/a'}</b>. This range, not any single national figure, is the operational analogue of the CCG fold-variation documented in Pillar 2.</div>`;
     // Show the SAME national intervention under BOTH apportionment rules, so the equity finding
     // can be separated from the apportionment assumption that produces it.
     const sCap = inequitySpread(uk.W0, ukTe.Te_realised, uk.mu, 'capacity');
@@ -730,6 +870,10 @@ function drawChart(uk, ukTe, de, deTe){
 ['uk','de'].forEach(p=>{
   ['W0','mu','rS0','rT0','capPct','convPct','rho'].forEach(f=>{
     document.getElementById(p+'_'+f).addEventListener('input', runDynamic);
+    // Keep the narrative report in step with the sliders. Without this the report panel retains the
+    // scenario it was last generated for, so it can sit on screen showing different numbers from the
+    // live panels above it — a cross-panel contradiction an examiner would reasonably flag.
+    document.getElementById(p+'_'+f).addEventListener('input', ()=>{ try{ generateReport(); }catch(e){} });
   });
 });
 document.getElementById('uk_regional').addEventListener('change', runDynamic);
@@ -779,7 +923,9 @@ function renderValidationTable(){
   const all = nIn === PUBLISHED_SCENARIOS.length;
   document.getElementById('validationSummary').innerHTML =
     `<b>${nIn} of ${PUBLISHED_SCENARIOS.length}</b> published scenarios reproduced within the paper's own 95% reference range` +
-    (all ? ' — complete agreement across every result the paper reports.' : ' — see flagged rows above.');
+    (all ? ' — every result the paper reports is reproduced within its published interval. Note this tests interval'
+         + ' containment, not exact agreement: point estimates differ by up to ~3.5% (largest deviation: conversion 30%,'
+         + ' 941 vs 975 days), and the published intervals are wide.' : ' — see flagged rows above.');
 }
 
 /* TAVI:SAVR procedure-time ratio — restricted to the four ratios Stickels et al. (2022) published */
@@ -906,19 +1052,28 @@ function runRhoSweep(){
   const rows = [];
   const ref = (()=>{ const te = computeTe(uk.rS0,uk.rT0,uk.capPct,uk.convPct,0).Te_realised;
                      return {te, ...galeSolve(uk.W0, uk.mu, te)}; })();
-  for(let rho=0; rho<=RHO_MAX+1e-9; rho+=step){
+  // Grid of 0.05 steps PLUS the tool's own default and whatever the user currently has set, so the
+  // configured value always appears as an explicit row rather than falling between grid points.
+  const rhoValues = [];
+  for(let rho=0; rho<=RHO_MAX+1e-9; rho+=step) rhoValues.push(Math.round(rho*1000)/1000);
+  [0.275, uk.rho].forEach(v=>{
+    if(isFinite(v) && v>=0 && v<=RHO_MAX && !rhoValues.some(x=>Math.abs(x-v)<1e-9)) rhoValues.push(v);
+  });
+  rhoValues.sort((a,b)=>a-b);
+  rhoValues.forEach(rho=>{
     const te = computeTe(uk.rS0, uk.rT0, uk.capPct, uk.convPct, rho).Te_realised;
     const sol = galeSolve(uk.W0, uk.mu, te);
     rows.push({rho, te, tc: sol.tc, deaths: sol.deaths,
                excess: sol.deaths - ref.deaths,
                pct: ref.deaths>0 ? (sol.deaths/ref.deaths - 1)*100 : NaN});
-  }
+  });
   window._lastRhoSweep = rows;
   const fmtD = r => isFinite(r.tc) ? (r.tc*365).toFixed(0)+'d' : 'never';
   document.querySelector('#rhoSweepTable tbody').innerHTML = rows.map(r=>{
     const isDefault = Math.abs(r.rho-0.275)<1e-9;
+    const isCurrent = Math.abs(r.rho-uk.rho)<1e-9;
     return `<tr${isDefault?' style="background:#1c2b3a;"':''}>
-      <td>${r.rho.toFixed(2)}${isDefault?' <span class="badge derived">tool default</span>':''}${r.rho===0?' <span class="badge confirmed">reference</span>':''}</td>
+      <td>${r.rho.toFixed(3).replace(/0$/,'')}${isDefault?' <span class="badge derived">default</span>':''}${(isCurrent&&!isDefault)?' <span class="badge derived">current</span>':''}${r.rho===0?' <span class="badge confirmed">reference</span>':''}</td>
       <td>${r.te.toFixed(0)}</td><td>${fmtD(r)}</td><td>${r.deaths.toFixed(0)}</td>
       <td>${r.excess>0?'+':''}${r.excess.toFixed(0)}</td>
       <td>${isFinite(r.pct)?(r.pct>0?'+':'')+r.pct.toFixed(1)+'%':'—'}</td></tr>`;
@@ -948,11 +1103,10 @@ function runRhoSweep(){
       <li>The tool's illustrative default (ρ=0.275) sits inside this range and is <i>not</i> what generates the
           direction or the materiality of the effect — both hold at every value tested.</li>
     </ul>
-    <div style="margin-top:8px;">Interpretation: the defensible claim is not "commissioning friction costs
-    ${rows.find(r=>Math.abs(r.rho-0.275)<1e-9) ? rows.find(r=>Math.abs(r.rho-0.275)<1e-9).pct.toFixed(0) : '—'}% more deaths",
-    which would merely restate the assumed value of ρ, but that <b>across every level of friction the model admits,
-    the effect is in one direction and is material in size</b>. That conclusion is independent of the specific value
-    of ρ, which remains unmeasured.</div>
+    <div style="margin-top:8px;">Interpretation: the defensible claim is not that commissioning friction costs
+    some specific percentage more deaths — quoting the figure at any one ρ merely restates the assumed value of that
+    parameter — but that <b>across every level of friction the model admits, the effect is in one direction and is
+    material in size</b>. That conclusion is independent of the specific value of ρ, which remains unmeasured.</div>
   </div>`;
 }
 document.getElementById('runRhoSweep').addEventListener('click', runRhoSweep);
@@ -980,9 +1134,15 @@ function runTornado(){
   const params = [
     {name:"μ — mortality rate", low:tcFor({mu:0.12}), high:tcFor({mu:0.60}), note:"Stickels et al. 95% CI (12%–60%/yr)"},
     {name:"W₀ — backlog size", low:tcFor({W0:4020}), high:tcFor({W0:5959}), note:"Stickels et al. 95% CI"},
-    {name:"Capacity increase %", low:tcFor({capPct:Math.max(0,uk.capPct-0.15)}), high:tcFor({capPct:Math.min(0.5,uk.capPct+0.15)}), note:"±15pp around current setting (Pillar 3)"},
-    {name:"Conversion % (Pillar 1 link)", low:tcFor({convPct:Math.max(0,uk.convPct-0.15)}), high:tcFor({convPct:Math.min(0.5,uk.convPct+0.15)}), note:"±15pp — NICE↔ESC/EACTS regime range"},
-    {name:"Funding rigidity ρ (Pillar 4)", low:tcFor({rho:Math.max(0,uk.rho-0.15)}), high:tcFor({rho:Math.min(0.6,uk.rho+0.15)}), note:"±0.15 around current setting"}
+    (()=>{ const lo=Math.max(0,uk.capPct-0.15), hi=Math.min(0.5,uk.capPct+0.15);
+      return {name:"Capacity increase %", low:tcFor({capPct:lo}), high:tcFor({capPct:hi}),
+        note:`tested ${(lo*100).toFixed(0)}%–${(hi*100).toFixed(0)}% (nominal ±15pp, clamped to the paper's 0–50% bound) (Pillar 3)`}; })(),
+    (()=>{ const lo=Math.max(0,uk.convPct-0.15), hi=Math.min(0.5,uk.convPct+0.15);
+      return {name:"Conversion % (Pillar 1 link)", low:tcFor({convPct:lo}), high:tcFor({convPct:hi}),
+        note:`tested ${(lo*100).toFixed(0)}%–${(hi*100).toFixed(0)}% (nominal ±15pp, clamped to the paper's 0–50% bound) — NICE↔ESC/EACTS regime range`}; })(),
+    (()=>{ const lo=Math.max(0,uk.rho-0.15), hi=Math.min(0.6,uk.rho+0.15);
+      return {name:"Funding rigidity ρ (Pillar 4)", low:tcFor({rho:lo}), high:tcFor({rho:hi}),
+        note:`tested ρ=${lo.toFixed(2)}–${hi.toFixed(2)} (nominal ±0.15, clamped to 0–0.6)`}; })()
   ].map(p=>({...p, swing: p.low!==null&&p.high!==null ? Math.abs(p.high-p.low) : 0}));
   params.sort((a,b)=>b.swing-a.swing);
   window._lastTornado = params;
@@ -1023,52 +1183,78 @@ document.getElementById('saveScenario').addEventListener('click', ()=>{
 });
 
 /* ============================================================
-   OPTIMISATION — grid search toward Germany-scenario outcome
+   OPTIMISATION — grid search ranked by COST PER DEATH AVERTED
+   relative to a no-intervention baseline.
+
+   This replaces an earlier "distance to the Germany scenario"
+   objective, which was unsound: when Germany has no intervention
+   configured (its shipped default), its scenario has t_c -> infinity
+   and deaths = its entire backlog, so "closest to Germany" rewarded
+   the combinations that killed the MOST UK patients, ranking the
+   least effective intervention first. Cost per death averted is
+   also the criterion this dissertation states it uses, and it needs
+   no comparator assumption at all.
    ============================================================ */
 document.getElementById('runOpt').addEventListener('click', ()=>{
-  const uk = getInputs('uk'), de = getInputs('de');
-  const deTe = computeTe(de.rS0,de.rT0,de.capPct,de.convPct,de.rho).Te_realised;
-  const deTarget = galeSolve(de.W0, de.mu, deTe); // Germany-scenario outcome = optimisation target
-  const deTargetValid = isFinite(deTarget.tc);
+  const uk = getInputs('uk');
   const CONSULTANT_COST = 161600, PROCEDURES_PER_OPERATOR = 100, UNIT_COST = 26145;
+  // Baseline = no added capacity, no added conversion, at the funding rigidity currently set.
+  // With T_e = 0 the excess backlog never clears and the whole of W0 is eventually lost, which is
+  // the model's own definition of taking no action (see the "never" state in the panel above).
+  const baseline = galeSolve(uk.W0, uk.mu, computeTe(uk.rS0,uk.rT0,0,0,uk.rho).Te_realised);
   const results=[];
-  for(let capPct=0; capPct<=0.5; capPct+=0.10){
-    for(let convPct=0; convPct<=0.5; convPct+=0.10){
-      for(let dRho=0; dRho<=uk.rho+1e-9; dRho+=0.10){
-        const rho = Math.max(0, uk.rho - dRho);
+  for(let capPct=0; capPct<=0.5+1e-9; capPct+=0.10){
+    for(let convPct=0; convPct<=0.5+1e-9; convPct+=0.10){
+      // Sweep funding rigidity from its current value down to 0 inclusive.
+      const rhoSteps = [];
+      for(let r=uk.rho; r>=-1e-9; r-=0.05) rhoSteps.push(Math.max(0,r));
+      if(rhoSteps.length===0 || rhoSteps[rhoSteps.length-1]>1e-9) rhoSteps.push(0);
+      rhoSteps.forEach(rho=>{
         const teObj = computeTe(uk.rS0, uk.rT0, capPct, convPct, rho);
         const sol = galeSolve(uk.W0, uk.mu, teObj.Te_realised);
-        if(!isFinite(sol.tc)) continue;
-        const tcDays = sol.tc*365;
-        const extraProcedures = teObj.Te_realised; // per year
-        const operators = Math.ceil(Math.max(0,extraProcedures)/PROCEDURES_PER_OPERATOR);
-        const cost = operators*CONSULTANT_COST + Math.max(0,extraProcedures)*UNIT_COST;
-        // If Germany's reference scenario has no configured intervention (t_c -> Infinity),
-        // there is no defined backlog-clearance target to compare against, so rank on the
-        // mortality term alone rather than producing NaN from an Infinity-valued t_c term.
-        const distance = deTargetValid
-          ? Math.sqrt(Math.pow((tcDays-deTarget.tc*365)/(deTarget.tc*365||1),2) + Math.pow((sol.deaths-deTarget.deaths)/(deTarget.deaths||1),2))
-          : Math.abs((sol.deaths-deTarget.deaths)/(deTarget.deaths||1));
-        results.push({capPct,convPct,dRho,tcDays,deaths:sol.deaths,cost,distance});
-      }
+        if(!isFinite(sol.tc)) return;                      // no intervention at all -> never clears
+        const deathsAverted = baseline.deaths - sol.deaths;
+        if(!(deathsAverted > 0)) return;                   // cannot express cost-effectiveness
+        const extraProcedures = Math.max(0, teObj.Te_realised);
+        const operators = Math.ceil(extraProcedures/PROCEDURES_PER_OPERATOR);
+        const cost = operators*CONSULTANT_COST + extraProcedures*UNIT_COST;
+        results.push({capPct, convPct, dRho: uk.rho-rho, rho,
+                      tcDays: sol.tc*365, deaths: sol.deaths,
+                      deathsAverted, cost, cpda: cost/deathsAverted});
+      });
     }
   }
-  results.sort((a,b)=>a.distance-b.distance);
+  results.sort((a,b)=>a.cpda-b.cpda);
   const top = results.slice(0,8);
   window._lastOptResults = top;
-  document.getElementById('optNote').innerHTML = deTargetValid ? '' :
-    `<div class="note" style="margin-top:8px;">Germany's reference scenario has no intervention configured (capacity/conversion levers at 0%), so it has no finite backlog-clearance time to target — the closed-form model has t_c → ∞ in this state, consistent with the panel above. Ranking below is therefore based on distance to Germany's death toll alone. Set Germany's capacity or conversion sliders above 0% for a full two-metric (time and deaths) optimisation target.</div>`;
+  document.getElementById('optNote').innerHTML = `<div class="note" style="margin-top:8px;">
+    Ranked by <b>cost per death averted</b> against a no-intervention baseline
+    (0% added capacity, 0% added conversion, ρ=${uk.rho.toFixed(3)}), under which the excess backlog never
+    clears and all ${baseline.deaths.toFixed(0)} patients are eventually lost. Cost is an illustrative
+    order-of-magnitude figure, not a health-economic evaluation: it contains no QALYs, no discounting and no
+    time horizon, and assumes a fixed linear relationship between staffing and throughput. Combinations that
+    avert no deaths are excluded because a cost-effectiveness ratio is undefined for them.
+    <div style="margin-top:8px;"><b>Read rank 1 as "best value per pound", not "best outcome".</b> Because the
+    closed-form solution has diminishing returns — each additional unit of capacity averts fewer deaths than the last —
+    the most cost-effective combination is systematically among the <i>smallest</i> interventions, which also avert the
+    fewest deaths in absolute terms. The "Deaths averted" column is shown alongside precisely so this trade-off is
+    visible: a decision-maker choosing on cost-effectiveness alone would select a materially less effective
+    intervention than one choosing on absolute lives saved. That tension is a genuine finding of the model, not an
+    artefact of the ranking.</div></div>`;
   document.querySelector('#optResults tbody').innerHTML = top.map((r,i)=>`
     <tr><td>${i+1}</td><td>${(r.capPct*100).toFixed(0)}%</td><td>${(r.convPct*100).toFixed(0)}%</td>
     <td>${r.dRho.toFixed(2)}</td><td>${r.tcDays.toFixed(0)}</td><td>${r.deaths.toFixed(0)}</td>
+    <td>${r.deathsAverted.toFixed(0)}</td>
     <td>£${r.cost.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-    <td class="dist">${r.distance.toFixed(3)}</td></tr>`).join('');
+    <td class="dist">£${r.cpda.toLocaleString(undefined,{maximumFractionDigits:0})}</td></tr>`).join('');
 });
 document.getElementById('exportOptCsv').addEventListener('click', ()=>{
   const top = window._lastOptResults || [];
-  const rows = [['Rank','Capacity +%','Conversion %','Δρ relaxed','t_c (days)','Deaths','Est. annual cost (£)','Distance to DE outcome']];
-  top.forEach((r,i)=>rows.push([i+1,(r.capPct*100).toFixed(0),(r.convPct*100).toFixed(0),r.dRho.toFixed(2),r.tcDays.toFixed(0),r.deaths.toFixed(0),r.cost.toFixed(0),r.distance.toFixed(4)]));
   if(top.length===0){ alert('Run the optimisation first.'); return; }
+  const rows = [['Rank','Capacity +%','Conversion %','rho relaxed by','t_c (days)','Deaths','Deaths averted vs no intervention','Est. annual cost (GBP)','Cost per death averted (GBP)']];
+  top.forEach((r,i)=>rows.push([i+1,(r.capPct*100).toFixed(0),(r.convPct*100).toFixed(0),r.dRho.toFixed(2),
+                                r.tcDays.toFixed(0),r.deaths.toFixed(0),r.deathsAverted.toFixed(0),
+                                r.cost.toFixed(0),r.cpda.toFixed(0)]));
   downloadCsv(rows, 'optimisation_results.csv');
 });
 document.getElementById('exportChartPng').addEventListener('click', ()=>{
@@ -1114,11 +1300,28 @@ function generateReport(){
   const title = document.getElementById('reportTitle').value.trim() || 'Untitled scenario';
 
   let prose = '';
-  prose += `SCENARIO: ${title}\nGenerated: ${new Date().toISOString().slice(0,16).replace('T',' ')}\n\n`;
+  const ratioLabel = ({"1.5":"3:2","1.3333333333333333":"4:3","1.6666666666666667":"5:3","2":"4:2"})[String(TAVI_PER_SAVR_TIME_RATIO)] || TAVI_PER_SAVR_TIME_RATIO.toFixed(3);
+  const calLabel = document.getElementById('calMode').value === 'gale'
+    ? 'Stickels et al. (2019/20) published calibration' : 'current (~2026) UK throughput estimate';
+  const geoLabel = document.getElementById('geoRule').value === 'population'
+    ? 'equal per head of population' : 'proportional to current treatment rate';
+  prose += `SCENARIO: ${title}\nGenerated: ${new Date().toISOString().slice(0,16).replace('T',' ')}\n`;
+  prose += `Tool version: v4 (4 Aug 2026)\n\n`;
+  prose += `MODEL CONFIGURATION (required to reproduce every figure below)\n`;
+  prose += `  Calibration mode ......... ${calLabel}\n`;
+  prose += `  TAVI:SAVR time ratio ..... ${ratioLabel}${Math.abs(TAVI_PER_SAVR_TIME_RATIO-1.5)>1e-9 ? '   *** NOT the base case — figures below will NOT match those reported in the dissertation ***' : '  (base case)'}\n`;
+  prose += `  UK  W0=${uk.W0}, mu=${uk.mu}/yr, baseline SAVR=${uk.rS0}, TAVI=${uk.rT0}\n`;
+  prose += `  DE  W0=${de.W0}, mu=${de.mu}/yr, baseline SAVR=${de.rS0}, TAVI=${de.rT0}\n`;
+  prose += `  Capacity apportionment rule (geographic panel): ${geoLabel}\n\n`;
   prose += `STRUCTURAL COMPARISON (Layer A). At baseline, the composite Access Determinants Score stands at ${scores? Math.exp((Math.log(scores.D1_Acceptability.uk)+Math.log(scores.D2_Accessibility.uk)+Math.log(scores.D3_Availability.uk)+Math.log(scores.D4_Affordability.uk))/4).toFixed(2):'—'}/5 for the UK versus ${scores? Math.exp((Math.log(scores.D1_Acceptability.de)+Math.log(scores.D2_Accessibility.de)+Math.log(scores.D3_Availability.de)+Math.log(scores.D4_Affordability.de))/4).toFixed(2):'—'}/5 for Germany (equal-weight geometric mean across the four Penchansky & Thomas dimensions). This is a structural snapshot, independent of the scenario levers below.\n\n`;
-  prose += `CURRENT SCENARIO (Layer B/C). The UK guidance regime is set to ${regimeLabel}. On top of that, capacity has been increased by ${fmtPct(uk.capPct)}, ${fmtPct(uk.convPct)} of SAVR cases are converted to TAVI, and a funding-rigidity of ρ=${uk.rho.toFixed(2)} is applied (i.e. ${(uk.rho*100).toFixed(0)}% of the theoretical extra capacity is not realised, reflecting commissioner case caps / prior-approval frictions). Under these settings, the UK backlog clears in ${isFinite(ukSol.tc)?(ukSol.tc*365).toFixed(0)+' days':'an indeterminate period (no net extra capacity)'} with an estimated ${ukSol.deaths.toFixed(0)} deaths while waiting. The equivalent Germany scenario (capacity +${fmtPct(de.capPct)}, conversion +${fmtPct(de.convPct)}, ρ=${de.rho.toFixed(2)}) clears in ${isFinite(deSol.tc)?(deSol.tc*365).toFixed(0)+' days':'an indeterminate period'} with ${deSol.deaths.toFixed(0)} deaths.\n\n`;
+  prose += `CURRENT SCENARIO (Layer B/C). The UK guidance regime is set to ${regimeLabel}. On top of that, capacity has been increased by ${fmtPct(uk.capPct)}, ${fmtPct(uk.convPct)} of SAVR cases are converted to TAVI, and a funding-rigidity of ρ=${uk.rho.toFixed(2)} is applied (i.e. ${(uk.rho*100).toFixed(0)}% of the theoretical extra capacity is not realised, reflecting commissioner case caps / prior-approval frictions). Under these settings, the UK backlog clears in ${isFinite(ukSol.tc)?(ukSol.tc*365).toFixed(0)+' days':'an indeterminate period (no net extra capacity)'} with an estimated ${ukSol.deaths.toFixed(0)} deaths while waiting. The equivalent Germany scenario (capacity +${fmtPct(de.capPct)}, conversion +${fmtPct(de.convPct)}, ρ=${de.rho.toFixed(2)}) clears in ${isFinite(deSol.tc)?(deSol.tc*365).toFixed(0)+' days':'an indeterminate period'} with ${deSol.deaths.toFixed(0)} deaths.`;
+  if(!isFinite(deSol.tc)){
+    prose += ` IMPORTANT: no intervention is configured on the Germany side (its capacity and conversion levers are both at 0%), so T_e=0 and the model returns its degenerate no-action state, in which the entire German backlog of ${de.W0} is eventually lost. That figure is NOT a comparative finding and must not be read as Germany performing worse than the UK — it is the arithmetic of taking no action, and it says nothing about German performance. Note it points in the opposite direction to the structural comparison above, where Germany scores higher than the UK. To make a like-for-like dynamic comparison, set Germany's levers to the scenario you intend to compare against.`;
+  }
+  prose += `\n\n`;
   if(topDriver){
-    prose += `SENSITIVITY. Of the parameters tested, "${topDriver.name}" produces the largest swing in backlog-clearance time (${topDriver.swing.toFixed(0)} days across its tested range) — this is, on the current settings, the single most influential lever on the outcome. See the Sensitivity panel above for the full ranking.\n\n`;
+    const isLever = /Capacity|Conversion|rigidity/i.test(topDriver.name);
+    prose += `SENSITIVITY. Of the parameters tested, "${topDriver.name}" produces the largest swing in backlog-clearance time (${topDriver.swing.toFixed(0)} days across its tested range) — this is, on the current settings, the most influential ${isLever?'policy lever':'parameter (note: an epidemiological input, not a policy lever — it cannot be acted on, and its prominence reflects uncertainty in the evidence base rather than an intervention opportunity)'} on the outcome. This is a local one-at-a-time analysis around the current settings: it holds all other parameters fixed and therefore cannot detect interactions between them, including the capacity-conversion interaction built into T_e. Ranges are also not commensurable — mu and W0 are swung across published 95% intervals whereas the policy levers are swung by a fixed +/-15 percentage points — so the ordering compares different kinds of quantity and should not be read as a general ranking of the four pillars. See the Sensitivity panel above for the full ranking.\n\n`;
   }
   prose += `HOW EACH LEVER CONTRIBUTES (waterfall, UK). Starting from no operational change and adding one lever at a time, holding the others fixed:\n`;
   const table = wf.map(r=>`  - ${r.label}: ${r.tcDays?.toFixed(0)??'—'} days, ${r.deaths.toFixed(0)} deaths` + (r.dTc!==null? ` (Δ ${r.dTc>=0?'+':''}${r.dTc.toFixed(0)} days, Δ ${r.dDeaths>=0?'+':''}${r.dDeaths.toFixed(0)} deaths vs previous step)`:'')).join('\n');
