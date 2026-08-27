@@ -58,7 +58,7 @@
   button.go:hover{opacity:.92;}
   .tag{display:inline-block;font:600 11px/1 -apple-system,Segoe UI,sans-serif;padding:4px 7px;
        border-radius:4px;text-transform:uppercase;letter-spacing:.03em;}
-  .t-conf{background:#e3f2e8;color:var(--good);} .t-assum{background:#fbeee0;color:var(--warn);}
+  .t-conf{background:#e3f2e8;color:var(--good);} .t-cav{background:#eef1f5;color:#5c6470;} .t-assum{background:#fbeee0;color:var(--warn);}
   details{margin:12px 0;border-top:1px solid var(--line);padding-top:10px;}
   summary{cursor:pointer;font:600 14px -apple-system,Segoe UI,sans-serif;color:var(--accent);}
   details p,details table{font-size:14.5px;}
@@ -170,7 +170,7 @@
   </section>
 
   <section class="sc" id="sc3">
-    <h2>Where you live decides how long you wait.</h2>
+    <h2>Recorded TAVI activity varies substantially by area.</h2>
     <div style="display:flex;gap:16px;margin:18px 0;flex-wrap:wrap;justify-content:center;">
       <div style="background:#141a26;border:2px solid #c0392b;border-radius:10px;padding:18px 22px;">
         <div style="font-size:13px;color:#8d95a6;">Lowest-access areas</div>
@@ -185,53 +185,58 @@
         <div class="big green" style="font-size:40px;">180</div>
         <div style="font-size:12px;color:#8d95a6;">procedures per million</div></div>
     </div>
-    <p>Same country. Same rules on paper. Between individual extreme areas the difference is
-       <b style="color:#fff">fifteen-fold</b>. The three figures above are averages of whole groups of areas,
-       which is why their spread looks smaller. And the areas doing the least TAVI are not doing more surgery
-       instead. They are simply treating fewer people.</p>
+    <p>Within England, recorded TAVI activity differed by more than <b style="color:#fff">fifteen-fold</b>
+       between the extreme former CCG areas. The three figures above are illustrative group averages, which is why
+       their spread looks smaller. Isolated SAVR activity was almost uncorrelated with TAVI activity, offering little
+       aggregate evidence that surgery routinely offset low TAVI activity. These crude rates do not measure local
+       clinical need or individual waiting time.</p>
   </section>
 
   <section class="sc" id="sc4">
     <h2>To be treated, a patient must pass four gates.</h2>
     <div class="gates">
-      <div class="gate" id="g0"><div class="ico">📋</div><div class="nm">Guidance</div><div class="q">Are you allowed?</div></div>
+      <div class="gate" id="g0"><div class="ico">📋</div><div class="nm">Guidance</div><div class="q">Who is considered?</div></div>
       <div class="gate" id="g1"><div class="ico">📍</div><div class="nm">Geography</div><div class="q">Can you reach it?</div></div>
       <div class="gate" id="g2"><div class="ico">🏥</div><div class="nm">Capacity</div><div class="q">Is there room?</div></div>
       <div class="gate" id="g3"><div class="ico">💷</div><div class="nm">Funding</div><div class="q">Will they pay?</div></div>
     </div>
-    <p>UK rules allow TAVI mainly for the highest-risk patients. European rules allow it from age 70.
-       Centres cluster in big cities. Waiting averages 155 days against a 126-day target.
-       And every single case still needs individual funding approval.</p>
-    <p><b style="color:#fff">Fail any one gate and the others do not matter.</b> That is why fixing just one changes so little.</p>
+    <p>NICE guidance in England remains risk-led, whereas the 2025 ESC/EACTS guideline recommends
+       transfemoral TAVI from age 70 under defined clinical and anatomical conditions. English activity varies by
+       area, two studies reported mean referral-to-treatment times of about 155 days, and the NHS England interim
+       route retains case-level Blueteq approval.</p>
+    <p><b style="color:#fff">These domains may constrain one another.</b> Improving one stage may have limited
+       effect if another part of the pathway remains restricted.</p>
   </section>
 
 
   <section class="sc" id="sc4a">
     <div style="font-size:42px;">📋</div>
-    <h2>Gate 1 — Guidance. <span style="color:#8d95a6;">Are you allowed?</span></h2>
+    <h2>Gate 1 — Guidance. <span style="color:#8d95a6;">Who is considered?</span></h2>
     <p>Two rulebooks disagree about the same patient.</p>
     <div style="display:flex;gap:16px;margin:14px 0;flex-wrap:wrap;justify-content:center;">
       <div style="background:#141a26;border:2px solid #c0392b;border-radius:10px;padding:16px 20px;max-width:230px;">
-        <div style="font-weight:700;color:#fff;">UK rules</div>
+        <div style="font-weight:700;color:#fff;">NICE framework in England</div>
         <div style="font-size:13px;color:#8d95a6;margin-top:4px;">TAVI mainly when surgery is unsuitable or
         high risk, with individual multidisciplinary assessment.</div></div>
       <div style="background:#141a26;border:2px solid #39c07a;border-radius:10px;padding:16px 20px;max-width:230px;">
-        <div style="font-weight:700;color:#fff;">European rules</div>
-        <div style="font-size:13px;color:#8d95a6;margin-top:4px;">TAVI generally recommended from age
-        <b style="color:#39c07a;font-size:17px;">70</b> when anatomically suitable, irrespective of estimated surgical risk.</div></div>
+        <div style="font-weight:700;color:#fff;">2025 ESC/EACTS guideline</div>
+        <div style="font-size:13px;color:#8d95a6;margin-top:4px;">Transfemoral TAVI is recommended from age
+        <b style="color:#39c07a;font-size:17px;">70</b> for selected patients with a tricuspid valve, suitable anatomy and Heart Team agreement.</div></div>
     </div>
-    <p>Every patient switched from surgery to TAVI also <b style="color:#fff">frees theatre time</b> —
-       three TAVIs fit in the time of two surgeries.</p>
+    <p>Under the inherited Stickels modelling assumption, converting suitable cases changes throughput
+       because the time assigned to two SAVR procedures can accommodate three TAVI procedures. This is a model
+       assumption, not a universal operating rule.</p>
     <p style="color:#5b9bff;font-weight:600;">In the tool: you choose how many patients are switched.</p>
   </section>
 
   <section class="sc" id="sc4b">
     <div style="font-size:42px;">📍</div>
     <h2>Gate 2 — Geography. <span style="color:#8d95a6;">Can you reach it?</span></h2>
-    <p>Centres cluster in big cities — six in London alone. Large rural areas with the
-       <b style="color:#fff">oldest populations</b>, the very people who get this disease, have the fewest.</p>
-    <p>And the poorest areas, where undiagnosed disease is <b style="color:#fff">twice as common</b>,
-       receive the least treatment. Need and provision point in opposite directions.</p>
+    <p>Implanting centres are concentrated in major conurbations, while crude procedure rates do not
+       account for age, prevalence, travel time, referral or clinical eligibility.</p>
+    <p>Separate studies report lower adjusted odds of valve replacement in the most deprived group and a higher
+       prevalence of undiagnosed valve disease in deprived groups. Together they raise an inverse-care concern,
+       but they do not establish area-level unmet need.</p>
     <p style="color:#5b9bff;font-weight:600;">In the tool: you compare activity-weighted allocation with an
        illustrative equal-sized-area rule. The second removes the modelled spread by construction and is not based
        on actual population or clinical need.</p>
@@ -244,8 +249,8 @@
     <p>mean referral-to-treatment time in a small single-centre audit (n=29), against a 126-day pathway
        benchmark. Only 3 of 29 patients met the total pathway benchmark; this is not a national estimate.</p>
     <p>The delay is not at the front door. It builds up <b style="color:#fff">between the clinic and the
-       specialist team meeting</b>, then again between the meeting and the procedure. 74% of centres say
-       the laboratory itself is the bottleneck.</p>
+       specialist team meeting</b>, then again between the meeting and the procedure. In the earlier
+       national survey, 74% of responding centres identified catheter-laboratory availability as a constraint.</p>
     <p style="color:#5b9bff;font-weight:600;">In the tool: you choose how much extra capacity to add. Across the
        stated one-at-a-time ranges, this lever produces the largest local clearance-time swing.</p>
   </section>
@@ -253,15 +258,14 @@
   <section class="sc" id="sc4d">
     <div style="font-size:42px;">💷</div>
     <h2>Gate 4 — Funding. <span style="color:#8d95a6;">Will they pay?</span></h2>
-    <p>Even a patient who clears all three gates still needs <b style="color:#fff">individual funding
-       approval</b> — a form, for every single case, through a system called Blueteq.</p>
-    <p>The policy behind it was labelled <i>interim</i> and promised an annual review.
-       That was <b style="color:#fff">over three years ago</b>. In a separate NHS drug IFR process — not TAVI —
+    <p>Patients treated through NHS England's interim widened-access route remain subject to
+       <b style="color:#fff">case-level Blueteq prior approval</b>.</p>
+    <p>The published position statement describes the route as interim and commits to review at least annually.
+       The page remained available when this project was finalised. In a separate NHS drug IFR process — not TAVI —
        <b style="color:#ff5d5d;">71%</b> of requests were declined; that figure motivates measurement but does not calibrate ρ.</p>
-    <p>How much capacity does this gate destroy for TAVI specifically?
-       <b style="color:#fff">Nobody has ever measured it.</b></p>
-    <p style="color:#5b9bff;font-weight:600;">In the tool: you set how strict the gate is — and because the
-       truth is unmeasured, the results page tests every possible strictness.</p>
+    <p>No TAVI-specific estimate of throughput loss from this approval route was identified in the review.</p>
+    <p style="color:#5b9bff;font-weight:600;">In the tool: you set an illustrative throughput-realisation loss,
+       and the results page displays the model's response across the tested 0–60% range.</p>
   </section>
 
 
@@ -270,16 +274,14 @@
     <p>Each gate receives a diagnostic score from 1 to 5. This makes the scoring rules visible; it does not measure or rank national access.</p>
     <div id="storyBars" style="width:min(620px,92vw);margin:10px 0;"></div>
     <div style="display:flex;gap:30px;margin:8px 0;justify-content:center;">
-      <div><div style="font-size:13px;color:#8d95a6;">England/UK evidence coverage</div><div class="big blue" style="font-size:46px;">14/15</div><div style="font-size:12px;color:#8d95a6;">indicators populated (93%)</div></div>
-      <div><div style="font-size:13px;color:#8d95a6;">Germany evidence coverage</div><div class="big gold" style="font-size:46px;">7/15</div><div style="font-size:12px;color:#8d95a6;">indicators populated (47%)</div></div>
+      <div><div style="font-size:13px;color:#8d95a6;">England/UK evidence coverage</div><div class="big blue" style="font-size:46px;">13/15</div><div style="font-size:12px;color:#8d95a6;">indicators populated (87%)</div></div>
+      <div><div style="font-size:13px;color:#8d95a6;">Germany evidence coverage</div><div class="big gold" style="font-size:46px;">6/15</div><div style="font-size:12px;color:#8d95a6;">indicators populated (40%)</div></div>
     </div>
     <p style="font-size:14.5px;"><b style="color:#fff">How should these numbers be read?</b>
-       Evidence coverage is the primary result. The secondary constructed scores are <span id="sbUK">—</span>
-       for England/UK and <span id="sbDE">—</span> for Germany; they are not a validated access index or country ranking.
-       The England/UK evidence set contains 14 indicators and the German set only 7, drawn from different years
-       and sometimes different definitions. A shared-indicator sensitivity check uses six indicators across only
-       three domains and has no shared capacity indicator. The displayed totals are retained to make the construction
-       auditable; neither the direction nor the size of the gap should be treated as a measured national effect.</p>
+       Evidence coverage is the primary result. A four-domain secondary score is calculated only for the
+       England/UK evidence set (<span id="sbUK">—</span>). A German four-domain total is <span id="sbDE">not calculated</span>
+       because no comparable commissioning value was identified. Only four indicators are available for both
+       systems, across guidance and geography. The profiles expose the construction; they do not rank national access.</p>
   </section>
 
   <section class="sc" id="sc5">
@@ -331,7 +333,7 @@
 
   <section class="sc" id="sc5c">
     <h2>Look again at those two middle bars.</h2>
-    <p>Identical theoretical intervention. One modelled difference: the funding-rigidity parameter is set to
+    <p>Identical theoretical intervention. One modelled difference: the assumed throughput-realisation loss is set to
        <b style="color:#fff">27.5%</b> — an illustrative assumption, because no TAVI-specific causal estimate exists.</p>
     <div class="big pulse" style="font-size:clamp(44px,8vw,72px);">+224 deaths</div>
     <p>A conditional model output of <b style="color:#fff">28% more deaths</b> than the otherwise identical
@@ -365,7 +367,7 @@
   <h1>TAVI Access Simulation</h1>
   <div class="sub">
     Supplementary tool for <i>Determinants of TAVI Utilisation: A Study of Operational Drivers in the UK Health System</i><br>
-    Ibrahim Diab · MSc Healthcare Operational Management · WMG, University of Warwick<br>Version 11 · August 2026 · Monte Carlo convergence, distributional robustness and evidence-first scoring revision; synchronised with the dissertation text, figures and §3.5.3 checksum in the final build of 25 August 2026 · intended public location: <a href="https://ibrahimdiabmd-beep.github.io/tavi-simulation/TAVI_Exploratory_Simulation.html">ibrahimdiabmd-beep.github.io/tavi-simulation</a>
+    Ibrahim Diab · MSc Healthcare Operational Management · WMG, University of Warwick<br>Version 12 · August 2026 · final interpretive revision; causal wording, England/UK scope and diagnostic scoring aligned with the dissertation; numerical engine unchanged; synchronised with the §3.5.3 checksum on 27 August 2026 · intended public location: <a href="https://ibrahimdiabmd-beep.github.io/tavi-simulation/TAVI_Exploratory_Simulation.html">ibrahimdiabmd-beep.github.io/tavi-simulation</a>
   </div>
   <nav>
     <button class="on" data-p="p0">Start here</button>
@@ -392,15 +394,15 @@
     <button id="storyGo">▶&nbsp; Start the story</button>
   </div>
 
-  <p class="lead">Patients in England wait too long for a heart valve procedure called TAVI, and how long they wait
-  depends heavily on where they live. This tool asks a single question: <b>if we changed one thing, how many
-  fewer people would die waiting?</b></p>
+  <p class="lead">Recorded TAVI activity varies substantially across England, and prolonged waits can
+  expose patients to harm. This tool asks a bounded question: <b>under a historical waiting-list model, how do
+  outcomes change when explicit operational assumptions are varied?</b></p>
 
   <div class="card">
     <h3 style="margin-top:0;">The idea in one paragraph</h3>
     <p>There is a queue of patients waiting for treatment. Every year, some are treated and leave the queue.
-    Some die before they are treated. The dissertation identifies four things that decide how fast the queue
-    moves. This tool lets you change each of those four things and see what happens to the queue.</p>
+    Some die before they are treated. The dissertation examines four plausible operational determinants.
+    This tool represents them as explicit scenario levers and shows the conditional outputs of the model.</p>
     <p style="margin-bottom:0;">Each of the four has its own page. Change what you like, then open
     <b>Results</b>.</p>
   </div>
@@ -409,10 +411,10 @@
   <table>
     <thead><tr><th style="width:23%">Pillar</th><th style="width:40%">The question it answers</th><th>What you can change</th></tr></thead>
     <tbody>
-      <tr><td><b>1 · Guidance</b></td><td>Who is allowed to have TAVI?</td><td>How many surgical patients are switched to TAVI instead</td></tr>
+      <tr><td><b>1 · Guidance</b></td><td>Who is considered for TAVI?</td><td>An illustrative treatment-mix conversion assumption</td></tr>
       <tr><td><b>2 · Geography</b></td><td>Is the service where the patients are?</td><td>How new capacity is shared out between areas</td></tr>
       <tr><td><b>3 · Capacity</b></td><td>Can the service physically do more?</td><td>How much extra capacity is added</td></tr>
-      <tr><td><b>4 · Commissioning</b></td><td>Will it actually be funded?</td><td>How much of that extra capacity is blocked by funding rules</td></tr>
+      <tr><td><b>4 · Commissioning</b></td><td>How is approval organised?</td><td>An assumed loss between theoretical and realised extra throughput</td></tr>
     </tbody>
   </table>
 
@@ -431,7 +433,7 @@
 
   <details>
     <summary>Version history</summary>
-    <p style="margin-bottom:0;"><b>Version 11 (August 2026)</b> — adds a 100,000-draw convergence check and a moment-matched lognormal sensitivity analysis; makes evidence coverage the primary score-page result; and consistently labels the published-scenario comparison as implementation-fidelity verification rather than external validation. The final build (25 August 2026) aligns the German centre-count label with the dissertation and records the synchronised checksum; no model logic or numerical output changed. <b>Version 10 (August 2026)</b> — rejects and redraws non-positive Monte Carlo inputs while retaining the source-style normal distributions; makes indicator coverage visible; and demotes the constructed composite from a headline comparison to a diagnostic evidence map. <b>Version 9 (August 2026)</b> — independent-audit correction. Uses untruncated
+    <p style="margin-bottom:0;"><b>Version 12 (August 2026)</b> — final interpretive revision: clarifies the England-focused scope, removes causal language not supported by the design, separates guideline recommendations from the 15% and 40% scenario anchors, and does not calculate a German four-domain score where commissioning evidence is absent; the numerical waiting-list engine and scenario outputs are unchanged. <b>Version 11 (August 2026)</b> — adds a 100,000-draw convergence check and a moment-matched lognormal sensitivity analysis; makes evidence coverage the primary score-page result; and consistently labels the published-scenario comparison as implementation-fidelity verification rather than external validation. The final build (25 August 2026) aligns the German centre-count label with the dissertation and records the synchronised checksum; no model logic or numerical output changed. <b>Version 10 (August 2026)</b> — rejects and redraws non-positive Monte Carlo inputs while retaining the source-style normal distributions; makes indicator coverage visible; and demotes the constructed composite from a headline comparison to a diagnostic evidence map. <b>Version 9 (August 2026)</b> — independent-audit correction. Uses untruncated
     normal Monte Carlo draws and reports means plus 2.5th/97.5th percentiles; distinguishes μ as a continuous
     hazard; adds the literal no-change comparator; reports published deaths and intervals for all seven Stickels
     scenarios; removes unsupported consultant-capacity conversion; reframes the budget as procedure-only partial
@@ -446,16 +448,16 @@
 <!-- ================= PILLAR 1 ================= -->
 <section class="page" id="p1">
   <h2>Pillar 1 · Clinical guidance</h2>
-  <p class="lead">Who is allowed to have TAVI in the first place?</p>
+  <p class="lead">Who is considered for TAVI under each framework?</p>
 
   <div class="card">
     <p>Two sets of rules differ. <b>NICE</b>, the body that guides NHS care and commissioning, directs TAVI mainly
     toward patients for whom surgery is unsuitable or high risk. <b>The 2025 European guidelines</b> generally
     recommend TAVI from age 70 when anatomically suitable, irrespective of estimated surgical risk and subject
     to Heart Team assessment.</p>
-    <p style="margin-bottom:0;">This matters because a patient sent for surgery instead of TAVI occupies far more
-    theatre time. Switching a patient from surgery to TAVI frees capacity. Under the European rules, many more
-    patients qualify to be switched.</p>
+    <p style="margin-bottom:0;">The guidance comparison establishes different eligibility logics, but it
+    does not estimate how many patients would change treatment. The model therefore uses 15% and 40% only as
+    investigator-selected scenario anchors within the range examined by Stickels et al. (2022).</p>
   </div>
 
   <table>
@@ -463,9 +465,9 @@
     <tbody>
       <tr><td>NICE rule</td><td>TAVI mainly when surgery is unsuitable or high risk; individual assessment required</td><td><span class="tag t-conf">Confirmed</span></td></tr>
       <tr><td>European rule (2025)</td><td>Age ≥70 if anatomically suitable, irrespective of estimated surgical risk</td><td><span class="tag t-conf">Confirmed</span></td></tr>
-      <tr><td>Time for 2 surgeries = 3 TAVIs</td><td>Ratio 3:2</td><td><span class="tag t-conf">Confirmed</span></td></tr>
-      <tr><td>Switching level under NICE rules</td><td>about 15%</td><td><span class="tag t-assum">Assumption</span></td></tr>
-      <tr><td>Switching level under European rules</td><td>about 40%</td><td><span class="tag t-assum">Assumption</span></td></tr>
+      <tr><td>Published model treatment-time assumption</td><td>Time for 2 SAVR procedures = 3 TAVI procedures</td><td><span class="tag t-cav">Confirmed as a source-model assumption</span></td></tr>
+      <tr><td>Lower conversion scenario anchor</td><td>15%</td><td><span class="tag t-assum">Investigator assumption; not derived from NICE</span></td></tr>
+      <tr><td>Higher conversion scenario anchor</td><td>40%</td><td><span class="tag t-assum">Investigator assumption; not derived from ESC/EACTS</span></td></tr>
     </tbody>
   </table>
 
@@ -479,8 +481,8 @@
     <label>Which rulebook are we following?</label>
     <div class="hint">This sets the slider below to a sensible level for that rulebook. You can still override it.</div>
     <select id="regime" style="width:100%;padding:9px;font-size:15px;border:1px solid var(--line);border-radius:6px;">
-      <option value="nice">NICE — the current UK rules</option>
-      <option value="esc">European 2025 — the wider rules</option>
+      <option value="nice">Lower illustrative anchor — 15% (not a NICE estimate)</option>
+      <option value="esc">Higher illustrative anchor — 40% (not an ESC/EACTS estimate)</option>
       <option value="manual">Set it myself</option>
     </select>
   </div>
@@ -502,8 +504,10 @@
   <p class="lead">Is the service where the patients are?</p>
 
   <div class="card">
-    <p>Access to TAVI varies more than fifteen-fold between the extreme individual areas of England. (The three group averages below sit closer together than that, because averaging smooths the extremes.) The areas with the fewest
-    procedures are not making up for it with more surgery. They are simply treating fewer people.</p>
+    <p>Recorded TAVI activity varies more than fifteen-fold between the extreme former CCG areas of England.
+    The three group averages below sit closer together because averaging smooths the extremes. Isolated SAVR activity
+    is almost uncorrelated with TAVI activity, but these crude rates do not identify individual eligibility, unmet
+    need or regional waiting time.</p>
     <p style="margin-bottom:0;">This tool splits England into three groups of areas, and asks a question that
     turns out to matter more than anything else on this page: <b>when we add new capacity, who gets it?</b></p>
   </div>
@@ -552,16 +556,16 @@
   <table>
     <thead><tr><th>Evidence</th><th>Value</th><th>Status</th></tr></thead>
     <tbody>
-      <tr><td>Surgeries per year (England)</td><td>7,830</td><td><span class="tag t-conf">Confirmed</span></td></tr>
-      <tr><td>TAVIs per year (England)</td><td>5,197</td><td><span class="tag t-conf">Confirmed</span></td></tr>
+      <tr><td>Historical SAVR activity inherited from Stickels</td><td>7,830/year</td><td><span class="tag t-cav">Confirmed historical input</span></td></tr>
+      <tr><td>Historical TAVI activity inherited from Stickels</td><td>5,197/year</td><td><span class="tag t-cav">Confirmed historical input</span></td></tr>
       <tr><td>Single-centre mean wait (n=29)</td><td>155.4 days vs 126-day pathway benchmark</td><td><span class="tag t-conf">Confirmed with limited generalisability</span></td></tr>
-      <tr><td>Centres limited by lab capacity</td><td>74%</td><td><span class="tag t-conf">Confirmed</span></td></tr>
+      <tr><td>Responding centres identifying lab availability as a constraint</td><td>74%</td><td><span class="tag t-cav">Confirmed with survey caveat</span></td></tr>
     </tbody>
   </table>
 
   <div class="lever">
     <label>Extra capacity added</label>
-    <div class="hint">A 20% increase means the service does 20% more procedures per year than it does now.</div>
+    <div class="hint">A 20% increase means 20% more annual procedure capacity than the inherited pre-pandemic baseline.</div>
     <input type="range" id="cap" min="0" max="50" value="20">
     <div class="val"><span>none</span><b>+<span id="capV">20</span>%</b><span>+50%</span></div>
   </div>
@@ -576,33 +580,34 @@
   <p class="lead">Will the treatment actually be funded?</p>
 
   <div class="card">
-    <p>Even when a patient qualifies clinically, each case still needs individual funding approval before it can
-    go ahead. That approval step is still mandatory. The interim policy that introduced it was meant to be
-    reviewed annually, and has now stood unchanged for over three years.</p>
-    <p style="margin-bottom:0;">The model explores a hypothetical funding-rigidity parameter ρ that removes a
+    <p>For patients treated through NHS England's interim widened-access route, case-level Blueteq prior
+    approval remains mandatory. The published statement commits to review at least annually; this project did not
+    identify a public TAVI-specific evaluation of approval time, rework or throughput loss.</p>
+    <p style="margin-bottom:0;">The model explores a hypothetical throughput-realisation loss parameter ρ that removes a
     chosen share of newly created capacity. This is a scenario input, not an observed TAVI-specific effect.</p>
   </div>
 
   <table>
     <thead><tr><th>Evidence</th><th>Value</th><th>Status</th></tr></thead>
     <tbody>
-      <tr><td>Centres reporting funding caps on their activity</td><td>35%</td><td><span class="tag t-conf">Confirmed</span></td></tr>
-      <tr><td>Rejection rate in a separate NHS drug IFR process (not TAVI)</td><td>71%</td><td><span class="tag t-conf">Confirmed contextual evidence; does not calibrate ρ</span></td></tr>
-      <tr><td>How much capacity this blocks, specifically for TAVI</td><td>never measured</td><td><span class="tag t-assum">Assumption</span></td></tr>
+      <tr><td>Responding centres reporting commissioner caps</td><td>35%</td><td><span class="tag t-cav">Confirmed with survey caveat</span></td></tr>
+      <tr><td>Rejection rate in a separate NHS drug IFR process (not TAVI)</td><td>71%</td><td><span class="tag t-cav">Context only; does not calibrate ρ</span></td></tr>
+      <tr><td>TAVI-specific throughput-realisation loss</td><td>No estimate identified</td><td><span class="tag t-assum">Investigator assumption</span></td></tr>
     </tbody>
   </table>
 
   <div class="lever">
-    <label>Assumed funding-rigidity parameter ρ</label>
-    <div class="hint">Nobody has ever measured this for TAVI. That is why the Results page shows the answer
-    across every possible value, rather than at one guess.</div>
+    <label>Assumed throughput-realisation loss parameter ρ</label>
+    <div class="hint">No TAVI-specific estimate was identified in this review. The Results page therefore
+    shows the structural response across the tested 0–60% range.</div>
     <input type="range" id="rho" min="0" max="60" value="27.5" step="0.5">
-    <div class="val"><span>none blocked</span><b><span id="rhoV">27</span>%</b><span>60% blocked</span></div>
+    <div class="val"><span>0% loss</span><b><span id="rhoV">27</span>%</b><span>60% loss</span></div>
   </div>
   <div class="effect" id="e4"></div>
   <div class="note"><b>Why the default is 27.5%.</b> It is the midpoint of an investigator-chosen illustrative
   20–35% range. It is not the average of the 35% and 71% observations above, and neither observation measures the
-  proportion of TAVI capacity lost. They support plausibility of friction, not calibration of ρ.</div>
+  proportion of TAVI capacity lost. The default is retained only to reproduce an illustrative scenario; it is not
+  a planning estimate or preferred policy value.</div>
 
   <div class="pill-nav"><button data-goto="p3">← Pillar 3</button><button data-goto="pS">Compare the systems →</button></div>
 </section>
@@ -631,7 +636,7 @@
     </tbody>
   </table>
   <div class="note" style="margin-top:8px;"><b>Interpretation.</b> S0 is an assumed active comparator, not an
-  observed status quo. The 15% conversion and 27.5% funding-rigidity values are illustrative, not empirically
+  observed status quo. The 15% conversion and 27.5% throughput-realisation loss values are illustrative, not empirically
   estimated causal effects. Every “deaths averted” result is conditional on using S0 as the reference.</div>
 
   <h3>How much does each area gain?</h3>
@@ -650,14 +655,14 @@
   <button class="go" id="mcRobustGo" style="margin-top:8px;">Run robustness check (100,000 draws)</button>
   <div id="mcRobustOut"></div>
 
-  <h3>Does the funding blockage matter, whatever its true size?</h3>
-  <p>Because nobody has measured Pillar 4, the honest test is to check every possible value rather than defend
-  one guess.</p>
+  <h3>How does the assumed throughput loss change the result?</h3>
+  <p>Because no TAVI-specific estimate was identified, the tool displays the model's structural response
+  across the tested 0–60% range rather than defending the default as an empirical value.</p>
   <button class="go" id="swGo">Test every value</button>
   <div id="swOut"></div>
 
   <h3>Which input moves the answer most? (Figure 4.3 in the dissertation)</h3>
-  <p>One-at-a-time sensitivity around Scenario A (+20% capacity, 40% switched, 27.5% blocked): each parameter is
+  <p>One-at-a-time sensitivity around Scenario A (+20% capacity, 40% switched, ρ=0.275): each parameter is
   swung across a stated range while the others stay fixed, and the swing in clearance time is recorded. The ranges
   are printed with each bar, because a swing means nothing without its range.</p>
   <button class="go" id="oatGo">Run the sensitivity analysis</button>
@@ -711,17 +716,17 @@
 
   <div class="note"><b>Currency and source note.</b> The TAVI-rate indicator uses the common-source 2023
   <a href="https://www.escardio.org/data-science/public-health-data/esc-atlas-of-cardiology/">ESC Atlas</a>
-  values (UK 139.8 and Germany 311.8 per million). The German centre count uses the 65 certified centres listed by the
-  <a href="https://tavi.dgk.org/">DGK certification register</a> dated 28 July 2026 (accessed 17 August 2026), but a DGK-certified centre
+  values (UK 139.8 and Germany 311.8 per million). The German centre count uses the 65 certified centres shown by the
+  <a href="https://tavi.dgk.org/">DGK certification register</a> when accessed on 17 August 2026; the register labelled the list as current to 2 April 2026, and a DGK-certified centre
   is not definitionally identical to an English implanting centre. The DACH waiting-time judgement comes from
   the <a href="https://doi.org/10.3389/fcvm.2023.1227217">European TAVI Pathway Registry</a> and covers Germany,
   Austria and Switzerland, not Germany alone.</div>
 
   <h3>Primary result: evidence coverage</h3>
   <div class="stats">
-    <div class="stat uk"><div class="k">England/UK populated indicators</div><div class="v">14/15</div><div class="n">93% of the selected evidence map</div></div>
-    <div class="stat"><div class="k">Germany populated indicators</div><div class="v" style="color:#c8842a">7/15</div><div class="n">47% of the selected evidence map</div></div>
-    <div class="stat"><div class="k">Indicators shared by both</div><div class="v">6/15</div><div class="n">three domains; no shared capacity indicator</div></div>
+    <div class="stat uk"><div class="k">England/UK populated indicators</div><div class="v">13/15</div><div class="n">87% of the selected evidence map</div></div>
+    <div class="stat"><div class="k">Germany populated indicators</div><div class="v" style="color:#c8842a">6/15</div><div class="n">40% of the selected evidence map</div></div>
+    <div class="stat"><div class="k">Indicators shared by both</div><div class="v">4/15</div><div class="n">guidance and geography only</div></div>
   </div>
   <div class="note"><b>Interpretation.</b> The unequal coverage and non-equivalent definitions prevent a defensible
   national ranking. The domain scores below are retained only to expose how the selected rules and evidence combine.</div>
@@ -731,8 +736,8 @@
   <div id="bars"></div>
 
   <div class="stats">
-    <div class="stat uk"><div class="k">England/UK secondary score</div><div class="v" id="ukC">—</div><div class="n">auditable construction only</div></div>
-    <div class="stat"><div class="k">Germany secondary score</div><div class="v" style="color:#c8842a" id="deC">—</div><div class="n">auditable construction only</div></div>
+    <div class="stat uk"><div class="k">England/UK four-domain score</div><div class="v" id="ukC">—</div><div class="n">internal diagnostic summary only</div></div>
+    <div class="stat"><div class="k">German four-domain score</div><div class="v" style="color:#c8842a;font-size:19px" id="deC">not calculated</div><div class="n">commissioning domain unavailable</div></div>
     <div class="stat"><div class="k">Lowest England/UK domain</div><div class="v" style="font-size:19px" id="weak">—</div><div class="n">within this construction</div></div>
   </div>
 
@@ -740,21 +745,13 @@
 
   <h3>Three questions any examiner should ask</h3>
   <div class="card tight">
-    <p><b>1. Would a different weighting reverse this constructed ordering?</b> Not while the four fixed domain
-    scores are held constant and the same non-negative weights are applied to both systems: the England/UK set
-    scores below Germany in every domain. This is a mathematical property of these inputs, not evidence that the
-    domains, anchors or missing-data choices are valid.</p>
-    <p><b>2. Is the comparison fair, given Germany has less data?</b> Only partly, and
-    this is the real weakness. The England/UK set is scored on all 14 indicators. Germany is scored on 7. Two German
-    domains rest on a single figure each — and both of those figures are documented judgements, not
-    measurements. Germany's capacity score of 4 rests on the European TAVI Pathway survey's finding that the
-    DACH region was the only region with no waiting times beyond three months (an earlier build of this tool
-    assumed 100% of German centres meet the UK's 126-day benchmark; the survey does not say that, and the
-    assumption has been corrected). Germany's commissioning score of 4 rests on the rule that having no
-    formal cost-per-QALY threshold removes one funding barrier — a value judgement, not a measured commissioning outcome. Scoring both countries on only the 6
-    indicators measured for both produces a <b>three-domain shared-indicator sensitivity score</b>, because no
-    shared availability/capacity indicator exists. It is not directly comparable with the four-domain diagnostic
-    composite. Both constructions are retained for auditability only; neither establishes a national access gap.</p>
+    <p><b>1. Why is no German four-domain score reported?</b> No comparable German commissioning value was
+    identified. Version 12 leaves that domain missing instead of treating the absence of an identified formal
+    cost-per-QALY threshold as evidence of more favourable commissioning.</p>
+    <p><b>2. Can the remaining profiles rank the two systems?</b> No. The England/UK set has 13 populated indicators
+    and Germany 6, drawn from different years and sometimes different definitions. Only four indicators are shared,
+    across guidance and geography. Germany's capacity score of 4 rests on a DACH regional waiting-time judgement,
+    not a Germany-only measure. The domain profiles are retained for auditability, not national ranking.</p>
     <p style="margin-bottom:0;"><b>3. Isn't there a contradiction in the England/UK commissioning score?</b> Yes, a
     deliberate and acknowledged one: it includes the most favourable published cost-per-QALY figure (£16,979),
     which the dissertation itself argues needs critical reading because it is manufacturer-funded. It is kept as
@@ -805,11 +802,12 @@
   </div>
 
   <div class="card">
-    <p><b>A3. Combining the four constructed domains into one number</b></p>
+    <p><b>A3. Combining four available constructed domains into one number</b></p>
     <p class="eq">composite = (D₁ × D₂ × D₃ × D₄)<sup>1/4</sup></p>
-    <p><b>Why this and not a plain average.</b> A geometric mean reduces full compensation between domains: a
-    low value pulls down the composite more strongly than under an arithmetic mean. This is a modelling choice,
-    not proof that the four domains are measured validly or are exact bottlenecks.</p>
+    <p><b>Why this and not a plain average.</b> A geometric mean reduces full compensation between domains. Version 12
+    calculates this secondary summary only for the England/UK evidence set, where all four domain scores are
+    available. No German total is calculated because commissioning evidence is missing. This is a modelling choice,
+    not proof that the domains are valid or exact bottlenecks.</p>
     <p style="margin-bottom:0;"><b>Sources and adaptation.</b> Penchansky and Thomas (1981) motivate thinking
     about multiple dimensions of access, but their original framework has five dimensions and differs from this
     four-domain operational adaptation. Geometric aggregation is supported as a composite-indicator technique by
@@ -817,14 +815,14 @@
   </div>
 
   <div class="card">
-    <p><b>A4. Testing whether the weighting matters</b></p>
-    <p class="eq">Fixed UK score &lt; fixed German score in every domain ⇒ no reversal under common non-negative weights</p>
-    <p><b>Why.</b> With fixed domain scores and the same non-negative weights applied to both systems, a weighted
-    sum or weighted geometric mean cannot reverse component-wise dominance. This result does not test whether the
-    indicators, anchors, missing-data rules or domain definitions themselves should change.</p>
-    <p style="margin-bottom:0;"><b>Source.</b> This conditional dominance check is an extension developed for this dissertation.
-    The underlying property of weighted means is standard. Sensitivity testing of composite indices is
-    recommended practice (Saisana, Saltelli and Tarantola, 2005).</p>
+    <p><b>A4. Sensitivity and comparability boundary</b></p>
+    <p class="eq">Shared-indicator check = four indicators across guidance and geography only</p>
+    <p><b>Why.</b> Arithmetic and user-weighted alternatives can test the England/UK construction, but they cannot
+    create missing German commissioning or comparable capacity evidence. The four shared indicators do not
+    reproduce the four-domain construct and are therefore descriptive only.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Sensitivity testing of composite indices is recommended practice
+    (Saisana, Saltelli and Tarantola, 2005); the decision not to calculate a German four-domain total is a
+    missing-data safeguard used in this dissertation.</p>
   </div>
 
   <h3>Part B — Modelling the queue (the simulation)</h3>
@@ -856,8 +854,8 @@
     <p class="eq">t<sub>c</sub> = ln(1 + μW₀ / T<sub>e</sub>) ÷ μ</p>
     <p><b>Why a logarithm appears.</b> This is the exact solution of equation B1, not an approximation. The
     logarithm is the reason the model shows diminishing returns: each extra unit of capacity clears the queue by
-    a smaller amount than the one before. That single feature drives the finding that the cheapest option per
-    life saved is never the biggest intervention.</p>
+    a smaller amount than the one before. Within the option set examined, that feature contributes to diminishing returns; it does not establish
+    a universal cost ranking.</p>
     <p style="margin-bottom:0;"><b>Source.</b> Stickels et al. (2022), derived in their supplementary material.</p>
   </div>
 
@@ -894,13 +892,13 @@
   </div>
 
   <div class="card">
-    <p><b>C2. The funding gate</b> <span class="tag t-assum">this dissertation's extension</span></p>
+    <p><b>C2. Throughput-realisation loss</b> <span class="tag t-assum">this dissertation's extension</span></p>
     <p class="eq">T<sub>e</sub> realised = T<sub>e</sub> theoretical × (1 − ρ)</p>
-    <p><b>Why.</b> The published model assumes any capacity created is used. In the NHS it must first pass
-    case-by-case funding approval. ρ is the share that does not survive that gate. This is the dissertation's
-    principal addition to the published model.</p>
-    <p style="margin-bottom:0;"><b>Honest caveat.</b> ρ has never been measured for TAVI. This is why the Results
-    page reports the outcome across every value of ρ rather than defending one figure.</p>
+    <p><b>Why.</b> The published model applies the capacity it creates. This extension instead tests a proportional
+    loss between theoretical and realised extra throughput. It does not assign that loss to Blueteq or any other
+    mechanism.</p>
+    <p style="margin-bottom:0;"><b>Honest caveat.</b> No TAVI-specific estimate was identified in this review.
+    The Results page therefore reports the structural response across the tested 0–60% range.</p>
   </div>
 
   <div class="card">
@@ -918,7 +916,7 @@
     <p><b>C4. Turning a published confidence interval into a spread of values</b></p>
     <p class="eq">standard deviation = (upper limit − lower limit) ÷ (2 × 1.96)</p>
     <p><b>Why.</b> This reconstructs a normal-distribution standard deviation from a reported 95% interval. The
-    Version 11 primary Monte Carlo uses the reconstructed normal distributions but rejects and redraws any non-positive
+    Version 12 primary Monte Carlo retains the reconstructed normal distributions but rejects and redraws any non-positive
     backlog or mortality-hazard value, runs 10,000 simulations, and reports the mean with the 2.5th and 97.5th percentiles.
     A 100,000-draw convergence check tests numerical stability. A second 100,000-draw sensitivity analysis uses
     positive lognormal inputs matched to the same mean and standard deviation, testing whether conclusions depend on
@@ -932,7 +930,7 @@
     <p class="eq">partial procedure outlay = (W₀ − modelled deaths) × £26,145</p>
     <p><b>Why this was narrowed.</b> The professional-society threshold of 100 procedures per operator is an
     experience/caseload standard, not evidence that one additional consultant creates 100 procedures per year.
-    Version 11 retains the removal of consultant-equivalent counts and the £161,600 earnings proxy.</p>
+    Version 12 retains the removal of consultant-equivalent counts and the £161,600 earnings proxy.</p>
     <p style="margin-bottom:0;"><b>Boundary.</b> The remaining multiplication is descriptive only. It treats the
     modelled treated total at a single procedure price and omits TAVI/SAVR mix, avoided surgery, staff, labs,
     beds, nursing, devices, capital, QALYs, discounting and a common analytic horizon. It must not be used to rank
@@ -1067,7 +1065,7 @@ function refresh(){
     ? 'No extra capacity is being created yet by the other levers, so there is nothing for this gate to block.'
     : (g.rho===0
       ? 'Nothing is blocked. All the extra capacity created by the other three levers gets used.'
-      : 'With ρ set to <b>'+$('rho').value+'%</b>, the model removes <b>'+fmt(lost)+'</b> of the <b>'+fmt(theoretical)+'</b> theoretical extra procedures. This is conditional arithmetic, not a measured commissioning effect.');
+      : 'With ρ set to <b>'+$('rho').value+'%</b>, the model removes <b>'+fmt(lost)+'</b> of the <b>'+fmt(theoretical)+'</b> theoretical extra procedures. This is conditional arithmetic, not an observed TAVI-specific effect.');
 }
 ['cap','conv','rho'].forEach(function(id){ $(id).oninput=function(){
   if(id==='conv') $('regime').value='manual';
@@ -1099,7 +1097,7 @@ function spread(te,rule){
 function results(){
   var g=get(), te=Te(g.cap,g.conv,g.rho), s=solve(W0,mu,te);
   $('settings').innerHTML='<b>Your settings:</b> '+$('conv').value+' in 100 patients switched · +'
-    +$('cap').value+'% capacity · '+$('rho').value+'% blocked by funding · capacity shared '
+    +$('cap').value+'% capacity · '+$('rho').value+'% throughput-realisation loss · capacity shared '
     +(g.rule==='population'?'by the illustrative equal-sized-area rule':'in proportion to current activity')+'.';
   var days=isFinite(s.tc)? s.tc*365 : null;
   $('rTc').textContent = days!==null ? fmt(days)+' days' : 'never';
@@ -1213,7 +1211,7 @@ $('oatGo').onclick=function(){
   var base=d(A.c,A.v,A.r);
   var rows=[
     {n:'Capacity lever (+5% to +35%)', lo:d(.05,A.v,A.r), hi:d(.35,A.v,A.r)},
-    {n:'Funding rigidity ρ (0.125 to 0.425)', lo:d(A.c,A.v,.125), hi:d(A.c,A.v,.425)},
+    {n:'Throughput-realisation loss ρ (0.125 to 0.425)', lo:d(A.c,A.v,.125), hi:d(A.c,A.v,.425)},
     {n:'W₀ backlog (95% CI 4,020–5,959)', lo:solve(4020,mu,Te(A.c,A.v,A.r)).tc*365, hi:solve(5959,mu,Te(A.c,A.v,A.r)).tc*365},
     {n:'μ continuous mortality hazard (interval 0.12–0.60)', lo:solve(W0,0.12,Te(A.c,A.v,A.r)).tc*365, hi:solve(W0,0.60,Te(A.c,A.v,A.r)).tc*365},
     {n:'Conversion lever (25% to 55%)', lo:d(A.c,.25,A.r), hi:d(A.c,.55,A.r)}
@@ -1232,7 +1230,7 @@ $('oatGo').onclick=function(){
       +'</div></div>';
   });
   html+='<div style="font-size:12px;color:#5c6470;">Black line = Scenario A itself ('+fmt(base)+' days). Bars sorted by swing.</div></div>'
-    +'<div class="effect">Ordering: capacity ('+fmt(rows[0].sw)+'d) > funding rigidity > W₀ > μ > conversion. These are the corrected figures reported in Figure 4.3 of the dissertation, each with its range stated.</div>';
+    +'<div class="effect">Ordering: capacity ('+fmt(rows[0].sw)+'d) > throughput-realisation loss > W₀ > μ > conversion. These are the corrected figures reported in Figure 4.3 of the dissertation, each with its range stated.</div>';
   $('oatOut').innerHTML=html;
 };
 
@@ -1305,13 +1303,13 @@ var PUB=[
 /* ---------- composite score (Layer A) ---------- */
 var DOM=[
  {k:'Guidance', pillar:'Pillar 1', rows:[
-   {p:'Who qualifies (risk-based = 2, age-based = 4)', uk:2, de:4, ord:true, st:'conf'},
-   {p:'Age from which TAVI is unconditional (lower is better)', uk:75, de:70, w:75, b:65, st:'conf'},
+   {p:'Treatment-selection framework (risk-led = 2, age-led with clinical conditions = 4)', uk:2, de:4, ord:true, st:'assum'},
+   {p:'Explicit age threshold in the applicable national framework (lower is better)', uk:null, de:70, w:75, b:65, st:'conf'},
    {p:'How current the guideline is vs latest trials (1–5)', uk:2, de:5, ord:true, st:'conf'}]},
  {k:'Geography', pillar:'Pillar 2', rows:[
    {p:'TAVI rate per million people (ESC Atlas 2023; common source)', uk:139.8, de:311.8, w:50, b:320, st:'conf'},
    {p:'Variation between areas, fold (lower is better)', uk:15, de:null, w:20, b:1, st:'conf'},
-   {p:'Centres per million (England implanting vs Germany 65 DGK-certified, register dated 28 Jul 2026; non-equivalent definitions)', uk:0.63, de:0.78, w:0.3, b:1, st:'cav'},
+   {p:'Centres per million (England implanting vs Germany 65 DGK-certified when accessed 17 Aug 2026; non-equivalent definitions)', uk:0.63, de:0.78, w:0.3, b:1, st:'cav'},
    {p:'Odds of treatment, poorest vs richest (1 = equal)', uk:0.73, de:null, w:0.5, b:1, st:'cav'}]},
  {k:'Capacity', pillar:'Pillar 3', rows:[
    {p:'Referral-to-treatment days (lower is better)', uk:155, de:null, w:210, b:126, st:'conf'},
@@ -1320,7 +1318,7 @@ var DOM=[
    {p:'Hospitals with a dedicated TAVI clinic (%)', uk:31, de:null, w:0, b:100, st:'conf'},
    {p:'Hospitals with a TAVI-specific team meeting (%)', uk:37, de:null, w:0, b:100, st:'conf'}]},
  {k:'Commissioning', pillar:'Pillar 4', rows:[
-   {p:'Decision-relevant cost-per-QALY threshold used in this constructed comparison (absence of an identified formal threshold scores 4 \u2014 a documented judgement, not a measurement)', uk:30000, de:'none', w:15000, b:50000, st:'assum'},
+   {p:'Decision-relevant cost-per-QALY threshold used in this constructed comparison', uk:30000, de:null, w:15000, b:50000, st:'assum'},
    {p:'Best published cost per QALY (lower is better)', uk:16979, de:null, w:30000, b:0, st:'cav'},
    {p:'Rejection rate of a comparable NHS funding process (%, lower is better)', uk:71, de:null, w:90, b:0, st:'cav'}]}];
 
@@ -1328,7 +1326,6 @@ function clip(x){ return Math.max(1,Math.min(5,x)); }
 function sc(r,c){
   var v=r[c];
   if(r.ord) return v===null?null:clip(v);
-  if(v==='none') return 4;
   if(v===null||v===undefined) return null;
   return clip(1+4*(v-r.w)/(r.b-r.w));
 }
@@ -1339,6 +1336,7 @@ function domScore(d,c){
 function domN(d,c){ return d.rows.filter(function(r){return sc(r,c)!==null;}).length; }
 function comp(c){
   var v=DOM.map(function(d){return domScore(d,c);});
+  if(v.some(function(x){return x===null;})) return null;
   return Math.exp(v.reduce(function(p,x){return p+Math.log(x);},0)/v.length);
 }
 function compCommon(c){
@@ -1356,30 +1354,26 @@ function compCommon(c){
     var u=domScore(d,'uk'), g=domScore(d,'de');
     if(u<wv){ wv=u; weakest=d.k; }
     bars+='<div class="bar"><div class="lbl"><span>'+d.k+' <span style="color:#5c6470;font-weight:400">· '+d.pillar+'</span></span>'
-      +'<span>UK '+u.toFixed(2)+' · DE '+g.toFixed(2)+'</span></div>'
-      +'<div class="track"><div class="fill" style="width:'+(g/5*100)+'%;background:#c8842a;"></div>'
+      +'<span>UK '+(u===null?'n/a':u.toFixed(2))+' · DE '+(g===null?'n/a':g.toFixed(2))+'</span></div>'
+      +'<div class="track">'+(g===null?'':'<div class="fill" style="width:'+(g/5*100)+'%;background:#c8842a;"></div>')
       +'<div class="fill" style="width:'+(u/5*100)+'%;background:#2f6fb8;"></div></div>'
       +'<div style="font-size:12px;color:#5c6470;margin-top:2px;">based on '+domN(d,'uk')+' of '+d.rows.length
       +' indicators for the England/UK evidence set, '+domN(d,'de')+' for Germany</div></div>';
   });
   document.getElementById('bars').innerHTML=bars;
-  var cu=comp('uk'), cg=comp('de');
+  var cu=comp('uk');
   document.getElementById('ukC').textContent=cu.toFixed(2);
-  document.getElementById('deC').textContent=cg.toFixed(2);
+  document.getElementById('deC').textContent='not calculated';
   document.getElementById('weak').textContent=weakest;
-  var ccU=compCommon('uk'), ccG=compCommon('de');
-  document.getElementById('scoreNote').innerHTML='<b>Evidence first:</b> 14 of 15 selected indicators are populated for England/UK, 7 of 15 for Germany, and only 6 are shared across three domains with no shared capacity indicator. The secondary constructed scores are <b>'
-    +cu.toFixed(2)+'</b> for England/UK and <b>'+cg.toFixed(2)+'</b> for Germany. The shared-indicator sensitivity check gives <b>'
-    +ccU.toFixed(2)+'</b> and <b>'+ccG.toFixed(2)+'</b>, but it contains only six indicators across three domains '
-    +'and is not directly comparable with the four-domain diagnostic score. The lowest England/UK domain is <b>'
-    +weakest.toLowerCase()+'</b>. These outputs describe the chosen inputs and anchors; they are not estimates of '
-    +'national access or causal effects.';
+  document.getElementById('scoreNote').innerHTML='<b>Evidence first:</b> 13 of 15 selected indicators are populated for England/UK and 6 of 15 for Germany. Only 4 are shared, across guidance and geography. The England/UK four-domain diagnostic summary is <b>'
+    +cu.toFixed(2)+'</b>. No German four-domain total is calculated because no comparable commissioning value was identified. The lowest England/UK domain is <b>'
+    +weakest.toLowerCase()+'</b>. These outputs expose the chosen inputs and anchors; they do not estimate national access, rank countries or identify causal effects.';
   var t='<table><thead><tr><th>Indicator</th><th>UK</th><th>Germany</th><th>UK score</th><th>DE score</th></tr></thead><tbody>';
   DOM.forEach(function(d){
     t+='<tr><td colspan="5" style="background:#f2f4f7;font-weight:700;">'+d.k+' — from '+d.pillar+'</td></tr>';
     d.rows.forEach(function(r){
       var u=sc(r,'uk'), g=sc(r,'de');
-      t+='<tr><td>'+r.p+'</td><td>'+(r.uk===null?'n/a':r.uk)+'</td><td>'+(r.de===null?'n/a':(r.de==='none'?'no identified formal threshold':r.de))
+      t+='<tr><td>'+r.p+'</td><td>'+(r.uk===null?'n/a':r.uk)+'</td><td>'+(r.de===null?'n/a':r.de)
         +'</td><td>'+(u===null?'—':u.toFixed(2))+'</td><td>'+(g===null?'—':g.toFixed(2))+'</td></tr>';
     });
   });
@@ -1546,22 +1540,22 @@ function compCommon(c){
     rows.forEach(function(r,i){
       var div=document.createElement('div'); div.style.cssText='margin:9px 0;opacity:0;transition:opacity .5s;';
       div.innerHTML='<div style="display:flex;justify-content:space-between;font:600 13px -apple-system,sans-serif;color:#dfe4ee;margin-bottom:3px;">'
-        +'<span>'+r.k+'</span><span>UK '+r.u.toFixed(2)+' · DE '+r.g.toFixed(2)+'</span></div>'
+        +'<span>'+r.k+'</span><span>UK '+(r.u===null?'n/a':r.u.toFixed(2))+' · DE '+(r.g===null?'n/a':r.g.toFixed(2))+'</span></div>'
         +'<div style="background:#141a26;border:1px solid #232c3f;border-radius:4px;height:16px;position:relative;overflow:hidden;">'
         +'<div class="sb-g" style="position:absolute;height:100%;width:0%;background:#e9a23b;border-radius:4px;transition:width 1.4s ease;"></div>'
         +'<div class="sb-u" style="position:absolute;height:100%;width:0%;background:#5b9bff;border-radius:4px;transition:width 1.4s ease;"></div></div>';
       host.appendChild(div);
       window._storyTimers.push(setTimeout(function(){
         div.style.opacity=1;
-        div.querySelector('.sb-g').style.width=(r.g/5*100)+'%';
-        div.querySelector('.sb-u').style.width=(r.u/5*100)+'%';
+        div.querySelector('.sb-g').style.width=(r.g===null?0:r.g/5*100)+'%';
+        div.querySelector('.sb-u').style.width=(r.u===null?0:r.u/5*100)+'%';
       }, 500+i*1100));
     });
     window._storyTimers.push(setTimeout(function(){
-      var cu=comp('uk'), cg=comp('de'), n=0;
+      var cu=comp('uk'), n=0;
+      document.getElementById('sbDE').textContent='not calculated';
       var iv=setInterval(function(){ n++;
         document.getElementById('sbUK').textContent=(cu*Math.min(1,n/40)).toFixed(2);
-        document.getElementById('sbDE').textContent=(cg*Math.min(1,n/40)).toFixed(2);
         if(n>=40) clearInterval(iv);
       },30);
       window._storyTimers.push(iv);
