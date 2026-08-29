@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TAVI Access Simulation — Ibrahim Diab, WMG</title>
+<title>TAVI Access Simulation — Ibrahim Diab MD, WMG</title>
 <style>
   :root{
     --ink:#1a1d23; --muted:#5c6470; --line:#dfe3e8; --bg:#f7f8fa; --card:#ffffff;
@@ -286,7 +286,7 @@
 
   <section class="sc" id="sc5">
     <h2>This tool lets you open the gates yourself.</h2>
-    <p>Each gate is a page with one slider, built on a peer-reviewed model of the waiting list.
+    <p>Each gate is a page with one slider, built on waiting-list equations published in a peer-reviewed paper.
        Move a slider and see what happens to the queue — and to the death count.</p>
     <div style="display:flex;gap:26px;margin:16px 0;flex-wrap:wrap;justify-content:center;">
       <div><div style="font-size:13px;color:#8d95a6;">S0 minimal active-conversion comparator</div><div class="big" style="font-size:44px;">3,035</div>
@@ -367,7 +367,8 @@
   <h1>TAVI Access Simulation</h1>
   <div class="sub">
     Supplementary tool for <i>Determinants of TAVI Utilisation: A Study of Operational Drivers in the UK Health System</i><br>
-    Ibrahim Diab · MSc Healthcare Operational Management · WMG, University of Warwick<br>Version 12 · August 2026 · final interpretive revision; causal wording, England/UK scope and diagnostic scoring aligned with the dissertation; numerical engine unchanged; synchronised with the §3.5.3 checksum on 27 August 2026 · intended public location: <a href="https://ibrahimdiabmd-beep.github.io/tavi-simulation/TAVI_Exploratory_Simulation.html">ibrahimdiabmd-beep.github.io/tavi-simulation</a>
+    Ibrahim Diab, MD · MSc Healthcare Operational Management · WMG, University of Warwick<br>
+    Version 13 · August 2026 · numerical engine unchanged since Version 11 · public copy: <a href="https://ibrahimdiabmd-beep.github.io/tavi-simulation/TAVI_Exploratory_Simulation.html">ibrahimdiabmd-beep.github.io/tavi-simulation</a>
   </div>
   <nav>
     <button class="on" data-p="p0">Start here</button>
@@ -433,13 +434,7 @@
 
   <details>
     <summary>Version history</summary>
-    <p style="margin-bottom:0;"><b>Version 12 (August 2026)</b> — final interpretive revision: clarifies the England-focused scope, removes causal language not supported by the design, separates guideline recommendations from the 15% and 40% scenario anchors, and does not calculate a German four-domain score where commissioning evidence is absent; the numerical waiting-list engine and scenario outputs are unchanged. <b>Version 11 (August 2026)</b> — adds a 100,000-draw convergence check and a moment-matched lognormal sensitivity analysis; makes evidence coverage the primary score-page result; and consistently labels the published-scenario comparison as implementation-fidelity verification rather than external validation. The final build (25 August 2026) aligns the German centre-count label with the dissertation and records the synchronised checksum; no model logic or numerical output changed. <b>Version 10 (August 2026)</b> — rejects and redraws non-positive Monte Carlo inputs while retaining the source-style normal distributions; makes indicator coverage visible; and demotes the constructed composite from a headline comparison to a diagnostic evidence map. <b>Version 9 (August 2026)</b> — independent-audit correction. Uses untruncated
-    normal Monte Carlo draws and reports means plus 2.5th/97.5th percentiles; distinguishes μ as a continuous
-    hazard; adds the literal no-change comparator; reports published deaths and intervals for all seven Stickels
-    scenarios; removes unsupported consultant-capacity conversion; reframes the budget as procedure-only partial
-    arithmetic; corrects the geography label; and reframes the England–Germany score as an illustrative,
-    non-equivalent composite. <b>Version 8</b> — dissertation submission draft. <b>Version 7</b> — story mode and
-    per-pillar redesign. <b>Versions 1–6</b> — engine construction and checks against published scenarios.</p>
+    <p style="margin-bottom:0;"><b>Version 13 (August 2026)</b> — presentation only: shortened the version note, clarified that the waiting-list equations come from a published paper while this tool is not itself peer reviewed, and adjusted the story animation. No model logic, input or numerical output changed. <b>Version 12 (August 2026)</b> — final interpretive revision aligning scope, causal wording and diagnostic scoring with the dissertation; engine unchanged. <b>Version 11 (August 2026)</b> — added the 100,000-draw convergence check and the moment-matched lognormal sensitivity analysis, and made evidence coverage the primary score-page result. <b>Versions 1–10</b> — engine construction, checks against the published scenarios, and successive audit corrections.</p>
   </details>
 
   <div class="pill-nav"><button data-goto="p1">Start with Pillar 1 →</button></div>
@@ -774,7 +769,7 @@
   <h2>The maths</h2>
   <p class="lead">Every equation used anywhere in this tool, where it comes from, and why it was chosen.</p>
 
-  <div class="note">The deterministic waiting-list equations are taken from a published, peer-reviewed paper.
+  <div class="note">The deterministic waiting-list equations are taken from a published, peer-reviewed paper; this tool itself has not been peer reviewed.
   The four-domain score, its indicator selection, anchors, missing-data handling and policy interpretation are
   dissertation constructions. Standard normalisation and aggregation equations do not validate those choices.</div>
 
@@ -1434,7 +1429,7 @@ function compCommon(c){
     if(e.key==='ArrowLeft') go(cur-1);
   });
 
-  /* queue scene: dots appear, drain slowly, some turn to grey crosses */
+  /* queue scene: dots appear, drain slowly, some turn to red crosses with a halo */
   function queueScene(){
     var c=document.getElementById('storyCanvas'), x=c.getContext('2d');
     var W=c.width, H=c.height, N=200, dotsA=[];
@@ -1454,7 +1449,11 @@ function compCommon(c){
       x.clearRect(0,0,W,H);
       dotsA.forEach(function(d){
         if(!d.s||d.gone) return;
-        if(d.dead){ x.strokeStyle='#5a6070'; x.lineWidth=2.5;
+        if(d.dead){
+          var g=x.createRadialGradient(d.x,d.y,1,d.x,d.y,13);
+          g.addColorStop(0,'rgba(255,93,93,0.42)'); g.addColorStop(1,'rgba(255,93,93,0)');
+          x.fillStyle=g; x.beginPath(); x.arc(d.x,d.y,13,0,7); x.fill();
+          x.strokeStyle='#ff5d5d'; x.lineWidth=3; x.lineCap='round';
           x.beginPath(); x.moveTo(d.x-6,d.y-6); x.lineTo(d.x+6,d.y+6);
           x.moveTo(d.x+6,d.y-6); x.lineTo(d.x-6,d.y+6); x.stroke();
         } else { x.fillStyle='#5b9bff'; x.beginPath(); x.arc(d.x,d.y,6,0,7); x.fill(); }
