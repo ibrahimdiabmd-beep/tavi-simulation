@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TAVI Access Simulation — Ibrahim Diab MD, WMG</title>
+<style>
+  :root{
+    --ink:#1a1d23; --muted:#5c6470; --line:#dfe3e8; --bg:#f7f8fa; --card:#ffffff;
+    --uk:#2f6fb8; --de:#c8842a; --good:#1f7a4d; --warn:#a8600b; --accent:#2f6fb8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.65 Georgia,'Times New Roman',serif;}
+  .shell{max-width:1060px;margin:0 auto;padding:0 20px 70px;}
+  header{background:var(--card);border-bottom:1px solid var(--line);padding:26px 0 0;}
+  header .shell{padding-bottom:0;}
+  h1{font-size:25px;margin:0 0 4px;letter-spacing:-.2px;}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:18px;}
+  .sub a{color:var(--accent);}
+  nav{display:flex;gap:2px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-top:6px;}
+  nav button{background:none;border:none;border-bottom:3px solid transparent;padding:11px 15px;
+             font:600 14px/1 -apple-system,Segoe UI,sans-serif;color:var(--muted);cursor:pointer;}
+  nav button:hover{color:var(--ink);}
+  nav button.on{color:var(--accent);border-bottom-color:var(--accent);}
+  .page{display:none;padding-top:26px;}
+  .page.on{display:block;}
+  h2{font-size:21px;margin:0 0 6px;}
+  h3{font-size:16px;margin:24px 0 8px;font-family:-apple-system,Segoe UI,sans-serif;}
+  p{margin:0 0 12px;}
+  .lead{font-size:17px;color:#333;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:20px 22px;margin:16px 0;}
+  .card.tight{padding:14px 18px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:780px){.grid{grid-template-columns:1fr;}}
+  table{width:100%;border-collapse:collapse;font:14px/1.5 -apple-system,Segoe UI,sans-serif;margin:10px 0;}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600;}
+  .lever{margin:18px 0 6px;}
+  .lever label{display:block;font:600 15px/1.4 -apple-system,Segoe UI,sans-serif;margin-bottom:2px;}
+  .lever .hint{font-size:13.5px;color:var(--muted);margin-bottom:10px;}
+  input[type=range]{width:100%;accent-color:var(--accent);}
+  .val{display:flex;justify-content:space-between;font:13px/1 -apple-system,Segoe UI,sans-serif;
+       color:var(--muted);margin-top:5px;}
+  .val b{color:var(--accent);font-size:15px;}
+  .effect{background:#eef4fb;border-left:4px solid var(--accent);border-radius:0 6px 6px 0;
+          padding:12px 15px;margin-top:14px;font-size:15px;}
+  .effect b{color:var(--accent);}
+  .stats{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0;}
+  .stat{flex:1;min-width:165px;background:var(--card);border:1px solid var(--line);
+        border-radius:8px;padding:14px 16px;}
+  .stat .k{font:12px/1.3 -apple-system,Segoe UI,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  .stat .v{font-size:27px;font-weight:700;margin-top:3px;}
+  .stat .n{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .stat.uk .v{color:var(--uk);} .stat.good .v{color:var(--good);}
+  button.go{background:var(--accent);color:#fff;border:none;border-radius:7px;
+            padding:11px 22px;font:600 15px -apple-system,Segoe UI,sans-serif;cursor:pointer;}
+  button.go:hover{opacity:.92;}
+  .tag{display:inline-block;font:600 11px/1 -apple-system,Segoe UI,sans-serif;padding:4px 7px;
+       border-radius:4px;text-transform:uppercase;letter-spacing:.03em;}
+  .t-conf{background:#e3f2e8;color:var(--good);} .t-cav{background:#eef1f5;color:#5c6470;} .t-assum{background:#fbeee0;color:var(--warn);}
+  details{margin:12px 0;border-top:1px solid var(--line);padding-top:10px;}
+  summary{cursor:pointer;font:600 14px -apple-system,Segoe UI,sans-serif;color:var(--accent);}
+  details p,details table{font-size:14.5px;}
+  .note{font-size:14px;color:var(--muted);background:#f2f4f7;border-radius:7px;padding:12px 15px;margin:12px 0;}
+  .eq{font:600 16px/1.7 "Cambria Math",Georgia,serif;background:#f2f4f7;border-radius:6px;padding:11px 15px;margin:10px 0;text-align:center;}
+  .bar{margin:9px 0;}
+  .bar .lbl{font:600 13.5px -apple-system,Segoe UI,sans-serif;margin-bottom:3px;display:flex;justify-content:space-between;}
+  .bar .track{background:#eceff3;border-radius:4px;height:19px;position:relative;overflow:hidden;}
+  .bar .fill{position:absolute;top:0;height:100%;border-radius:4px;}
+  canvas{width:100%;background:var(--card);border:1px solid var(--line);border-radius:8px;}
+  .steps{counter-reset:s;padding:0;list-style:none;margin:14px 0;}
+  .steps li{counter-increment:s;position:relative;padding-left:38px;margin-bottom:13px;}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:25px;height:25px;
+    background:var(--accent);color:#fff;border-radius:50%;display:grid;place-items:center;
+    font:700 13px -apple-system,Segoe UI,sans-serif;}
+  .pill-nav{display:flex;gap:10px;margin-top:22px;}
+  .pill-nav button{flex:1;background:var(--card);border:1px solid var(--line);border-radius:8px;
+    padding:12px;font:600 14px -apple-system,Segoe UI,sans-serif;color:var(--accent);cursor:pointer;}
+  .pill-nav button:hover{background:#eef4fb;}
+
+  /* ---------- intro story ---------- */
+  #story{position:fixed;inset:0;background:#0b0e14;z-index:50;display:none;color:#e8eaf0;
+         font-family:-apple-system,Segoe UI,sans-serif;}
+  #story.on{display:block;}
+  .sc{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;
+      justify-content:center;text-align:center;padding:30px 24px 110px;}
+  .sc.on{display:flex;animation:scIn .9s ease;}
+  @keyframes scIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+  .sc h2{font-size:clamp(22px,4vw,34px);color:#fff;margin:20px 0 10px;max-width:760px;}
+  .sc p{font-size:clamp(15px,2.2vw,19px);line-height:1.7;color:#b9bfcc;max-width:680px;margin:0 0 8px;}
+  .sc .big{font-size:clamp(38px,7vw,64px);font-weight:800;color:#ff5d5d;margin:6px 0;}
+  .sc .big.blue{color:#5b9bff;} .sc .big.gold{color:#e9a23b;} .sc .big.green{color:#39c07a;}
+  #storyCanvas{max-width:min(680px,92vw);width:100%;height:auto;background:transparent;border:none;}
+  .heart{width:110px;height:110px;position:relative;animation:beat 1.05s infinite;}
+  .heart::before,.heart::after{content:"";position:absolute;top:0;width:55px;height:88px;
+    border-radius:55px 55px 0 0;background:#e14b4b;}
+  .heart::before{left:55px;transform:rotate(-45deg);transform-origin:0 100%;}
+  .heart::after{left:0;transform:rotate(45deg);transform-origin:100% 100%;}
+  @keyframes beat{0%,100%{transform:scale(1);}12%{transform:scale(1.14);}24%{transform:scale(1);}
+    36%{transform:scale(1.08);}48%{transform:scale(1);}}
+  .heart.slow{animation-duration:2.2s;filter:saturate(.55) brightness(.8);}
+  .gates{display:flex;gap:14px;margin:22px 0;flex-wrap:wrap;justify-content:center;}
+  .gate{width:130px;padding:14px 8px 12px;border:2px solid #39435a;border-radius:10px;background:#141a26;
+        opacity:0;transform:translateY(16px);transition:all .6s;}
+  .gate.on{opacity:1;transform:none;}
+  .gate .ico{font-size:26px;} .gate .nm{font-weight:700;font-size:14px;margin-top:6px;color:#fff;}
+  .gate .q{font-size:12px;color:#8d95a6;margin-top:3px;}
+  .gate.shut{border-color:#c0392b;} .gate.open{border-color:#39c07a;}
+  #sBar{position:absolute;left:0;top:0;height:4px;background:#5b9bff;width:0%;transition:width .3s linear;}
+  #sCtl{position:absolute;bottom:0;left:0;right:0;display:flex;gap:10px;align-items:center;
+        justify-content:center;padding:20px;background:linear-gradient(transparent,#0b0e14 40%);}
+  #sCtl button{background:#1c2433;border:1px solid #39435a;color:#dfe4ee;border-radius:8px;
+        padding:10px 18px;font:600 14px -apple-system,Segoe UI,sans-serif;cursor:pointer;}
+  #sCtl button:hover{background:#26314a;}
+  #sCtl button.prime{background:#2f6fb8;border-color:#2f6fb8;color:#fff;}
+  .dots{display:flex;gap:7px;} .dots i{width:9px;height:9px;border-radius:50%;background:#39435a;cursor:pointer;}
+  .dots i.on{background:#5b9bff;}
+  #introHero{background:linear-gradient(135deg,#10203a,#0b0e14);border-radius:12px;color:#fff;
+     padding:34px 30px;margin:16px 0;text-align:center;}
+  #introHero h3{margin:0 0 8px;font-size:20px;color:#fff;}
+  #introHero p{color:#b9bfcc;max-width:560px;margin:0 auto 18px;}
+  #introHero button{background:#e14b4b;color:#fff;border:none;border-radius:9px;padding:15px 34px;
+     font:700 17px -apple-system,Segoe UI,sans-serif;cursor:pointer;box-shadow:0 6px 22px rgba(225,75,75,.35);}
+  #introHero button:hover{transform:translateY(-1px);}
+
+
+  @keyframes bigPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);text-shadow:0 0 34px rgba(255,93,93,.65);}}
+  .pulse{animation:bigPulse 1.6s infinite;}
+  .race{width:min(640px,92vw);margin:14px 0;}
+  .rrow{margin:11px 0;opacity:0;transition:opacity .5s;}
+  .rrow.on{opacity:1;}
+  .rrow .rlbl{display:flex;justify-content:space-between;font:600 14px -apple-system,Segoe UI,sans-serif;
+              color:#dfe4ee;margin-bottom:4px;}
+  .rrow .rlbl b{font-size:17px;}
+  .rrow .rtrack{background:#141a26;border:1px solid #232c3f;border-radius:5px;height:24px;overflow:hidden;}
+  .rrow .rfill{height:100%;width:0%;border-radius:5px;transition:width 1.6s cubic-bezier(.2,.7,.2,1);}
+
+</style>
+</head>
+<body>
+
+
+<div id="story">
+  <div id="sBar"></div>
+
+  <section class="sc" id="sc0">
+    <div class="heart"></div>
+    <h2>The aortic valve.</h2>
+    <p>The aortic valve opens with every heartbeat to let blood leave the heart. With age, in some people,
+       it stiffens and narrows. Doctors call it <b style="color:#fff">aortic stenosis</b>.</p>
+    <p>Once it becomes severe and symptoms begin, untreated survival is short.</p>
+  </section>
+
+  <section class="sc" id="sc1">
+    <div class="heart slow"></div>
+    <div class="big">1 in 2</div>
+    <h2>die within two years if it is not treated.</h2>
+    <p style="font-size:13px;color:#8d95a6;">Approximate natural-history figure reported by Ali et al. (2021); see the references on the maths page.</p>
+    <p>But it can be treated. A valve delivered through a leg artery — no open surgery, often no general
+       anaesthetic, home in days. It is called <b style="color:#fff">TAVI</b>.</p>
+    <p>So the treatment exists. The problem is getting it.</p>
+  </section>
+
+  <section class="sc" id="sc2">
+    <h2>The queue.</h2>
+    <canvas id="storyCanvas" width="680" height="330"></canvas>
+    <p id="qCap">In England in November 2020, an estimated <b style="color:#fff">4,989 people</b> were waiting over and above what the
+       service could handle (Stickels et al., 2022). Every dot represents patients. The animation shows what waiting does in the model.</p>
+  </section>
+
+  <section class="sc" id="sc3">
+    <h2>Recorded TAVI activity varies substantially by area.</h2>
+    <div style="display:flex;gap:16px;margin:18px 0;flex-wrap:wrap;justify-content:center;">
+      <div style="background:#141a26;border:2px solid #c0392b;border-radius:10px;padding:18px 22px;">
+        <div style="font-size:13px;color:#8d95a6;">Lowest-access areas</div>
+        <div class="big" style="font-size:40px;">50</div>
+        <div style="font-size:12px;color:#8d95a6;">procedures per million</div></div>
+      <div style="background:#141a26;border:2px solid #39435a;border-radius:10px;padding:18px 22px;">
+        <div style="font-size:13px;color:#8d95a6;">Middle</div>
+        <div class="big blue" style="font-size:40px;">112</div>
+        <div style="font-size:12px;color:#8d95a6;">procedures per million</div></div>
+      <div style="background:#141a26;border:2px solid #39c07a;border-radius:10px;padding:18px 22px;">
+        <div style="font-size:13px;color:#8d95a6;">Highest-access areas</div>
+        <div class="big green" style="font-size:40px;">180</div>
+        <div style="font-size:12px;color:#8d95a6;">procedures per million</div></div>
+    </div>
+    <p>Within England, recorded TAVI activity differed by more than <b style="color:#fff">fifteen-fold</b>
+       between the extreme former CCG areas. The three figures above are illustrative group averages, which is why
+       their spread looks smaller. Isolated SAVR activity was almost uncorrelated with TAVI activity, offering little
+       aggregate evidence that surgery routinely offset low TAVI activity. These crude rates do not measure local
+       clinical need or individual waiting time.</p>
+  </section>
+
+  <section class="sc" id="sc4">
+    <h2>To be treated, a patient must pass four gates.</h2>
+    <div class="gates">
+      <div class="gate" id="g0"><div class="ico">📋</div><div class="nm">Guidance</div><div class="q">Who is considered?</div></div>
+      <div class="gate" id="g1"><div class="ico">📍</div><div class="nm">Geography</div><div class="q">Can you reach it?</div></div>
+      <div class="gate" id="g2"><div class="ico">🏥</div><div class="nm">Capacity</div><div class="q">Is there room?</div></div>
+      <div class="gate" id="g3"><div class="ico">💷</div><div class="nm">Funding</div><div class="q">Will they pay?</div></div>
+    </div>
+    <p>NICE guidance in England remains risk-led, whereas the 2025 ESC/EACTS guideline recommends
+       transfemoral TAVI from age 70 under defined clinical and anatomical conditions. English activity varies by
+       area, two studies reported mean referral-to-treatment times of about 155 days, and the NHS England interim
+       route retains case-level Blueteq approval.</p>
+    <p><b style="color:#fff">These domains may constrain one another.</b> Improving one stage may have limited
+       effect if another part of the pathway remains restricted.</p>
+  </section>
+
+
+  <section class="sc" id="sc4a">
+    <div style="font-size:42px;">📋</div>
+    <h2>Gate 1 — Guidance. <span style="color:#8d95a6;">Who is considered?</span></h2>
+    <p>Two guidelines reach different answers for the same patient.</p>
+    <div style="display:flex;gap:16px;margin:14px 0;flex-wrap:wrap;justify-content:center;">
+      <div style="background:#141a26;border:2px solid #c0392b;border-radius:10px;padding:16px 20px;max-width:230px;">
+        <div style="font-weight:700;color:#fff;">NICE framework in England</div>
+        <div style="font-size:13px;color:#8d95a6;margin-top:4px;">TAVI mainly when surgery is unsuitable or
+        high risk, with individual multidisciplinary assessment.</div></div>
+      <div style="background:#141a26;border:2px solid #39c07a;border-radius:10px;padding:16px 20px;max-width:230px;">
+        <div style="font-weight:700;color:#fff;">2025 ESC/EACTS guideline</div>
+        <div style="font-size:13px;color:#8d95a6;margin-top:4px;">Transfemoral TAVI is recommended from age
+        <b style="color:#39c07a;font-size:17px;">70</b> for selected patients with a tricuspid valve, suitable anatomy and Heart Team agreement.</div></div>
+    </div>
+    <p>Under the inherited Stickels modelling assumption, converting suitable cases changes throughput
+       because the time assigned to two SAVR procedures can accommodate three TAVI procedures. This is a model
+       assumption, not a universal operating rule.</p>
+    <p style="color:#5b9bff;font-weight:600;">In the tool: you choose how many patients are switched.</p>
+  </section>
+
+  <section class="sc" id="sc4b">
+    <div style="font-size:42px;">📍</div>
+    <h2>Gate 2 — Geography. <span style="color:#8d95a6;">Can you reach it?</span></h2>
+    <p>Implanting centres are concentrated in major conurbations, while crude procedure rates do not
+       account for age, prevalence, travel time, referral or clinical eligibility.</p>
+    <p>Separate studies report lower adjusted odds of valve replacement in the most deprived group and a higher
+       prevalence of undiagnosed valve disease in deprived groups. Together they raise an inverse-care concern,
+       but they do not establish area-level unmet need.</p>
+    <p style="color:#5b9bff;font-weight:600;">In the tool: you compare activity-weighted allocation with an
+       illustrative equal-sized-area rule. The second removes the modelled spread by construction and is not based
+       on actual population or clinical need.</p>
+  </section>
+
+  <section class="sc" id="sc4c">
+    <div style="font-size:42px;">🏥</div>
+    <h2>Gate 3 — Capacity. <span style="color:#8d95a6;">Is there room?</span></h2>
+    <div class="big gold" style="font-size:clamp(34px,6vw,52px);">155.4 days</div>
+    <p>mean referral-to-treatment time in a small single-centre audit (n=29), against a 126-day pathway
+       benchmark. Only 3 of 29 patients met the total pathway benchmark; this is not a national estimate.</p>
+    <p>The delay is not at the front door. It builds up <b style="color:#fff">between the clinic and the
+       specialist team meeting</b>, then again between the meeting and the procedure. In the earlier
+       national survey, 74% of responding centres identified catheter-laboratory availability as a constraint.</p>
+    <p style="color:#5b9bff;font-weight:600;">In the tool: you choose how much extra capacity to add. Across the
+       stated one-at-a-time ranges, this lever produces the largest local clearance-time swing.</p>
+  </section>
+
+  <section class="sc" id="sc4d">
+    <div style="font-size:42px;">💷</div>
+    <h2>Gate 4 — Funding. <span style="color:#8d95a6;">Will they pay?</span></h2>
+    <p>Patients treated through NHS England's interim widened-access route remain subject to
+       <b style="color:#fff">case-level Blueteq prior approval</b>.</p>
+    <p>The published position statement describes the route as interim and commits to review at least annually.
+       The page remained available when this project was finalised. In a separate NHS drug IFR process — not TAVI —
+       <b style="color:#ff5d5d;">71%</b> of requests were declined; that figure motivates measurement but does not calibrate ρ.</p>
+    <p>No TAVI-specific estimate of throughput loss from this approval route was identified in the review.</p>
+    <p style="color:#5b9bff;font-weight:600;">In the tool: you set an illustrative throughput-realisation loss,
+       and the results page displays the model's response across the tested 0–60% range.</p>
+  </section>
+
+
+  <section class="sc" id="sc4e">
+    <h2>Before touching anything, we mapped the selected evidence onto a constructed scale.</h2>
+    <p>Each gate receives a diagnostic score from 1 to 5. This makes the scoring rules visible; it does not measure or rank national access.</p>
+    <div id="storyBars" style="width:min(620px,92vw);margin:10px 0;"></div>
+    <div style="display:flex;gap:30px;margin:8px 0;justify-content:center;">
+      <div><div style="font-size:13px;color:#8d95a6;">England/UK evidence coverage</div><div class="big blue" style="font-size:46px;">13/15</div><div style="font-size:12px;color:#8d95a6;">indicators populated (87%)</div></div>
+      <div><div style="font-size:13px;color:#8d95a6;">Germany evidence coverage</div><div class="big gold" style="font-size:46px;">6/15</div><div style="font-size:12px;color:#8d95a6;">indicators populated (40%)</div></div>
+    </div>
+    <p style="font-size:14.5px;"><b style="color:#fff">How should these numbers be read?</b>
+       Evidence coverage is the primary result. A four-domain secondary score is calculated only for the
+       England/UK evidence set (<span id="sbUK">—</span>). A German four-domain total is <span id="sbDE">not calculated</span>
+       because no comparable commissioning value was identified. Only four indicators are available for both
+       systems, across guidance and geography. The profiles expose the construction; they do not rank national access.</p>
+  </section>
+
+  <section class="sc" id="sc5">
+    <h2>This tool lets you open the gates yourself.</h2>
+    <p>Each gate is a page with one slider, built on waiting-list equations published in a peer-reviewed paper.
+       Move a slider and see what happens to the queue — and to the death count.</p>
+    <div style="display:flex;gap:26px;margin:16px 0;flex-wrap:wrap;justify-content:center;">
+      <div><div style="font-size:13px;color:#8d95a6;">S0 minimal active-conversion comparator</div><div class="big" style="font-size:44px;">3,035</div>
+        <div style="font-size:12px;color:#8d95a6;">deaths while waiting</div></div>
+      <div style="align-self:center;font-size:30px;color:#5b9bff;">→</div>
+      <div><div style="font-size:13px;color:#8d95a6;">One published intervention: +20% capacity, 40% switched, no funding gate</div><div class="big green" style="font-size:44px;">793</div>
+        <div style="font-size:12px;color:#8d95a6;">deaths while waiting</div></div>
+    </div>
+    <p>Same backlog, same baseline capacity; only the assumptions change.</p>
+  </section>
+
+
+  <section class="sc" id="sc5a">
+    <h2>We did not run it once. We ran it 10,000 times.</h2>
+    <p>Two inputs are uncertain: the continuous annual mortality hazard μ is reported with a 0.12–0.60 interval,
+       and the excess queue with a 4,020–5,959 interval. The central μ=0.36 is a hazard, corresponding to a
+       one-year mortality probability of 1−e<sup>−0.36</sup>=30.2%, not 36%.</p>
+    <p>Following the source paper's resampling approach, the model is re-run 10,000 times with a fixed, recorded
+       seed, drawing both inputs from normal distributions reconstructed from those intervals. Draws are not clipped
+       to the reported interval limits, but any non-positive backlog or mortality-hazard draw is rejected and redrawn
+       because neither parameter can be negative. The output reports the mean and 2.5th/97.5th percentiles —
+       a <b style="color:#fff">Monte Carlo</b> analysis, in which each run draws the two inputs at random from their
+       reconstructed distributions. The charts below are generated live by the JavaScript model from the current inputs, not from a recording. The tool
+       also offers a 100,000-draw convergence check and a positive, moment-matched lognormal sensitivity analysis;
+       both preserve the Scenario B advantage, while the tail intervals change with distribution choice.</p>
+    <canvas id="mcCanvas" width="680" height="270"></canvas>
+    <p id="mcCap" style="min-height:28px;"></p>
+  </section>
+
+  <section class="sc" id="sc5b">
+    <h2>Then we changed one thing at a time.</h2>
+    <div class="race">
+      <div class="rrow" id="r0"><div class="rlbl"><span>S0 minimal active-conversion comparator</span><b style="color:#ff5d5d" id="r0v">0</b></div>
+        <div class="rtrack"><div class="rfill" style="background:#c0392b;"></div></div></div>
+      <div class="rrow" id="r1"><div class="rlbl"><span>+20% capacity, 40% switched, no funding gate</span><b style="color:#39c07a" id="r1v">0</b></div>
+        <div class="rtrack"><div class="rfill" style="background:#1f7a4d;"></div></div></div>
+      <div class="rrow" id="r2"><div class="rlbl"><span>Exactly the same — but the gate blocks 27.5% of it</span><b style="color:#e9a23b" id="r2v">0</b></div>
+        <div class="rtrack"><div class="rfill" style="background:#a8600b;"></div></div></div>
+      <div class="rrow" id="r3"><div class="rlbl"><span>Bigger push: +40% capacity, 40% switched, no gate</span><b style="color:#5b9bff" id="r3v">0</b></div>
+        <div class="rtrack"><div class="rfill" style="background:#2f6fb8;"></div></div></div>
+    </div>
+    <p style="font-size:13.5px;color:#8d95a6;">deaths while waiting, out of 4,989 people in the queue</p>
+  </section>
+
+  <section class="sc" id="sc5c">
+    <h2>Look again at those two middle bars.</h2>
+    <p>Identical theoretical intervention. One modelled difference: the assumed throughput-realisation loss is set to
+       <b style="color:#fff">27.5%</b> — an illustrative assumption, because no TAVI-specific causal estimate exists.</p>
+    <div class="big pulse" style="font-size:clamp(44px,8vw,72px);">+224 deaths</div>
+    <p>A conditional model output of <b style="color:#fff">28% more deaths</b> than the otherwise identical
+       ρ=0 scenario — not an observed effect and not proof that commissioning caused those deaths.</p>
+    <p>Because 27.5% is an estimate, we did not stop there. We re-ran the model at
+       <b style="color:#fff">thirteen strictness levels spanning the whole range, 0% to 60%</b>.
+       Within the model, every higher value of ρ produces more deaths because ρ directly removes realised
+       capacity. This is a structural monotonicity check, not empirical validation of the parameter.</p>
+  </section>
+
+  <section class="sc" id="sc6">
+    <div style="font-size:44px;">🔍</div>
+    <h2>One warning before you start.</h2>
+    <p>This is an exploratory model, not a forecasting tool. It is checked against every published clearance time of the
+       paper it is built on — the <b style="color:#fff">“Is it accurate?”</b> page shows all seven checks —
+       but no single number here is a prediction.</p>
+    <p>What it shows is the <b style="color:#fff">conditional direction and size</b> produced by its stated
+       assumptions. It does not estimate causal policy effects or forecast contemporary mortality.</p>
+  </section>
+
+  <div id="sCtl">
+    <button id="sPrev">‹ Back</button>
+    <div class="dots" id="sDots"></div>
+    <button id="sNext" class="prime">Next ›</button>
+    <button id="sPause">Pause</button>
+    <button id="sSkip">Skip to the tool</button>
+  </div>
+</div>
+
+<header><div class="shell">
+  <h1>TAVI Access Simulation</h1>
+  <div class="sub">
+    Supplementary tool for <i>Determinants of TAVI Utilisation: A Study of Operational Drivers in the UK Health System</i><br>
+    Ibrahim Diab, MD · MSc Healthcare Operational Management · WMG, University of Warwick<br>
+    Version 14 · August 2026 · numerical engine unchanged since Version 11 · public copy: <a href="https://ibrahimdiabmd-beep.github.io/tavi-simulation/TAVI_Exploratory_Simulation.html">ibrahimdiabmd-beep.github.io/tavi-simulation</a>
+  </div>
+  <nav>
+    <button class="on" data-p="p0">Start here</button>
+    <button data-p="p1">1 · Guidance</button>
+    <button data-p="p2">2 · Geography</button>
+    <button data-p="p3">3 · Capacity</button>
+    <button data-p="p4">4 · Commissioning</button>
+    <button data-p="pS">Evidence map</button>
+    <button data-p="p5">Results</button>
+    <button data-p="pM">The maths</button>
+    <button data-p="p6">Is it accurate?</button>
+  </nav>
+</div></header>
+
+<div class="shell">
+
+<!-- ================= START ================= -->
+<section class="page on" id="p0">
+  <h2>What this tool does</h2>
+  <div id="introHero">
+    <h3>New here? Watch the story first.</h3>
+    <p>A guided, animated walk-through of the whole problem and what this tool does about it.
+       About five minutes, silent, and you can skip or jump at any point.</p>
+    <button id="storyGo">▶&nbsp; Start the story</button>
+  </div>
+
+  <p class="lead">Recorded TAVI activity varies substantially across England, and prolonged waits can
+  expose patients to harm. This tool asks a bounded question: <b>under a historical waiting-list model, how do
+  outcomes change when explicit operational assumptions are varied?</b></p>
+
+  <div class="card">
+    <h3 style="margin-top:0;">The idea in one paragraph</h3>
+    <p>There is a queue of patients waiting for treatment. Every year, some are treated and leave the queue.
+    Some die before they are treated. The dissertation examines four plausible operational determinants.
+    This tool represents them as explicit scenario levers and shows the conditional outputs of the model.</p>
+    <p style="margin-bottom:0;">Each of the four has its own page. Change what you like, then open
+    <b>Results</b>.</p>
+  </div>
+
+  <h3>The four things that move the queue</h3>
+  <table>
+    <thead><tr><th style="width:23%">Pillar</th><th style="width:40%">The question it answers</th><th>What you can change</th></tr></thead>
+    <tbody>
+      <tr><td><b>1 · Guidance</b></td><td>Who is considered for TAVI?</td><td>An illustrative treatment-mix conversion assumption</td></tr>
+      <tr><td><b>2 · Geography</b></td><td>Is the service where the patients are?</td><td>How new capacity is shared out between areas</td></tr>
+      <tr><td><b>3 · Capacity</b></td><td>Can the service physically do more?</td><td>How much extra capacity is added</td></tr>
+      <tr><td><b>4 · Commissioning</b></td><td>How is approval organised?</td><td>An assumed loss between theoretical and realised extra throughput</td></tr>
+    </tbody>
+  </table>
+
+  <h3>How to use it</h3>
+  <ol class="steps">
+    <li>Visit each of the four pillar pages. Each one explains the problem, shows the evidence, and gives you one slider.</li>
+    <li>Move the slider. The blue box underneath tells you immediately what that change does.</li>
+    <li>Open <b>Results</b> to see the effect of all four together.</li>
+    <li>If you want to inspect the software check, open <b>Is it accurate?</b>.</li>
+  </ol>
+
+  <div class="note"><b>What this tool is not.</b> It is an exploratory tool for comparing conditional scenarios,
+  not a forecast, causal evaluation or formal cost-effectiveness analysis. Its deterministic equations closely
+  reproduce the seven published scenario point estimates. That is implementation-fidelity verification, not external
+  clinical validation, and it does not mean any single number will occur in practice.</div>
+
+  <details>
+    <summary>Version history</summary>
+    <p><b>Version 14 (August 2026)</b> — presentation and wording only, no model logic, input or numerical output changed: corrected the plain-language explanation of the deaths equation (the remainder is the second group, modelled deaths), replaced the word “money” with “extra capacity” in the diminishing-returns note, neutralised the tone of the story page and added the November 2020 qualifier to the backlog figure, renamed the equal-sized-area allocation value from “population” to “equalArea” in the code, relabelled the conversion-anchor selector, aligned the guideline-currency status label with the dissertation (Derived), added the status label column and the two composite checks (arithmetic mean and shared-indicator subset) to the evidence-map page, and recorded the DGK counter recheck of 29 August 2026.</p>
+    <p style="margin-bottom:0;"><b>Version 13 (August 2026)</b> — presentation only: shortened the version note, clarified that the waiting-list equations come from a published paper while this tool is not itself peer reviewed, and adjusted the story animation. No model logic, input or numerical output changed. <b>Version 12 (August 2026)</b> — final interpretive revision aligning scope, causal wording and diagnostic scoring with the dissertation; engine unchanged. <b>Version 11 (August 2026)</b> — added the 100,000-draw convergence check and the moment-matched lognormal sensitivity analysis, and made evidence coverage the primary score-page result. <b>Versions 1–10</b> — engine construction, checks against the published scenarios, and successive audit corrections.</p>
+  </details>
+
+  <div class="pill-nav"><button data-goto="p1">Start with Pillar 1 →</button></div>
+</section>
+
+<!-- ================= PILLAR 1 ================= -->
+<section class="page" id="p1">
+  <h2>Pillar 1 · Clinical guidance</h2>
+  <p class="lead">Who is considered for TAVI under each framework?</p>
+
+  <div class="card">
+    <p>Two sets of rules differ. <b>NICE</b>, the body that guides NHS care and commissioning, directs TAVI mainly
+    toward patients for whom surgery is unsuitable or high risk. <b>The 2025 European guidelines</b> generally
+    recommend TAVI from age 70 when anatomically suitable, irrespective of estimated surgical risk and subject
+    to Heart Team assessment.</p>
+    <p style="margin-bottom:0;">The guidance comparison establishes different eligibility logics, but it
+    does not estimate how many patients would change treatment. The model therefore uses 15% and 40% only as
+    investigator-selected scenario anchors within the range examined by Stickels et al. (2022).</p>
+  </div>
+
+  <table>
+    <thead><tr><th>Evidence</th><th>Value</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>NICE rule</td><td>TAVI mainly when surgery is unsuitable or high risk; individual assessment required</td><td><span class="tag t-conf">Confirmed</span></td></tr>
+      <tr><td>European rule (2025)</td><td>Age ≥70 if anatomically suitable, irrespective of estimated surgical risk</td><td><span class="tag t-conf">Confirmed</span></td></tr>
+      <tr><td>Published model treatment-time assumption</td><td>Time for 2 SAVR procedures = 3 TAVI procedures</td><td><span class="tag t-cav">Confirmed as a source-model assumption</span></td></tr>
+      <tr><td>Lower conversion scenario anchor</td><td>15%</td><td><span class="tag t-assum">Investigator assumption; not derived from NICE</span></td></tr>
+      <tr><td>Higher conversion scenario anchor</td><td>40%</td><td><span class="tag t-assum">Investigator assumption; not derived from ESC/EACTS</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><b>Evidence currency (August 2026).</b> The clinical background should be read alongside
+  the Evolut Low Risk <a href="https://doi.org/10.1016/j.jacc.2025.03.004">5-year</a> and
+  <a href="https://doi.org/10.1016/j.jacc.2026.02.5063">6-year</a> follow-up and the
+  <a href="https://doi.org/10.1056/NEJMoa2509766">PARTNER 3 7-year</a> report. This operational model does not
+  simulate valve durability, reintervention or patient-level treatment choice.</div>
+
+  <div class="lever">
+    <label>Set the conversion anchor</label>
+    <div class="hint">This sets the slider below to one of the two illustrative anchors used in the dissertation. You can still override it.</div>
+    <select id="regime" style="width:100%;padding:9px;font-size:15px;border:1px solid var(--line);border-radius:6px;">
+      <option value="nice">Lower illustrative anchor — 15% (not a NICE estimate)</option>
+      <option value="esc">Higher illustrative anchor — 40% (not an ESC/EACTS estimate)</option>
+      <option value="manual">Set it myself</option>
+    </select>
+  </div>
+
+  <div class="lever">
+    <label>Patients switched from surgery to TAVI</label>
+    <div class="hint">Out of every 100 patients who would have had surgery, how many have TAVI instead?</div>
+    <input type="range" id="conv" min="0" max="50" value="15">
+    <div class="val"><span>0 in 100</span><b><span id="convV">15</span> in 100</b><span>50 in 100</span></div>
+  </div>
+  <div class="effect" id="e1"></div>
+
+  <div class="pill-nav"><button data-goto="p0">← Start</button><button data-goto="p2">Pillar 2 →</button></div>
+</section>
+
+<!-- ================= PILLAR 2 ================= -->
+<section class="page" id="p2">
+  <h2>Pillar 2 · Geography</h2>
+  <p class="lead">Is the service where the patients are?</p>
+
+  <div class="card">
+    <p>Recorded TAVI activity varies more than fifteen-fold between the extreme former CCG areas of England.
+    The three group averages below sit closer together because averaging smooths the extremes. Isolated SAVR activity
+    is almost uncorrelated with TAVI activity, but these crude rates do not identify individual eligibility, unmet
+    need or regional waiting time.</p>
+    <p style="margin-bottom:0;">This tool splits England into three groups of areas, and asks a question that
+    turns out to matter more than anything else on this page: <b>when we add new capacity, who gets it?</b></p>
+  </div>
+
+  <table>
+    <thead><tr><th>Group of areas</th><th>Roughly how many</th><th>Procedures per million people</th></tr></thead>
+    <tbody>
+      <tr><td>Lowest access</td><td>30 areas</td><td>50</td></tr>
+      <tr><td>Middle</td><td>54 areas</td><td>112</td></tr>
+      <tr><td>Highest access</td><td>22 areas</td><td>180</td></tr>
+    </tbody>
+  </table>
+
+  <div class="lever">
+    <label>When new capacity is created, how is it shared out?</label>
+    <div class="hint">This is a policy choice, not a fact. The tool lets you test both.</div>
+    <select id="rule" style="width:100%;padding:9px;font-size:15px;border:1px solid var(--line);border-radius:6px;">
+      <option value="capacity">Give it to areas in proportion to what they already do</option>
+      <option value="equalArea">Illustrative equal-sized-area rule (share by number of areas)</option>
+    </select>
+  </div>
+  <div class="effect" id="e2"></div>
+
+  <div class="note"><b>Important modelling limitation.</b> This tool has counts of former CCG areas, not their
+  actual populations or clinical need. The second rule therefore splits both backlog and new capacity by area
+  count under an explicit equal-sized-area assumption. Equal clearance times are built into that construction;
+  they are not an empirical estimate of what population-weighted allocation would achieve.</div>
+
+  <div class="pill-nav"><button data-goto="p1">← Pillar 1</button><button data-goto="p3">Pillar 3 →</button></div>
+</section>
+
+<!-- ================= PILLAR 3 ================= -->
+<section class="page" id="p3">
+  <h2>Pillar 3 · Capacity</h2>
+  <p class="lead">Can the service physically do more?</p>
+
+  <div class="card">
+    <p>In a small single-centre audit (n=29), mean referral-to-treatment time was 155.4 days against a 126-day
+    pathway benchmark. This is not a national mean. In that audit, delay accumulated between clinic and the
+    specialist team meeting, and again between that meeting and the procedure.</p>
+    <p style="margin-bottom:0;">Adding capacity means more staffed lab sessions, specialist time, team meeting
+    slots, beds, nursing and device inventory. This tool models the resulting throughput, not the detailed
+    workforce or capital package required to deliver it.</p>
+  </div>
+
+  <table>
+    <thead><tr><th>Evidence</th><th>Value</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Historical SAVR activity inherited from Stickels</td><td>7,830/year</td><td><span class="tag t-cav">Confirmed historical input</span></td></tr>
+      <tr><td>Historical TAVI activity inherited from Stickels</td><td>5,197/year</td><td><span class="tag t-cav">Confirmed historical input</span></td></tr>
+      <tr><td>Single-centre mean wait (n=29)</td><td>155.4 days vs 126-day pathway benchmark</td><td><span class="tag t-conf">Confirmed with limited generalisability</span></td></tr>
+      <tr><td>Responding centres identifying lab availability as a constraint</td><td>74%</td><td><span class="tag t-cav">Confirmed with survey caveat</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="lever">
+    <label>Extra capacity added</label>
+    <div class="hint">A 20% increase means 20% more annual procedure capacity than the inherited pre-pandemic baseline.</div>
+    <input type="range" id="cap" min="0" max="50" value="20">
+    <div class="val"><span>none</span><b>+<span id="capV">20</span>%</b><span>+50%</span></div>
+  </div>
+  <div class="effect" id="e3"></div>
+
+  <div class="pill-nav"><button data-goto="p2">← Pillar 2</button><button data-goto="p4">Pillar 4 →</button></div>
+</section>
+
+<!-- ================= PILLAR 4 ================= -->
+<section class="page" id="p4">
+  <h2>Pillar 4 · Commissioning</h2>
+  <p class="lead">Will the treatment actually be funded?</p>
+
+  <div class="card">
+    <p>For patients treated through NHS England's interim widened-access route, case-level Blueteq prior
+    approval remains mandatory. The published statement commits to review at least annually; this project did not
+    identify a public TAVI-specific evaluation of approval time, rework or throughput loss.</p>
+    <p style="margin-bottom:0;">The model explores a hypothetical throughput-realisation loss parameter ρ that removes a
+    chosen share of newly created capacity. This is a scenario input, not an observed TAVI-specific effect.</p>
+  </div>
+
+  <table>
+    <thead><tr><th>Evidence</th><th>Value</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Responding centres reporting commissioner caps</td><td>35%</td><td><span class="tag t-cav">Confirmed with survey caveat</span></td></tr>
+      <tr><td>Rejection rate in a separate NHS drug IFR process (not TAVI)</td><td>71%</td><td><span class="tag t-cav">Context only; does not calibrate ρ</span></td></tr>
+      <tr><td>TAVI-specific throughput-realisation loss</td><td>No estimate identified</td><td><span class="tag t-assum">Investigator assumption</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="lever">
+    <label>Assumed throughput-realisation loss parameter ρ</label>
+    <div class="hint">No TAVI-specific estimate was identified in this review. The Results page therefore
+    shows the structural response across the tested 0–60% range.</div>
+    <input type="range" id="rho" min="0" max="60" value="27.5" step="0.5">
+    <div class="val"><span>0% loss</span><b><span id="rhoV">27</span>%</b><span>60% loss</span></div>
+  </div>
+  <div class="effect" id="e4"></div>
+  <div class="note"><b>Why the default is 27.5%.</b> It is the midpoint of an investigator-chosen illustrative
+  20–35% range. It is not the average of the 35% and 71% observations above, and neither observation measures the
+  proportion of TAVI capacity lost. The default is retained only to reproduce an illustrative scenario; it is not
+  a planning estimate or preferred policy value.</div>
+
+  <div class="pill-nav"><button data-goto="p3">← Pillar 3</button><button data-goto="pS">Compare the systems →</button></div>
+</section>
+
+<!-- ================= RESULTS ================= -->
+<section class="page" id="p5">
+  <h2>Results</h2>
+  <p class="lead">What your four settings do to the queue.</p>
+  <div class="card tight" id="settings"></div>
+
+  <div class="stats">
+    <div class="stat uk"><div class="k">Time to clear the queue</div><div class="v" id="rTc">—</div><div class="n" id="rTcN"></div></div>
+    <div class="stat"><div class="k">People who die waiting</div><div class="v" id="rD">—</div><div class="n" id="rDN"></div></div>
+    <div class="stat good"><div class="k">Deaths averted vs S0</div><div class="v" id="rS">—</div><div class="n">against 3,035 under the minimal active-conversion comparator</div></div>
+  </div>
+
+  <canvas id="chart" height="230"></canvas>
+  <div class="note" style="margin-top:8px;">The line shows the queue shrinking over time. Where it reaches zero
+  is the time to clear.</div>
+  <h3>Comparator definitions</h3>
+  <table>
+    <thead><tr><th>Comparator</th><th>Settings</th><th>Effective extra capacity</th><th>Clearance</th><th>Deaths</th></tr></thead>
+    <tbody>
+      <tr><td><b>Literal no-change</b></td><td>capacity 0%; conversion 0%; ρ not operative</td><td>0/year</td><td>never</td><td>4,989</td></tr>
+      <tr><td><b>S0 minimal active-conversion</b></td><td>capacity 0%; conversion 15%; ρ=27.5%</td><td>425.756/year</td><td>1,675 days</td><td>3,035</td></tr>
+    </tbody>
+  </table>
+  <div class="note" style="margin-top:8px;"><b>Interpretation.</b> S0 is an assumed active comparator, not an
+  observed status quo. The 15% conversion and 27.5% throughput-realisation loss values are illustrative, not empirically
+  estimated causal effects. Every “deaths averted” result is conditional on using S0 as the reference.</div>
+
+  <h3>How much does each area gain?</h3>
+  <div id="geoOut"></div>
+
+  <h3>How certain is this?</h3>
+  <p>The uncertain inputs are the continuous annual waiting-list mortality hazard μ (central value 0.36;
+  reported interval 0.12–0.60) and the excess queue W₀ (4,989; interval 4,020–5,959). The source-style analysis
+  reconstructs normal distributions from those intervals, rejects and redraws non-positive values, and takes 10,000
+  positive-support draws. It reports the mean plus 2.5th and 97.5th percentiles. μ=0.36 is a continuous hazard and implies a 30.2% one-year death probability.
+  A fixed seed (20260816) makes the numerical experiment reproducible.</p>
+  <p>One honest boundary: this tests <i>input</i> uncertainty only. If the model's structure itself is wrong,
+  Monte Carlo will not reveal it — that is why the separate implementation-fidelity verification is reported.</p>
+  <button class="go" id="mcGo">Run it 10,000 times (seeded)</button>
+  <div id="mcOut"></div>
+  <button class="go" id="mcRobustGo" style="margin-top:8px;">Run robustness check (100,000 draws)</button>
+  <div id="mcRobustOut"></div>
+
+  <h3>How does the assumed throughput loss change the result?</h3>
+  <p>Because no TAVI-specific estimate was identified, the tool displays the model's structural response
+  across the tested 0–60% range rather than defending the default as an empirical value.</p>
+  <button class="go" id="swGo">Test every value</button>
+  <div id="swOut"></div>
+
+  <h3>Which input moves the answer most? (Figure 4.3 in the dissertation)</h3>
+  <p>One-at-a-time sensitivity around Scenario A (+20% capacity, 40% switched, ρ=0.275): each parameter is
+  swung across a stated range while the others stay fixed, and the swing in clearance time is recorded. The ranges
+  are printed with each bar, because a swing means nothing without its range.</p>
+  <button class="go" id="oatGo">Run the sensitivity analysis</button>
+  <div id="oatOut"></div>
+
+  <h3>What is the procedure-only outlay?</h3>
+  <p>This deliberately limited arithmetic multiplies the number treated before clearance by £26,145. It does not
+  treat operator caseload guidance as a staffing-productivity rule, and it does not estimate consultant FTEs.
+  It also omits the TAVI/SAVR cost mix, avoided surgery, labs, beds, nursing, devices, capital, quality-adjusted
+  life-years and discounting. It is therefore neither a budget-impact analysis nor a cost-effectiveness analysis.</p>
+  <button class="go" id="costGo">Run the partial cost arithmetic</button>
+  <div id="costOut"></div>
+
+  <h3>Structural diagnostic: why this cannot rank policies economically</h3>
+  <p>The grid search is retained only as a diagnostic. In this simplified engine, all three levers affect outcomes
+  through realised extra capacity T<sub>e</sub>, while the partial outlay is a fixed price per modelled treatment.
+  Equal T<sub>e</sub> therefore gives equal clinical outputs and equal partial outlay by construction. The grid is
+  not evidence that real policies have equal costs.</p>
+  <button class="go" id="gridGo">Run the structural diagnostic</button>
+  <div id="gridOut"></div>
+
+  <div class="pill-nav"><button data-goto="pS">← Evidence map</button><button data-goto="pM">The maths →</button></div>
+</section>
+
+
+<!-- ================= SCORE ================= -->
+<section class="page" id="pS">
+  <h2>England–Germany evidence map and secondary diagnostic scores</h2>
+  <p class="lead">Evidence coverage comes first. The scores are a transparent descriptive construction, not a
+  validated access index or a like-for-like national ranking.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0;">How this page connects to the rest of the tool</h3>
+    <p>The four pillar pages are operational domains chosen for this dissertation. They are loosely informed by
+    access literature, including Penchansky and Thomas (1981), but they are <b>not</b> the original five-A
+    framework: accommodation is omitted, and clinical guidance is not the original meaning of acceptability.
+    The domains are therefore named directly rather than presented as validated access dimensions.</p>
+    <table>
+      <thead><tr><th style="width:26%">Pillar page</th><th style="width:22%">Operational domain</th><th>The question</th></tr></thead>
+      <tbody>
+        <tr><td>1 · Guidance</td><td><b>Guidance</b></td><td>Who is eligible under the applicable guideline?</td></tr>
+        <tr><td>2 · Geography</td><td><b>Geography</b></td><td>Where is activity and access located?</td></tr>
+        <tr><td>3 · Capacity</td><td><b>Capacity</b></td><td>Can the pathway physically deliver more?</td></tr>
+        <tr><td>4 · Commissioning</td><td><b>Commissioning</b></td><td>How is approval and payment organised?</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-bottom:0;"><b>Scope warning.</b> The evidence mixes England-specific service data with some
+    UK-wide policy/economic evidence, while Germany is mostly national. Years and centre definitions differ.
+    Scores describe this assembled evidence set only; they do not measure true national access.</p>
+  </div>
+
+  <div class="note"><b>Currency and source note.</b> The TAVI-rate indicator uses the common-source 2023
+  <a href="https://www.escardio.org/data-science/public-health-data/esc-atlas-of-cardiology/">ESC Atlas</a>
+  values (UK 139.8 and Germany 311.8 per million). The German centre count uses the 65 certified centres shown by the
+  <a href="https://tavi.dgk.org/">DGK certification register</a> when accessed on 17 August 2026; the register labelled the list as current to 2 April 2026 (when rechecked on 29 August 2026 its home-page counter showed 66 centres, dated 13 August 2026, which leaves the rounded density at about 0.8 per million), and a DGK-certified centre
+  is not definitionally identical to an English implanting centre. The DACH waiting-time judgement comes from
+  the <a href="https://doi.org/10.3389/fcvm.2023.1227217">European TAVI Pathway Registry</a> and covers Germany,
+  Austria and Switzerland, not Germany alone.</div>
+
+  <h3>Primary result: evidence coverage</h3>
+  <div class="stats">
+    <div class="stat uk"><div class="k">England/UK populated indicators</div><div class="v">13/15</div><div class="n">87% of the selected evidence map</div></div>
+    <div class="stat"><div class="k">Germany populated indicators</div><div class="v" style="color:#c8842a">6/15</div><div class="n">40% of the selected evidence map</div></div>
+    <div class="stat"><div class="k">Indicators shared by both</div><div class="v">4/15</div><div class="n">guidance and geography only</div></div>
+  </div>
+  <div class="note"><b>Interpretation.</b> The unequal coverage and non-equivalent definitions prevent a defensible
+  national ranking. The domain scores below are retained only to expose how the selected rules and evidence combine.</div>
+
+  <h3>Secondary result: diagnostic domain scores</h3>
+  <p>Each constructed domain is scored from 1 to 5, where 5 is favourable under the stated anchors. The totals are shown for auditability, not as estimates or a national league table.</p>
+  <div id="bars"></div>
+
+  <div class="stats">
+    <div class="stat uk"><div class="k">England/UK four-domain score</div><div class="v" id="ukC">—</div><div class="n">internal diagnostic summary only</div></div>
+    <div class="stat"><div class="k">German four-domain score</div><div class="v" style="color:#c8842a;font-size:19px" id="deC">not calculated</div><div class="n">commissioning domain unavailable</div></div>
+    <div class="stat"><div class="k">Lowest England/UK domain</div><div class="v" style="font-size:19px" id="weak">—</div><div class="n">within this construction</div></div>
+  </div>
+
+  <div class="effect" id="scoreNote"></div>
+
+  <h3>Three questions any examiner should ask</h3>
+  <div class="card tight">
+    <p><b>1. Why is no German four-domain score reported?</b> No comparable German commissioning value was
+    identified. The tool leaves that domain missing instead of treating the absence of an identified formal
+    cost-per-QALY threshold as evidence of more favourable commissioning.</p>
+    <p><b>2. Can the remaining profiles rank the two systems?</b> No. The England/UK set has 13 populated indicators
+    and Germany 6, drawn from different years and sometimes different definitions. Only four indicators are shared,
+    across guidance and geography. Germany's capacity score of 4 rests on a DACH regional waiting-time judgement,
+    not a Germany-only measure. The domain profiles are retained for auditability, not national ranking.</p>
+    <p style="margin-bottom:0;"><b>3. Isn't there a contradiction in the England/UK commissioning score?</b> Yes, a
+    deliberate and acknowledged one: it includes the most favourable published cost-per-QALY figure (£16,979),
+    which the dissertation itself argues needs critical reading because it is manufacturer-funded. It is kept as
+    the best available published value and tagged with a caveat, and the tension is stated rather than hidden.</p>
+  </div>
+
+  <details>
+    <summary>Show all indicators and how each was scored</summary>
+    <p>Each raw figure is converted to the 1–5 scale using the min-max method explained on the maths page.
+    "n/a" means no published figure was found for that country. Missing indicators are dropped rather than
+    guessed, which is why the number of indicators differs between the two countries.</p>
+    <div id="fullTable"></div>
+  </details>
+
+  <div class="pill-nav"><button data-goto="p4">← Pillar 4</button><button data-goto="p5">Now see what changes →</button></div>
+</section>
+
+<!-- ================= MATHS ================= -->
+<section class="page" id="pM">
+  <h2>The maths</h2>
+  <p class="lead">Every equation used anywhere in this tool, where it comes from, and why it was chosen.</p>
+
+  <div class="note">The deterministic waiting-list equations are taken from a published, peer-reviewed paper; this tool itself has not been peer reviewed.
+  The four-domain score, its indicator selection, anchors, missing-data handling and policy interpretation are
+  dissertation constructions. Standard normalisation and aggregation equations do not validate those choices.</div>
+
+  <h3>Part A — Diagnostic policy-and-capacity composite</h3>
+
+  <div class="card">
+    <p><b>A1. Putting different units on the same scale</b></p>
+    <p class="eq">score = 1 + 4 × (value − worst) / (best − worst)</p>
+    <p><b>Why.</b> The indicators are measured in incompatible units: procedures per million, days, percentages,
+    pounds per quality-adjusted life year. They cannot be averaged as they stand. This converts each one to a
+    common 1–5 scale, where 1 is the worst plausible value and 5 the best. Indicators where a lower number is
+    better, such as waiting days, are inverted so that 5 always means good.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Standard min-max normalisation, as set out in the OECD handbook on
+    building composite indicators (Nardo et al., 2008).</p>
+  </div>
+
+  <div class="card">
+    <p><b>A2. Combining indicators within one dimension</b></p>
+    <p class="eq">dimension score = (sum of its indicator scores) ÷ (number of indicators available)</p>
+    <p><b>Why.</b> A plain average is used inside a dimension because the indicators there measure the same
+    underlying thing in different ways. Dividing by the number <i>available</i>, rather than the number
+    possible, is what allows a country with missing data to be scored at all. It is also the source of the
+    weakness flagged on the previous page.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Nardo et al. (2008).</p>
+  </div>
+
+  <div class="card">
+    <p><b>A3. Combining four available constructed domains into one number</b></p>
+    <p class="eq">composite = (D₁ × D₂ × D₃ × D₄)<sup>1/4</sup></p>
+    <p><b>Why this and not a plain average.</b> A geometric mean reduces full compensation between domains. The tool
+    calculates this secondary summary only for the England/UK evidence set, where all four domain scores are
+    available. No German total is calculated because commissioning evidence is missing. This is a modelling choice,
+    not proof that the domains are valid or exact bottlenecks.</p>
+    <p style="margin-bottom:0;"><b>Sources and adaptation.</b> Penchansky and Thomas (1981) motivate thinking
+    about multiple dimensions of access, but their original framework has five dimensions and differs from this
+    four-domain operational adaptation. Geometric aggregation is supported as a composite-indicator technique by
+    Nardo et al. (2008) and discussed in the HDI context by Klugman, Rodríguez and Choi (2011).</p>
+  </div>
+
+  <div class="card">
+    <p><b>A4. Sensitivity and comparability boundary</b></p>
+    <p class="eq">Shared-indicator check = four indicators across guidance and geography only</p>
+    <p><b>Why.</b> Arithmetic and user-weighted alternatives can test the England/UK construction, but they cannot
+    create missing German commissioning or comparable capacity evidence. The four shared indicators do not
+    reproduce the four-domain construct and are therefore descriptive only.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Sensitivity testing of composite indices is recommended practice
+    (Saisana, Saltelli and Tarantola, 2005); the decision not to calculate a German four-domain total is a
+    missing-data safeguard used in this dissertation.</p>
+  </div>
+
+  <h3>Part B — Modelling the queue (the simulation)</h3>
+
+  <div class="card">
+    <p><b>B1. How the queue changes over time</b></p>
+    <p class="eq">dW/dt = f − r<sub>T</sub> − r<sub>S</sub> − μW</p>
+    <p><b>In words.</b> The change in the queue equals new patients arriving, minus those treated by TAVI, minus
+    those treated by surgery, minus those who die while waiting.</p>
+    <p><b>Meaning of μ.</b> μ is a continuous annual mortality hazard. At μ=0.36, the implied one-year death
+    probability is 1−e<sup>−0.36</sup>=30.2%; describing it as “36% die within a year” would be incorrect.</p>
+    <p><b>Why.</b> This is the standard way to describe a stock that fills and drains at the same time. It is the
+    minimum structure needed to capture the fact that waiting itself kills people, which a simple
+    "capacity versus demand" calculation misses entirely.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Stickels et al. (2022), <i>BMJ Open</i>.</p>
+  </div>
+
+  <div class="card">
+    <p><b>B2. Extra capacity</b></p>
+    <p class="eq">T<sub>e</sub> = r<sub>T</sub> + r<sub>S</sub> − f</p>
+    <p><b>Why.</b> Only capacity <i>above</i> the rate needed to keep pace with new arrivals actually shortens
+    the queue. Capacity below that line merely stops it growing. T<sub>e</sub> is the surplus, and it is the
+    single quantity all four pillars act upon.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Stickels et al. (2022).</p>
+  </div>
+
+  <div class="card">
+    <p><b>B3. Time to clear the queue</b></p>
+    <p class="eq">t<sub>c</sub> = ln(1 + μW₀ / T<sub>e</sub>) ÷ μ</p>
+    <p><b>Why a logarithm appears.</b> This is the exact solution of equation B1, not an approximation. The
+    logarithm is the reason the model shows diminishing returns: each extra unit of capacity clears the queue by
+    a smaller amount than the one before. Within the option set examined, that feature contributes to diminishing returns; it does not establish
+    a universal cost ranking.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Stickels et al. (2022), derived in their supplementary material.</p>
+  </div>
+
+  <div class="card">
+    <p><b>B4. How many die waiting</b></p>
+    <p class="eq">m(t<sub>c</sub>) = W₀ − T<sub>e</sub> × t<sub>c</sub></p>
+    <p><b>Why.</b> Everyone in the queue leaves it one of two ways: treated, or dead. The second term counts
+    those treated. Whatever is left is the second group: modelled deaths.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Stickels et al. (2022).</p>
+  </div>
+
+  <div class="card">
+    <p><b>B5. The shape of the queue over time (the chart on the Results page)</b></p>
+    <p class="eq">W(t) = (W₀ + T<sub>e</sub>/μ) × e<sup>−μt</sup> − T<sub>e</sub>/μ</p>
+    <p><b>Why.</b> Equation B3 gives only the end point. This gives the whole path, so the queue can be drawn
+    shrinking rather than reported as a single number. It is the same equation solved for W instead of t.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Standard solution of equation B1.</p>
+  </div>
+
+  <h3>Part C — What this dissertation added</h3>
+
+  <div class="card">
+    <p><b>C1. Capacity created by the two levers together</b></p>
+    <p class="eq">T<sub>e</sub> = cap × (r<sub>S0</sub> + r<sub>T0</sub>) + conv × r<sub>S0</sub> × (1 + cap) × (ratio − 1)</p>
+    <p><b>Why the second term looks complicated.</b> Because the two levers interact. If you first grow the
+    service by 20%, there are then more surgical patients available to switch. So the switching lever acts on the
+    <i>enlarged</i> pool, not the original one, which is what "(1 + cap)" represents. Adding the two effects
+    separately would understate their combined value.</p>
+    <p>The "ratio" is 3:2, meaning three TAVI procedures fit in the time of two surgeries. Only the difference
+    between them, "(ratio − 1)", is new capacity.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Reproduced from the worked example in Stickels et al.'s (2022)
+    supplementary material. An earlier version of this tool added the two terms separately, which understated
+    the interaction and is now corrected.</p>
+  </div>
+
+  <div class="card">
+    <p><b>C2. Throughput-realisation loss</b> <span class="tag t-assum">this dissertation's extension</span></p>
+    <p class="eq">T<sub>e</sub> realised = T<sub>e</sub> theoretical × (1 − ρ)</p>
+    <p><b>Why.</b> The published model applies the capacity it creates. This extension instead tests a proportional
+    loss between theoretical and realised extra throughput. It does not assign that loss to Blueteq or any other
+    mechanism.</p>
+    <p style="margin-bottom:0;"><b>Honest caveat.</b> No TAVI-specific estimate was identified in this review.
+    The Results page therefore reports the structural response across the tested 0–60% range.</p>
+  </div>
+
+  <div class="card">
+    <p><b>C3. Splitting England into three groups of areas</b> <span class="tag t-assum">this dissertation's extension</span></p>
+    <p class="eq">share of new capacity = activity-weighted area share &nbsp;&nbsp;<i>or</i>&nbsp;&nbsp; area-count share</p>
+    <p><b>Why two versions.</b> The first allocates by representative activity. The second allocates both backlog
+    and capacity by the number of former CCG areas, implicitly treating all areas as equal in population and need.
+    Equal clearance times under the second rule are therefore an algebraic consequence, not a population-based
+    empirical result.</p>
+    <p style="margin-bottom:0;"><b>Source and limitation.</b> Tier rates are illustrative summaries derived from
+    access bands in Aktaa et al. (2024). Real population, age and clinical-need weights are not included.</p>
+  </div>
+
+  <div class="card">
+    <p><b>C4. Turning a published confidence interval into a spread of values</b></p>
+    <p class="eq">standard deviation = (upper limit − lower limit) ÷ (2 × 1.96)</p>
+    <p><b>Why.</b> This reconstructs a normal-distribution standard deviation from a reported 95% interval. The
+    primary Monte Carlo retains the reconstructed normal distributions but rejects and redraws any non-positive
+    backlog or mortality-hazard value, runs 10,000 simulations, and reports the mean with the 2.5th and 97.5th percentiles.
+    A 100,000-draw convergence check tests numerical stability. A second 100,000-draw sensitivity analysis uses
+    positive lognormal inputs matched to the same mean and standard deviation, testing whether conclusions depend on
+    the normal shape.</p>
+    <p style="margin-bottom:0;"><b>Source.</b> Standard statistical conversion and the resampling approach
+    described by Stickels et al. (2022), with positive-support rejection sampling added because neither W₀ nor μ can be negative.</p>
+  </div>
+
+  <div class="card">
+    <p><b>C5. Procedure-only partial arithmetic</b> <span class="tag t-assum">not an economic evaluation</span></p>
+    <p class="eq">partial procedure outlay = (W₀ − modelled deaths) × £26,145</p>
+    <p><b>Why this was narrowed.</b> The professional-society threshold of 100 procedures per operator is an
+    experience/caseload standard, not evidence that one additional consultant creates 100 procedures per year.
+    The tool retains the removal of consultant-equivalent counts and the £161,600 earnings proxy.</p>
+    <p style="margin-bottom:0;"><b>Boundary.</b> The remaining multiplication is descriptive only. It treats the
+    modelled treated total at a single procedure price and omits TAVI/SAVR mix, avoided surgery, staff, labs,
+    beds, nursing, devices, capital, QALYs, discounting and a common analytic horizon. It must not be used to rank
+    policies, claim cost-effectiveness or claim conservatism.</p>
+  </div>
+
+  <h3>References for the equations and opening clinical context</h3>
+  <table>
+    <thead><tr><th>Used in</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>B1–B5, C1, C4</td><td>Stickels, C.P. et al. (2022) 'Aortic stenosis post-COVID-19: a mathematical model on waiting lists and mortality', <i>BMJ Open</i>, 12(6), e059309. <a href="https://doi.org/10.1136/bmjopen-2021-059309">doi:10.1136/bmjopen-2021-059309</a></td></tr>
+      <tr><td>A1, A2, A3</td><td>Nardo, M. et al. (2008) <i>Handbook on Constructing Composite Indicators</i>. OECD. <a href="https://doi.org/10.1787/9789264043466-en">doi:10.1787/9789264043466-en</a></td></tr>
+      <tr><td>A3 (adapted concept)</td><td>Penchansky, R. and Thomas, J.W. (1981) 'The concept of access', <i>Medical Care</i>, 19(2), pp.127–140. <a href="https://doi.org/10.1097/00005650-198102000-00001">doi:10.1097/00005650-198102000-00001</a></td></tr>
+      <tr><td>A3 (precedent)</td><td>Klugman, J., Rodríguez, F. and Choi, H.-J. (2011) 'The HDI 2010', <i>Journal of Economic Inequality</i>, 9, pp.249–288. <a href="https://doi.org/10.1007/s10888-011-9178-z">doi:10.1007/s10888-011-9178-z</a></td></tr>
+      <tr><td>A4</td><td>Saisana, M., Saltelli, A. and Tarantola, S. (2005) 'Uncertainty and sensitivity analysis techniques', <i>JRSS: Series A</i>, 168(2), pp.307–323. <a href="https://doi.org/10.1111/j.1467-985X.2005.00350.x">doi:10.1111/j.1467-985X.2005.00350.x</a></td></tr>
+      <tr><td>C3</td><td>Aktaa, S. et al. (2024) 'Geographical inequality in access to aortic valve intervention in England', <i>Interventional Cardiology</i>, 19, e15. <a href="https://doi.org/10.15420/icr.2024.19">doi:10.15420/icr.2024.19</a></td></tr>
+      <tr><td>C5</td><td>£26,145 procedure-cost input as cited via Blackman et al. (2025); retained only for partial descriptive arithmetic. <a href="https://doi.org/10.1007/s10198-024-01739-2">doi:10.1007/s10198-024-01739-2</a></td></tr>
+      <tr><td>Opening natural-history statement</td><td>Ali, N. et al. (2021) 'Valve for Life: tackling the deficit in transcatheter treatment of heart valve disease in the UK', <i>Open Heart</i>, 8, e001547. <a href="https://doi.org/10.1136/openhrt-2020-001547">doi:10.1136/openhrt-2020-001547</a></td></tr>
+      <tr><td>155.4-day single-centre pathway figure</td><td>Shrestha, O. et al. (2025) 'Reducing delays in aortic stenosis treatment: a clinical audit of the transcatheter aortic valve implantation (TAVI) pathway and quality improvement initiatives', <i>Cureus</i>, 17(11), e96731. <a href="https://doi.org/10.7759/cureus.96731">doi:10.7759/cureus.96731</a></td></tr>
+      <tr><td>71% contextual IFR decline rate</td><td>Sanghvi, S. et al. (2023) 'Are high-cost drug funding mechanisms fit for purpose? A retrospective study of individual funding requests in an NHS tertiary hospital', <i>British Journal of Clinical Pharmacology</i>, 89(1), pp.11–19. This is a separate drug process, not TAVI. <a href="https://doi.org/10.1111/bcp.14409">doi:10.1111/bcp.14409</a></td></tr>
+      <tr><td>Mandatory Blueteq approval and interim policy status</td><td>NHS England (2023) <i>TAVI and SAVR position statement</i>. <a href="https://www.england.nhs.uk/long-read/tavi-and-savr-position-statement/">NHS England position statement</a></td></tr>
+    </tbody>
+  </table>
+
+  <div class="pill-nav"><button data-goto="p5">← Results</button><button data-goto="p6">Is it accurate? →</button></div>
+</section>
+
+<!-- ================= VERIFICATION ================= -->
+<section class="page" id="p6">
+  <h2>Is it accurate? — implementation-fidelity verification</h2>
+  <p class="lead"><b>Not external clinical validation.</b> The deterministic engine is checked against all seven published scenarios and both reported
+  endpoints: clearance time and deaths while waiting.</p>
+
+  <div class="card">
+    <p style="margin-bottom:0;">The source is Stickels et al. (2022), published in <i>BMJ Open</i>. They built a
+    model of the aortic stenosis waiting list after COVID-19. This tool implements their deterministic equations,
+    then adds explicitly labelled dissertation extensions. The table compares point estimates and relative
+    deviations for all seven scenarios. Agreement here checks implementation fidelity; it does not validate the
+    model against independent contemporary patients.</p>
+  </div>
+
+  <table id="valTable">
+    <thead><tr><th>Published scenario</th><th>Tool: days</th><th>Paper: days (95% range)</th><th>Δ days</th><th>Tool: deaths</th><th>Paper: deaths (95% range)</th><th>Δ deaths</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="valSum" class="effect"></div>
+
+  <details>
+    <summary>What the equations actually say</summary>
+    <p><b>dW/dt = f − r<sub>T</sub> − r<sub>S</sub> − μW.</b> The queue grows as new patients arrive (<i>f</i>),
+    and shrinks as patients are treated by TAVI (<i>r<sub>T</sub></i>) or surgery (<i>r<sub>S</sub></i>), or die
+    while waiting (<i>μ</i>).</p>
+    <p><b>t<sub>c</sub> = ln(1 + μW₀ / T<sub>e</sub>) / μ.</b> The time to clear the queue, where
+    <i>W₀</i> is how many are waiting at the start and <i>T<sub>e</sub></i> is the extra capacity created.</p>
+    <p><b>m(t<sub>c</sub>) = W₀ − T<sub>e</sub> · t<sub>c</sub>.</b> Everyone in the queue is either treated or
+    dies; this counts the second group.</p>
+    <p style="margin-bottom:0;">The logarithm is why doubling the extra capacity does not halve the deaths. Each extra
+    unit of capacity helps slightly less than the one before.</p>
+  </details>
+
+  <details>
+    <summary>What this tool cannot tell you</summary>
+    <p>The number waiting is a figure from November 2020. No newer published figure exists, so every result
+    describes clearing a queue of that size, not today's queue.</p>
+    <p>Everyone in the queue is treated as clinically identical. Real patients differ in urgency and risk.</p>
+    <p>Reproducing the published results supports faithful implementation of the deterministic equations. It does not prove the underlying
+    model is right, or that it still applies in 2026.</p>
+    <p style="margin-bottom:0;">The procedure-only outlay omits major resource categories and contains no
+    quality-of-life adjustment, common horizon or discounting. It cannot rank policies or satisfy a formal
+    budget-impact or health-economic assessment.</p>
+  </details>
+
+  <div class="pill-nav"><button data-goto="p0">← Back to start</button></div>
+</section>
+
+</div>
+
+<script>
+/* ---------- engine (unchanged, verified against the published paper) ---------- */
+var rS0=7830, rT0=5197, W0=4989, mu=0.36, RATIO=1.5;
+function Te(cap,conv,rho){ return (cap*(rS0+rT0) + conv*rS0*(1+cap)*(RATIO-1))*(1-rho); }
+function solve(w,m,te){
+  if(!(te>0)) return {tc:Infinity, deaths:w};
+  if(m<1e-9) return {tc:w/te, deaths:0};
+  var tc=Math.log(1+(m*w)/te)/m;
+  return {tc:tc, deaths:Math.max(0,w-te*tc)};
+}
+var fmt=function(n){ return Math.round(n).toLocaleString(); };
+
+/* ---------- navigation ---------- */
+function show(id){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.toggle('on', p.id===id); });
+  document.querySelectorAll('nav button').forEach(function(b){ b.classList.toggle('on', b.dataset.p===id); });
+  window.scrollTo(0,0);
+  if(id==='p5') results();
+}
+document.querySelectorAll('nav button').forEach(function(b){ b.onclick=function(){ show(b.dataset.p); }; });
+document.querySelectorAll('[data-goto]').forEach(function(b){ b.onclick=function(){ show(b.dataset.goto); }; });
+
+/* ---------- read the four levers ---------- */
+var $=function(id){ return document.getElementById(id); };
+function get(){
+  return { cap:+$('cap').value/100, conv:+$('conv').value/100,
+           rho:+$('rho').value/100, rule:$('rule').value };
+}
+
+/* ---------- live feedback on each pillar page ---------- */
+function refresh(){
+  var g=get();
+  $('capV').textContent=$('cap').value;
+  $('convV').textContent=$('conv').value;
+  $('rhoV').textContent=$('rho').value;
+
+  var fromConv = g.conv*rS0*(1+g.cap)*(RATIO-1);
+  $('e1').innerHTML = g.conv===0
+    ? 'No patients are being switched, so this lever is adding nothing.'
+    : 'Switching <b>'+$('conv').value+' in 100</b> surgical patients to TAVI frees up enough theatre time for about <b>'+fmt(fromConv)+' extra procedures a year</b>.';
+
+  var teNow=Te(g.cap,g.conv,g.rho);
+  var spreadCap = spread(teNow,'capacity');
+  $('e2').innerHTML = g.rule==='equalArea'
+    ? 'Under the illustrative equal-sized-area rule, backlog and new capacity use the same area-count shares, so every compartment clears at the same speed and the modelled spread is <b>0 days by construction</b>.'
+    : 'Sharing capacity in proportion to what areas already do keeps the gap open. Best and worst areas would still be <b>'+(spreadCap!==null?fmt(spreadCap)+' days':'—')+' apart</b>.';
+
+  var fromCap = g.cap*(rS0+rT0);
+  $('e3').innerHTML = g.cap===0
+    ? 'No extra capacity is being added.'
+    : 'A <b>'+$('cap').value+'%</b> increase means about <b>'+fmt(fromCap)+' more procedures a year</b>. The workforce, lab, bed and capital package needed to deliver this is not estimated by this tool.';
+
+  var theoretical=Te(g.cap,g.conv,0), lost=theoretical-teNow;
+  $('e4').innerHTML = theoretical<=0
+    ? 'No extra capacity is being created yet by the other levers, so there is nothing for this gate to block.'
+    : (g.rho===0
+      ? 'Nothing is blocked. All the extra capacity created by the other three levers gets used.'
+      : 'With ρ set to <b>'+$('rho').value+'%</b>, the model removes <b>'+fmt(lost)+'</b> of the <b>'+fmt(theoretical)+'</b> theoretical extra procedures. This is conditional arithmetic, not an observed TAVI-specific effect.');
+}
+['cap','conv','rho'].forEach(function(id){ $(id).oninput=function(){
+  if(id==='conv') $('regime').value='manual';
+  refresh(); }; });
+$('rule').onchange=refresh;
+$('regime').onchange=function(){
+  var v=$('regime').value;
+  if(v==='nice') $('conv').value=15;
+  if(v==='esc')  $('conv').value=40;
+  refresh();
+};
+
+/* ---------- geography ---------- */
+var REG=[['Lowest access',30/106,50],['Middle',54/106,112],['Highest access',22/106,180]];
+function tiers(te,rule){
+  var tw=0,tp=0; REG.forEach(function(r){ tw+=r[1]*r[2]; tp+=r[1]; });
+  return REG.map(function(r){
+    var share = rule==='equalArea' ? r[1]/tp : (r[1]*r[2])/tw;
+    var s=solve(W0*r[1], mu, te*share);
+    return {name:r[0], tc:s.tc*365, deaths:s.deaths};
+  });
+}
+function spread(te,rule){
+  var t=tiers(te,rule).map(function(x){ return x.tc; }).filter(isFinite);
+  return t.length>1 ? Math.max.apply(null,t)-Math.min.apply(null,t) : null;
+}
+
+/* ---------- results ---------- */
+function results(){
+  var g=get(), te=Te(g.cap,g.conv,g.rho), s=solve(W0,mu,te);
+  $('settings').innerHTML='<b>Your settings:</b> '+$('conv').value+' in 100 patients switched · +'
+    +$('cap').value+'% capacity · '+$('rho').value+'% throughput-realisation loss · capacity shared '
+    +(g.rule==='equalArea'?'by the illustrative equal-sized-area rule':'in proportion to current activity')+'.';
+  var days=isFinite(s.tc)? s.tc*365 : null;
+  $('rTc').textContent = days!==null ? fmt(days)+' days' : 'never';
+  $('rTcN').textContent = days!==null ? 'about '+(days/365).toFixed(1)+' years' : 'nothing is being added';
+  $('rD').textContent = fmt(s.deaths);
+  $('rDN').textContent = 'out of 4,989 waiting';
+  var sq=solve(W0,mu,Te(0,0.15,0.275));
+  $('rS').textContent = fmt(Math.max(0,sq.deaths-s.deaths));
+  drawChart(te);
+  var t=tiers(te,g.rule), sp=spread(te,g.rule);
+  $('geoOut').innerHTML='<table><thead><tr><th>Area group</th><th>Queue cleared in</th><th>Deaths</th></tr></thead><tbody>'
+    + t.map(function(r){ return '<tr><td>'+r.name+'</td><td>'+(isFinite(r.tc)?fmt(r.tc)+' days':'never')+'</td><td>'+fmt(r.deaths)+'</td></tr>'; }).join('')
+    + '</tbody></table><div class="effect">'+(sp===null
+      ? 'Nothing is being added yet, so no area clears its queue. Add capacity or switch patients first.'
+      : 'Gap between best and worst: <b>'+fmt(sp)+' days</b>. '+(sp<1
+          ? 'The equal-sized-area construction removes the modelled spread algebraically; it is not based on actual population or need.'
+          : 'The alternative equal-sized-area rule closes this modelled spread by construction.'))+'</div>';
+}
+function drawChart(te){
+  var c=$('chart'), x=c.getContext('2d');
+  var w=c.width=c.clientWidth, h=c.height=230, pad=38;
+  x.clearRect(0,0,w,h);
+  var s=solve(W0,mu,te), maxD=isFinite(s.tc)? s.tc*365*1.1 : 1500;
+  x.strokeStyle='#dfe3e8'; x.beginPath(); x.moveTo(pad,10); x.lineTo(pad,h-24); x.lineTo(w-10,h-24); x.stroke();
+  x.fillStyle='#5c6470'; x.font='11px sans-serif';
+  x.fillText('patients waiting',4,14); x.fillText('0',pad-8,h-10); x.fillText(fmt(maxD)+' days',w-80,h-10);
+  x.strokeStyle='#2f6fb8'; x.lineWidth=2.5; x.beginPath();
+  for(var i=0;i<=120;i++){
+    var t=(maxD/365)*(i/120), W = te>0 ? Math.max(0,(W0+te/mu)*Math.exp(-mu*t)-te/mu) : W0;
+    var px=pad+(i/120)*(w-pad-10), py=10+(1-W/W0)*(h-34);
+    i?x.lineTo(px,py):x.moveTo(px,py);
+  }
+  x.stroke();
+}
+
+/* ---------- Monte Carlo ---------- */
+var MC_SEED=20260816, MC_N=10000, MC_ROBUST_N=100000;
+function mulberry32(a){ return function(){ var t=a+=0x6D2B79F5; t=Math.imul(t^t>>>15,t|1);
+  t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; }; }
+function mcRun(te,n,dist){
+  n=n||MC_N; dist=dist||'normal';
+  var rnd=mulberry32(MC_SEED), sdW=(5959-4020)/(2*1.96), sdM=(0.60-0.12)/(2*1.96);
+  var rejectW=0, rejectM=0;
+  function gauss(){ var u=rnd()||1e-9, v=rnd()||1e-9;
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+  function positiveNormal(centre,sd,which){ var x;
+    do { x=centre+sd*gauss(); if(!(x>0)){ if(which==='w') rejectW++; else rejectM++; } } while(!(x>0));
+    return x;
+  }
+  function logParams(mean,sd){ var variance=Math.log(1+(sd*sd)/(mean*mean));
+    return {m:Math.log(mean)-variance/2,s:Math.sqrt(variance)}; }
+  var lpW=logParams(W0,sdW), lpM=logParams(mu,sdM);
+  function positiveLognormal(p){ return Math.exp(p.m+p.s*gauss()); }
+  var tcs=[], ds=[];
+  for(var i=0;i<n;i++){
+    var w=dist==='lognormal' ? positiveLognormal(lpW) : positiveNormal(W0,sdW,'w');
+    var m=dist==='lognormal' ? positiveLognormal(lpM) : positiveNormal(mu,sdM,'m');
+    var s=solve(w,m,te);
+    if(isFinite(s.tc)){ tcs.push(s.tc*365); ds.push(s.deaths); }
+  }
+  tcs.sort(function(a,b){return a-b;}); ds.sort(function(a,b){return a-b;});
+  function mean(a){ return a.reduce(function(p,x){return p+x;},0)/a.length; }
+  return {tcs:tcs, ds:ds, meanTc:mean(tcs), meanD:mean(ds), rejectW:rejectW, rejectM:rejectM};
+}
+function mcQ(a,p){ return a[Math.floor((a.length-1)*p)]; }
+$('mcGo').onclick=function(){
+  var g=get(), te=Te(g.cap,g.conv,g.rho);
+  if(!(te>0)){ $('mcOut').innerHTML='<div class="note">Nothing is being added, so there is nothing to test. Add some capacity or switch some patients first.</div>'; return; }
+  var r=mcRun(te,MC_N,'normal');
+  $('mcOut').innerHTML='<div class="effect">Across 10,000 positive-support normal draws with non-positive values redrawn (seed 20260816), mean clearance time is <b>'
+    +fmt(r.meanTc)+' days</b>; the 2.5th–97.5th percentile interval is '+fmt(mcQ(r.tcs,.025))+'–'+fmt(mcQ(r.tcs,.975))
+    +' days. Mean deaths are <b>'+fmt(r.meanD)+'</b>; the percentile interval is '+fmt(mcQ(r.ds,.025))+'–'+fmt(mcQ(r.ds,.975))
+    +'. Rejections: '+r.rejectW+' backlog and '+r.rejectM+' mortality-hazard draws. This is parameter uncertainty under the assumed model, not a prediction interval for current NHS outcomes.</div>';
+};
+$('mcRobustGo').onclick=function(){
+  $('mcRobustOut').innerHTML='<div class="note">Running the fixed-seed robustness analysis…</div>';
+  setTimeout(function(){
+    var teA=Te(.20,.40,.275), teB=Te(.40,.40,0);
+    var a10=mcRun(teA,MC_N,'normal'), b10=mcRun(teB,MC_N,'normal');
+    var aN=mcRun(teA,MC_ROBUST_N,'normal'), bN=mcRun(teB,MC_ROBUST_N,'normal');
+    var aL=mcRun(teA,MC_ROBUST_N,'lognormal'), bL=mcRun(teB,MC_ROBUST_N,'lognormal');
+    function row(shape,scenario,r){ return '<tr><td>'+shape+'</td><td>'+scenario+'</td><td>'+fmt(r.meanTc)+' ('+fmt(mcQ(r.tcs,.025))+'–'+fmt(mcQ(r.tcs,.975))+')</td><td>'+fmt(r.meanD)+' ('+fmt(mcQ(r.ds,.025))+'–'+fmt(mcQ(r.ds,.975))+')</td></tr>'; }
+    var maxDayMove=Math.max(Math.abs(aN.meanTc-a10.meanTc),Math.abs(bN.meanTc-b10.meanTc));
+    var maxDeathMove=Math.max(Math.abs(aN.meanD-a10.meanD),Math.abs(bN.meanD-b10.meanD));
+    $('mcRobustOut').innerHTML='<table><thead><tr><th>Input distribution (100,000 draws)</th><th>Scenario</th><th>Clearance days: mean (2.5%–97.5%)</th><th>Deaths: mean (2.5%–97.5%)</th></tr></thead><tbody>'
+      +row('Positive-support normal','A',aN)+row('Positive-support normal','B',bN)
+      +row('Moment-matched lognormal','A',aL)+row('Moment-matched lognormal','B',bL)
+      +'</tbody></table><div class="effect"><b>Convergence:</b> increasing the primary analysis from 10,000 to 100,000 draws moved a scenario mean by at most '
+      +maxDayMove.toFixed(1)+' day and '+maxDeathMove.toFixed(1)+' deaths. <b>Distributional robustness:</b> the positive lognormal alternative preserves each input mean and standard deviation; it changes tail intervals but leaves rounded means and the A-versus-B ordering materially unchanged. The scenarios share the same seeded random stream. This checks simulation stability under two chosen input shapes; it does not address structural uncertainty or validate current NHS outcomes. Primary-normal rejections at 100,000 draws: '+aN.rejectW+' backlog and '+aN.rejectM+' mortality-hazard values.</div>';
+  },20);
+};
+
+/* ---------- rho sweep ---------- */
+$('swGo').onclick=function(){
+  var g=get(), rows=[], ref=solve(W0,mu,Te(g.cap,g.conv,0));
+  if(!isFinite(ref.tc)){ $('swOut').innerHTML='<div class="note">Add some capacity or switch some patients first, then this test will work.</div>'; return; }
+  for(var r=0;r<=0.6001;r+=0.05){
+    var s=solve(W0,mu,Te(g.cap,g.conv,r));
+    rows.push({r:r, d:s.deaths, extra:s.deaths-ref.deaths});
+  }
+  $('swOut').innerHTML='<table><thead><tr><th>Share blocked</th><th>Deaths</th><th>Extra deaths vs nothing blocked</th></tr></thead><tbody>'
+    + rows.map(function(x){ return '<tr><td>'+Math.round(x.r*100)+'%</td><td>'+fmt(x.d)+'</td><td>'+(x.extra>0?'+':'')+fmt(x.extra)+'</td></tr>'; }).join('')
+    + '</tbody></table><div class="effect">Within this equation, increasing ρ always reduces realised capacity and therefore increases modelled deaths. '
+    + 'At ρ=5%, the conditional difference is <b>'+fmt(rows[1].extra)+' additional modelled deaths</b> versus ρ=0. This monotonicity is built into the model and does not estimate the real value or causal effect of ρ.</div>';
+};
+
+/* ---------- one-at-a-time sensitivity (Figure 4.3) ---------- */
+$('oatGo').onclick=function(){
+  var A={c:.20,v:.40,r:.275};
+  function d(c,v,r){ var s=solve(W0,mu,Te(c,v,r)); return s.tc*365; }
+  var base=d(A.c,A.v,A.r);
+  var rows=[
+    {n:'Capacity lever (+5% to +35%)', lo:d(.05,A.v,A.r), hi:d(.35,A.v,A.r)},
+    {n:'Throughput-realisation loss ρ (0.125 to 0.425)', lo:d(A.c,A.v,.125), hi:d(A.c,A.v,.425)},
+    {n:'W₀ backlog (95% CI 4,020–5,959)', lo:solve(4020,mu,Te(A.c,A.v,A.r)).tc*365, hi:solve(5959,mu,Te(A.c,A.v,A.r)).tc*365},
+    {n:'μ continuous mortality hazard (interval 0.12–0.60)', lo:solve(W0,0.12,Te(A.c,A.v,A.r)).tc*365, hi:solve(W0,0.60,Te(A.c,A.v,A.r)).tc*365},
+    {n:'Conversion lever (25% to 55%)', lo:d(A.c,.25,A.r), hi:d(A.c,.55,A.r)}
+  ].map(function(x){ x.min=Math.min(x.lo,x.hi); x.max=Math.max(x.lo,x.hi); x.sw=x.max-x.min; return x; });
+  rows.sort(function(a,b){ return b.sw-a.sw; });
+  var lo=Math.min.apply(null,rows.map(function(x){return x.min;}))-30;
+  var hi=Math.max.apply(null,rows.map(function(x){return x.max;}))+30;
+  var html='<div style="margin:10px 0;">';
+  rows.forEach(function(x){
+    var L=(x.min-lo)/(hi-lo)*100, Wd=(x.max-x.min)/(hi-lo)*100;
+    html+='<div style="margin:7px 0;"><div style="display:flex;justify-content:space-between;font-size:13px;">'
+      +'<span>'+x.n+'</span><b>swing '+fmt(x.sw)+' days</b></div>'
+      +'<div style="height:16px;background:#eef1f5;border-radius:4px;position:relative;">'
+      +'<div style="position:absolute;left:'+L+'%;width:'+Wd+'%;height:100%;background:#2f6fb8;border-radius:4px;"></div>'
+      +'<div style="position:absolute;left:'+((base-lo)/(hi-lo)*100)+'%;width:2px;height:100%;background:#222;"></div>'
+      +'</div></div>';
+  });
+  html+='<div style="font-size:12px;color:#5c6470;">Black line = Scenario A itself ('+fmt(base)+' days). Bars sorted by swing.</div></div>'
+    +'<div class="effect">Ordering: capacity ('+fmt(rows[0].sw)+'d) > throughput-realisation loss > W₀ > μ > conversion. These are the corrected figures reported in Figure 4.3 of the dissertation, each with its range stated.</div>';
+  $('oatOut').innerHTML=html;
+};
+
+/* ---------- procedure-only partial cost arithmetic ---------- */
+var PROC=26145;
+function budget(c,v,r){
+  var te=Te(c,v,r), s=solve(W0,mu,te);
+  if(!isFinite(s.tc)) return null;
+  var treated=W0-s.deaths;
+  return {te:te, tc:s.tc, deaths:s.deaths, treated:treated, cost:treated*PROC};
+}
+$('costGo').onclick=function(){
+  var rows=[
+    {n:'Stickels benchmark (+20% cap, 40% switched, ρ=0)', b:budget(.20,.40,0)},
+    {n:'Scenario A (+20% cap, 40% switched, ρ=0.275)',     b:budget(.20,.40,.275)},
+    {n:'Scenario B (+40% cap, 40% switched, ρ=0)',         b:budget(.40,.40,0)}
+  ];
+  var html='<table><thead><tr><th>Scenario</th><th>Realised Tₑ/year</th><th>Clearance</th><th>Treated before clearance</th><th>Modelled deaths</th><th>Procedure-only partial outlay</th></tr></thead><tbody>';
+  rows.forEach(function(x){
+    html+='<tr><td>'+x.n+'</td><td>'+fmt(x.b.te)+'</td><td>'+fmt(x.b.tc*365)+' days</td><td>'+fmt(x.b.treated)
+      +'</td><td>'+fmt(x.b.deaths)+'</td><td>£'+(x.b.cost/1e6).toFixed(1)+'m</td></tr>';
+  });
+  html+='</tbody></table><div class="effect">Every treated patient is multiplied by the same £26,145 input. The resulting totals are partial procedure arithmetic only. They exclude the TAVI/SAVR mix and all other material resource consequences, so no economic ranking or cost-effectiveness conclusion is drawn.</div>';
+  $('costOut').innerHTML=html;
+};
+
+/* ---------- grid search ---------- */
+$('gridGo').onclick=function(){
+  var n=0, best=1e18, worst=-1e18, byTe={}, contradiction=false;
+  for(var c=0;c<=0.501;c+=0.05) for(var v=0;v<=0.501;v+=0.05) for(var r=0;r<=0.601;r+=0.05){
+    var b=budget(c,v,r); if(!b) continue;
+    n++; if(b.cost<best) best=b.cost; if(b.cost>worst) worst=b.cost;
+    var k=b.te.toFixed(3);
+    var signature=b.cost.toFixed(2)+'|'+b.deaths.toFixed(6)+'|'+b.tc.toFixed(9);
+    if(byTe[k]!==undefined && byTe[k]!==signature) contradiction=true;
+    byTe[k]=signature;
+  }
+  $('gridOut').innerHTML='<div class="effect">Searched <b>'+n+'</b> positive-throughput combinations. Partial outlay spans <b>£'
+    +(best/1e6).toFixed(1)+'m to £'+(worst/1e6).toFixed(1)+'m</b>, solely because the number modelled as treated changes. '
+    +'Combinations with the same realised Tₑ produced '+(contradiction?'<b>different</b>':'<b>identical</b>')
+    +' clearance, deaths and partial outlay. This confirms a structural limitation of the engine; it does not compare the real costs of capacity, guidance or commissioning policies.</div>';
+};
+
+/* ---------- implementation-fidelity verification ---------- */
+var PUB=[
+ {n:'5% more capacity',      c:.05,v:0,  r:1.5, d:1384,dr:[1025,1994],pd:2526,pdr:[1355,3516]},
+ {n:'20% more capacity',     c:.20,v:0,  r:1.5, d:536, dr:[434,666],  pd:1173,pdr:[466,1859]},
+ {n:'Double the capacity',   c:1.0,v:0,  r:1.5, d:131, dr:[126,137],  pd:313, pdr:[118,494]},
+ {n:'Switch 30% of patients',c:0,  v:.30,r:1.5, d:975, dr:[741,1284], pd:1914,pdr:[923,2809]},
+ {n:'Switch 50% of patients',c:0,  v:.50,r:1.5, d:666, dr:[533,848],  pd:1419,pdr:[597,2189]},
+ {n:'Switch 50%, faster procedures', c:0, v:.50, r:2.0, d:384, dr:[330,462],pd:871,pdr:[314,1426]},
+ {n:'20% capacity + switch 40%', c:.20,v:.40,r:1.5, d:343, dr:[281,410], pd:784, pdr:[292,1324]}
+];
+(function(){
+  function pct(x){ return (x>=0?'+':'')+x.toFixed(1)+'%'; }
+  var maxDay=0, maxDeaths=0, rows=PUB.map(function(p){
+    var te=(p.c*(rS0+rT0)+p.v*rS0*(1+p.c)*(p.r-1));
+    var s=solve(W0,mu,te), days=s.tc*365;
+    var dd=(days-p.d)/p.d*100, md=(s.deaths-p.pd)/p.pd*100;
+    maxDay=Math.max(maxDay,Math.abs(dd)); maxDeaths=Math.max(maxDeaths,Math.abs(md));
+    return '<tr><td>'+p.n+'</td><td>'+days.toFixed(1)+'</td><td>'+p.d+' ('+p.dr[0]+'–'+p.dr[1]+')</td><td>'+pct(dd)
+      +'</td><td>'+s.deaths.toFixed(1)+'</td><td>'+fmt(p.pd)+' ('+fmt(p.pdr[0])+'–'+fmt(p.pdr[1])+')</td><td>'+pct(md)+'</td></tr>';
+  });
+  document.querySelector('#valTable tbody').innerHTML=rows.join('');
+  $('valSum').innerHTML='All seven model outputs fall within the source paper\'s reported uncertainty ranges. More importantly, point-estimate deviations are small: the maximum absolute relative difference is <b>'
+    +maxDay.toFixed(1)+'%</b> for clearance time and <b>'+maxDeaths.toFixed(1)+'%</b> for deaths. This supports implementation fidelity only; it is not external clinical validation.';
+})();
+
+
+/* ---------- composite score (Layer A) ---------- */
+var DOM=[
+ {k:'Guidance', pillar:'Pillar 1', rows:[
+   {p:'Treatment-selection framework (risk-led = 2, age-led with clinical conditions = 4)', uk:2, de:4, ord:true, st:'assum'},
+   {p:'Explicit age threshold in the applicable national framework (lower is better)', uk:null, de:70, w:75, b:65, st:'conf'},
+   {p:'How current the guideline is vs latest trials (1–5)', uk:2, de:5, ord:true, st:'der'}]},
+ {k:'Geography', pillar:'Pillar 2', rows:[
+   {p:'TAVI rate per million people (ESC Atlas 2023; common source)', uk:139.8, de:311.8, w:50, b:320, st:'conf'},
+   {p:'Variation between areas, fold (lower is better)', uk:15, de:null, w:20, b:1, st:'conf'},
+   {p:'Centres per million (England implanting vs Germany 65 DGK-certified when accessed 17 Aug 2026, home-page counter 66 on 13 Aug 2026; non-equivalent definitions)', uk:0.63, de:0.78, w:0.3, b:1, st:'cav'},
+   {p:'Odds of treatment, poorest vs richest (1 = equal)', uk:0.73, de:null, w:0.5, b:1, st:'cav'}]},
+ {k:'Capacity', pillar:'Pillar 3', rows:[
+   {p:'Referral-to-treatment days (lower is better)', uk:155, de:null, w:210, b:126, st:'conf'},
+   {p:'Centres meeting the pathway benchmark (%)', uk:47.8, de:null, w:0, b:100, st:'cav'},
+   {p:'Waiting-time performance (ordinal 1\u20135; DACH survey region, not Germany alone)', uk:null, de:4, ord:true, st:'assum'},
+   {p:'Hospitals with a dedicated TAVI clinic (%)', uk:31, de:null, w:0, b:100, st:'conf'},
+   {p:'Hospitals with a TAVI-specific team meeting (%)', uk:37, de:null, w:0, b:100, st:'conf'}]},
+ {k:'Commissioning', pillar:'Pillar 4', rows:[
+   {p:'Decision-relevant cost-per-QALY threshold used in this constructed comparison', uk:30000, de:null, w:15000, b:50000, st:'assum'},
+   {p:'Best published cost per QALY (lower is better)', uk:16979, de:null, w:30000, b:0, st:'cav'},
+   {p:'Rejection rate of a comparable NHS funding process (%, lower is better)', uk:71, de:null, w:90, b:0, st:'cav'}]}];
+
+function clip(x){ return Math.max(1,Math.min(5,x)); }
+function sc(r,c){
+  var v=r[c];
+  if(r.ord) return v===null?null:clip(v);
+  if(v===null||v===undefined) return null;
+  return clip(1+4*(v-r.w)/(r.b-r.w));
+}
+function domScore(d,c){
+  var a=d.rows.map(function(r){return sc(r,c);}).filter(function(x){return x!==null;});
+  return a.length? a.reduce(function(p,q){return p+q;},0)/a.length : null;
+}
+function domN(d,c){ return d.rows.filter(function(r){return sc(r,c)!==null;}).length; }
+function comp(c){
+  var v=DOM.map(function(d){return domScore(d,c);});
+  if(v.some(function(x){return x===null;})) return null;
+  return Math.exp(v.reduce(function(p,x){return p+Math.log(x);},0)/v.length);
+}
+function compArith(c){
+  var v=DOM.map(function(d){return domScore(d,c);});
+  if(v.some(function(x){return x===null;})) return null;
+  return v.reduce(function(p,x){return p+x;},0)/v.length;
+}
+var STL={conf:'Confirmed',cav:'Confirmed with caveat',der:'Derived',assum:'Assumption-needed'};
+function compCommon(c){
+  var vals=DOM.map(function(d){
+    var rs=d.rows.filter(function(r){return sc(r,'uk')!==null && sc(r,'de')!==null;});
+    if(!rs.length) return null;
+    var a=rs.map(function(r){return sc(r,c);});
+    return a.reduce(function(p,q){return p+q;},0)/a.length;
+  }).filter(function(x){return x!==null;});
+  return Math.exp(vals.reduce(function(p,x){return p+Math.log(x);},0)/vals.length);
+}
+(function buildScore(){
+  var bars='', weakest=null, wv=99;
+  DOM.forEach(function(d){
+    var u=domScore(d,'uk'), g=domScore(d,'de');
+    if(u<wv){ wv=u; weakest=d.k; }
+    bars+='<div class="bar"><div class="lbl"><span>'+d.k+' <span style="color:#5c6470;font-weight:400">· '+d.pillar+'</span></span>'
+      +'<span>UK '+(u===null?'n/a':u.toFixed(2))+' · DE '+(g===null?'n/a':g.toFixed(2))+'</span></div>'
+      +'<div class="track">'+(g===null?'':'<div class="fill" style="width:'+(g/5*100)+'%;background:#c8842a;"></div>')
+      +'<div class="fill" style="width:'+(u/5*100)+'%;background:#2f6fb8;"></div></div>'
+      +'<div style="font-size:12px;color:#5c6470;margin-top:2px;">based on '+domN(d,'uk')+' of '+d.rows.length
+      +' indicators for the England/UK evidence set, '+domN(d,'de')+' for Germany</div></div>';
+  });
+  document.getElementById('bars').innerHTML=bars;
+  var cu=comp('uk');
+  document.getElementById('ukC').textContent=cu.toFixed(2);
+  document.getElementById('deC').textContent='not calculated';
+  document.getElementById('weak').textContent=weakest;
+  document.getElementById('scoreNote').innerHTML='<b>Evidence first:</b> 13 of 15 selected indicators are populated for England/UK and 6 of 15 for Germany. Only 4 are shared, across guidance and geography. The England/UK four-domain diagnostic summary is <b>'
+    +cu.toFixed(2)+'</b>. No German four-domain total is calculated because no comparable commissioning value was identified. The lowest England/UK domain is <b>'
+    +weakest.toLowerCase()+'</b>. These outputs expose the chosen inputs and anchors; they do not estimate national access, rank countries or identify causal effects.'
+    +' <b>Checks:</b> replacing the geometric mean with an arithmetic mean gives <b>'+compArith('uk').toFixed(2)
+    +'</b>; the restricted check on the 4 indicators shared by both evidence sets (2 guidance, 2 geography) gives England/UK <b>'
+    +compCommon('uk').toFixed(2)+'</b> and Germany <b>'+compCommon('de').toFixed(2)
+    +'</b>. Both checks are descriptive: the shared subset has no capacity or commissioning measure and is not used to rank the two systems.';
+  var t='<table><thead><tr><th>Indicator</th><th>UK</th><th>Germany</th><th>UK score</th><th>DE score</th><th>Status</th></tr></thead><tbody>';
+  DOM.forEach(function(d){
+    t+='<tr><td colspan="6" style="background:#f2f4f7;font-weight:700;">'+d.k+' — from '+d.pillar+'</td></tr>';
+    d.rows.forEach(function(r){
+      var u=sc(r,'uk'), g=sc(r,'de');
+      t+='<tr><td>'+r.p+'</td><td>'+(r.uk===null?'n/a':r.uk)+'</td><td>'+(r.de===null?'n/a':r.de)
+        +'</td><td>'+(u===null?'—':u.toFixed(2))+'</td><td>'+(g===null?'—':g.toFixed(2))+'</td><td>'+(STL[r.st]||'')+'</td></tr>';
+    });
+  });
+  document.getElementById('fullTable').innerHTML=t+'</tbody></table>';
+})();
+
+
+/* ---------- story engine ---------- */
+(function(){
+  var scenes=['sc0','sc1','sc2','sc3','sc4','sc4a','sc4b','sc4c','sc4d','sc4e','sc5','sc5a','sc5b','sc5c','sc6'];
+  var dur   =[ 17,   19,   26,   21,   22,   18,   18,   18,   20,   26,   17,   26,   26,   21,   15 ];  // ≈ 5.2 min total
+  var cur=0, t0=0, paused=false, raf=null, qAnim=null;
+  var story=document.getElementById('story');
+  var dots=document.getElementById('sDots');
+  scenes.forEach(function(_,i){ var d=document.createElement('i'); d.onclick=function(){go(i);}; dots.appendChild(d); });
+
+  function go(i){
+    if(i<0) i=0;
+    if(i>=scenes.length){ end(); return; }
+    cur=i; t0=performance.now(); 
+    scenes.forEach(function(id,k){ document.getElementById(id).classList.toggle('on',k===i); });
+    dots.querySelectorAll('i').forEach(function(d,k){ d.classList.toggle('on',k===i); });
+    if(qAnim){ cancelAnimationFrame(qAnim); qAnim=null; }
+    (window._storyTimers||[]).forEach(clearTimeout); window._storyTimers=[];
+    if(scenes[i]==='sc2') queueScene();
+    if(scenes[i]==='sc4') gateScene();
+    if(scenes[i]==='sc5a') mcScene();
+    if(scenes[i]==='sc5b') raceScene();
+    if(scenes[i]==='sc4e') scoreScene();
+    document.getElementById('sNext').textContent = i===scenes.length-1 ? 'Explore the tool ›' : 'Next ›';
+  }
+  function tick(now){
+    if(!story.classList.contains('on')) return;
+    if(!paused){
+      var el=(now-t0)/1000, frac=Math.min(1, el/dur[cur]);
+      document.getElementById('sBar').style.width=((cur+frac)/scenes.length*100)+'%';
+      if(frac>=1) go(cur+1);
+    }
+    raf=requestAnimationFrame(tick);
+  }
+  function start(){ story.classList.add('on'); document.body.style.overflow='hidden'; paused=false;
+    document.getElementById('sPause').textContent='Pause'; go(0); raf=requestAnimationFrame(tick); }
+  function end(){ story.classList.remove('on'); document.body.style.overflow='';
+    if(raf) cancelAnimationFrame(raf); if(qAnim) cancelAnimationFrame(qAnim); }
+  document.getElementById('storyGo').onclick=start;
+  document.getElementById('sSkip').onclick=end;
+  document.getElementById('sNext').onclick=function(){ go(cur+1); };
+  document.getElementById('sPrev').onclick=function(){ go(cur-1); };
+  var pausedAt=0;
+  document.getElementById('sPause').onclick=function(){ paused=!paused;
+    if(paused){ pausedAt=performance.now(); }
+    else { t0 += performance.now()-pausedAt; }
+    this.textContent=paused?'Play':'Pause'; };
+  document.addEventListener('keydown',function(e){
+    if(!story.classList.contains('on')) return;
+    if(e.key==='Escape') end();
+    if(e.key==='ArrowRight') go(cur+1);
+    if(e.key==='ArrowLeft') go(cur-1);
+  });
+
+  /* queue scene: dots appear, drain slowly, some turn to red crosses with a halo */
+  function queueScene(){
+    var c=document.getElementById('storyCanvas'), x=c.getContext('2d');
+    var W=c.width, H=c.height, N=200, dotsA=[];
+    for(var i=0;i<N;i++) dotsA.push({x:20+(i%25)*26, y:24+Math.floor(i/25)*30, s:0, dead:false, gone:false});
+    var born=0, treated=0, died=0, t=0;
+    function frame(){
+      if(paused){ qAnim=requestAnimationFrame(frame); return; }
+      t++;
+      if(born<N && t%2===0) { dotsA[born].s=1; born++; }
+      if(t>140 && t%22===0){ // slow treatment from the front
+        for(var i=0;i<N;i++){ if(dotsA[i].s && !dotsA[i].gone && !dotsA[i].dead){ dotsA[i].gone=true; treated++; break; } }
+      }
+      if(t>170 && t%34===0){ // deaths scattered in the middle of the queue
+        var alive=dotsA.filter(function(d){return d.s&&!d.gone&&!d.dead;});
+        if(alive.length){ alive[Math.floor(alive.length*0.35)].dead=true; died++; }
+      }
+      x.clearRect(0,0,W,H);
+      dotsA.forEach(function(d){
+        if(!d.s||d.gone) return;
+        if(d.dead){
+          var g=x.createRadialGradient(d.x,d.y,1,d.x,d.y,13);
+          g.addColorStop(0,'rgba(255,93,93,0.42)'); g.addColorStop(1,'rgba(255,93,93,0)');
+          x.fillStyle=g; x.beginPath(); x.arc(d.x,d.y,13,0,7); x.fill();
+          x.strokeStyle='#ff5d5d'; x.lineWidth=3; x.lineCap='round';
+          x.beginPath(); x.moveTo(d.x-6,d.y-6); x.lineTo(d.x+6,d.y+6);
+          x.moveTo(d.x+6,d.y-6); x.lineTo(d.x-6,d.y+6); x.stroke();
+        } else { x.fillStyle='#5b9bff'; x.beginPath(); x.arc(d.x,d.y,6,0,7); x.fill(); }
+      });
+      x.fillStyle='#8d95a6'; x.font='13px sans-serif';
+      x.fillText('treated: '+treated, 20, H-8);
+      x.fillStyle='#ff5d5d'; x.fillText('died waiting: '+died, 120, H-8);
+      qAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  /* Monte Carlo scene: live histogram built from real model runs (Scenario A) */
+  function mcScene(){
+    var c=document.getElementById('mcCanvas'), x=c.getContext('2d');
+    var W=c.width, H=c.height, te=Te(0.20,0.40,0.275);
+    var sdM=(0.60-0.12)/(2*1.96), sdW=(5959-4020)/(2*1.96);
+    var BINS=34, lo=0, hi=2200, bins=new Array(BINS).fill(0), vals=[], done=0, TOTAL=2000;
+    var sr=mulberry32(MC_SEED+17);
+    function rnd(m,sd){ var x;
+      do { var u=sr()||1e-9,v=sr()||1e-9;
+        x=m+sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); } while(!(x>0));
+      return x; }
+    function frame(){
+      if(paused){ qAnim=requestAnimationFrame(frame); return; }
+      for(var k=0;k<25 && done<TOTAL;k++,done++){
+        var r=solve(rnd(W0,sdW),rnd(mu,sdM),te);
+        if(isFinite(r.tc)){ vals.push(r.deaths);
+          var b=Math.floor((r.deaths-lo)/(hi-lo)*BINS); if(b>=0&&b<BINS) bins[b]++; }
+      }
+      var mx=Math.max.apply(null,bins)||1, bw=(W-40)/BINS;
+      x.clearRect(0,0,W,H);
+      for(var i=0;i<BINS;i++){
+        var h=(bins[i]/mx)*(H-58);
+        x.fillStyle='#5b9bff'; x.fillRect(20+i*bw, H-38-h, bw-2, h);
+      }
+      x.fillStyle='#8d95a6'; x.font='12px sans-serif';
+      x.fillText(lo+' deaths',20,H-16); x.fillText(hi+' deaths',W-92,H-16);
+      if(done>=TOTAL){
+        var sv=vals.slice().sort(function(a,b){return a-b;});
+        var mean=sv.reduce(function(p,v){return p+v;},0)/sv.length;
+        var q1=sv[Math.floor(sv.length*.025)], q9=sv[Math.floor(sv.length*.975)];
+        var mxp=20+((mean-lo)/(hi-lo))*(W-40);
+        x.strokeStyle='#ff5d5d'; x.lineWidth=2.5; x.beginPath(); x.moveTo(mxp,12); x.lineTo(mxp,H-38); x.stroke();
+        x.fillStyle='#ff5d5d'; x.font='700 14px sans-serif';
+        x.fillText('mean '+Math.round(mean).toLocaleString(), Math.min(mxp+8,W-140), 26);
+        document.getElementById('mcCap').innerHTML='After this live 2,000-run sample: <b style="color:#fff">'
+          +Math.round(mean).toLocaleString()+' mean deaths</b>, with the 2.5th–97.5th percentile interval <b style="color:#fff">'
+          +Math.round(q1).toLocaleString()+'</b> and <b style="color:#fff">'+Math.round(q9).toLocaleString()
+          +'</b>. The deterministic central-input result is 1,017; the Monte Carlo mean differs because the model is nonlinear.';
+        return;
+      }
+      document.getElementById('mcCap').innerHTML='live sample runs: <b style="color:#fff">'+done.toLocaleString()+'</b> of 2,000 (the tool itself runs 10,000, seeded)';
+      qAnim=requestAnimationFrame(frame);
+    }
+    document.getElementById('mcCap').textContent='';
+    frame();
+  }
+  /* scenario bar race: verified engine outputs */
+  function raceScene(){
+    var data=[{id:'r0',v:3035},{id:'r1',v:793},{id:'r2',v:1017},{id:'r3',v:522}], MAX=3200;
+    data.forEach(function(d){ var el=document.getElementById(d.id);
+      el.classList.remove('on'); el.querySelector('.rfill').style.width='0%';
+      document.getElementById(d.id+'v').textContent='0'; });
+    data.forEach(function(d,i){
+      window._storyTimers.push(setTimeout(function(){
+        var el=document.getElementById(d.id); el.classList.add('on');
+        el.querySelector('.rfill').style.width=(d.v/MAX*100)+'%';
+        var n=0, step=Math.max(7,Math.round(d.v/70));
+        var iv=setInterval(function(){ n=Math.min(d.v,n+step);
+          document.getElementById(d.id+'v').textContent=n.toLocaleString();
+          if(n>=d.v) clearInterval(iv); },20);
+        window._storyTimers.push(iv);
+      }, 700+i*2600));
+    });
+  }
+
+
+  /* score scene: animated dimension bars, real engine values */
+  function scoreScene(){
+    var host=document.getElementById('storyBars'); host.innerHTML='';
+    var rows=DOM.map(function(d){ return {k:d.k, u:domScore(d,'uk'), g:domScore(d,'de')}; });
+    rows.forEach(function(r,i){
+      var div=document.createElement('div'); div.style.cssText='margin:9px 0;opacity:0;transition:opacity .5s;';
+      div.innerHTML='<div style="display:flex;justify-content:space-between;font:600 13px -apple-system,sans-serif;color:#dfe4ee;margin-bottom:3px;">'
+        +'<span>'+r.k+'</span><span>UK '+(r.u===null?'n/a':r.u.toFixed(2))+' · DE '+(r.g===null?'n/a':r.g.toFixed(2))+'</span></div>'
+        +'<div style="background:#141a26;border:1px solid #232c3f;border-radius:4px;height:16px;position:relative;overflow:hidden;">'
+        +'<div class="sb-g" style="position:absolute;height:100%;width:0%;background:#e9a23b;border-radius:4px;transition:width 1.4s ease;"></div>'
+        +'<div class="sb-u" style="position:absolute;height:100%;width:0%;background:#5b9bff;border-radius:4px;transition:width 1.4s ease;"></div></div>';
+      host.appendChild(div);
+      window._storyTimers.push(setTimeout(function(){
+        div.style.opacity=1;
+        div.querySelector('.sb-g').style.width=(r.g===null?0:r.g/5*100)+'%';
+        div.querySelector('.sb-u').style.width=(r.u===null?0:r.u/5*100)+'%';
+      }, 500+i*1100));
+    });
+    window._storyTimers.push(setTimeout(function(){
+      var cu=comp('uk'), n=0;
+      document.getElementById('sbDE').textContent='not calculated';
+      var iv=setInterval(function(){ n++;
+        document.getElementById('sbUK').textContent=(cu*Math.min(1,n/40)).toFixed(2);
+        if(n>=40) clearInterval(iv);
+      },30);
+      window._storyTimers.push(iv);
+    }, 500+rows.length*1100));
+  }
+
+  /* gates scene: reveal one by one, flash shut then open */
+  function gateScene(){
+    var ids=['g0','g1','g2','g3'];
+    ids.forEach(function(id){ var g=document.getElementById(id); g.className='gate'; });
+    ids.forEach(function(id,i){
+      setTimeout(function(){ document.getElementById(id).classList.add('on'); }, 500+i*900);
+      setTimeout(function(){ document.getElementById(id).classList.add('shut'); }, 1000+i*900);
+      setTimeout(function(){ var g=document.getElementById(id);
+        g.classList.remove('shut'); g.classList.add('open'); }, 12000+i*700);
+    });
+  }
+})();
+
+refresh();
+</script>
+</body>
+</html>
