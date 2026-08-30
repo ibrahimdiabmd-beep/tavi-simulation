@@ -146,10 +146,10 @@
 
   <section class="sc" id="sc0">
     <div class="heart"></div>
-    <h2>Inside every chest, a one-way door.</h2>
+    <h2>The aortic valve.</h2>
     <p>The aortic valve opens with every heartbeat to let blood leave the heart. With age, in some people,
        it stiffens and narrows. Doctors call it <b style="color:#fff">aortic stenosis</b>.</p>
-    <p>Once it becomes severe and symptoms begin, the numbers turn brutal.</p>
+    <p>Once it becomes severe and symptoms begin, untreated survival is short.</p>
   </section>
 
   <section class="sc" id="sc1">
@@ -165,8 +165,8 @@
   <section class="sc" id="sc2">
     <h2>The queue.</h2>
     <canvas id="storyCanvas" width="680" height="330"></canvas>
-    <p id="qCap">In England, <b style="color:#fff">4,989 people</b> were waiting over and above what the
-       service could handle. Every dot is patients. Watch what waiting does.</p>
+    <p id="qCap">In England in November 2020, an estimated <b style="color:#fff">4,989 people</b> were waiting over and above what the
+       service could handle (Stickels et al., 2022). Every dot represents patients. The animation shows what waiting does in the model.</p>
   </section>
 
   <section class="sc" id="sc3">
@@ -212,7 +212,7 @@
   <section class="sc" id="sc4a">
     <div style="font-size:42px;">📋</div>
     <h2>Gate 1 — Guidance. <span style="color:#8d95a6;">Who is considered?</span></h2>
-    <p>Two rulebooks disagree about the same patient.</p>
+    <p>Two guidelines reach different answers for the same patient.</p>
     <div style="display:flex;gap:16px;margin:14px 0;flex-wrap:wrap;justify-content:center;">
       <div style="background:#141a26;border:2px solid #c0392b;border-radius:10px;padding:16px 20px;max-width:230px;">
         <div style="font-weight:700;color:#fff;">NICE framework in England</div>
@@ -295,7 +295,7 @@
       <div><div style="font-size:13px;color:#8d95a6;">One published intervention: +20% capacity, 40% switched, no funding gate</div><div class="big green" style="font-size:44px;">793</div>
         <div style="font-size:12px;color:#8d95a6;">deaths while waiting</div></div>
     </div>
-    <p>Same patients. Same money-conscious NHS. Different choices.</p>
+    <p>Same backlog, same baseline capacity; only the assumptions change.</p>
   </section>
 
 
@@ -308,8 +308,8 @@
        seed, drawing both inputs from normal distributions reconstructed from those intervals. Draws are not clipped
        to the reported interval limits, but any non-positive backlog or mortality-hazard draw is rejected and redrawn
        because neither parameter can be negative. The output reports the mean and 2.5th/97.5th percentiles —
-       named <b style="color:#fff">Monte Carlo</b>, after the casino, because every run is a roll of the dice.
-       It is running live on this page: every bar below is real runs of the real engine, not a recording. The tool
+       a <b style="color:#fff">Monte Carlo</b> analysis, in which each run draws the two inputs at random from their
+       reconstructed distributions. The charts below are generated live by the JavaScript model from the current inputs, not from a recording. The tool
        also offers a 100,000-draw convergence check and a positive, moment-matched lognormal sensitivity analysis;
        both preserve the Scenario B advantage, while the tail intervals change with distribution choice.</p>
     <canvas id="mcCanvas" width="680" height="270"></canvas>
@@ -347,7 +347,7 @@
   <section class="sc" id="sc6">
     <div style="font-size:44px;">🔍</div>
     <h2>One warning before you start.</h2>
-    <p>This is an exploratory model, not a crystal ball. It is checked against every published clearance time of the
+    <p>This is an exploratory model, not a forecasting tool. It is checked against every published clearance time of the
        paper it is built on — the <b style="color:#fff">“Is it accurate?”</b> page shows all seven checks —
        but no single number here is a prediction.</p>
     <p>What it shows is the <b style="color:#fff">conditional direction and size</b> produced by its stated
@@ -368,7 +368,7 @@
   <div class="sub">
     Supplementary tool for <i>Determinants of TAVI Utilisation: A Study of Operational Drivers in the UK Health System</i><br>
     Ibrahim Diab, MD · MSc Healthcare Operational Management · WMG, University of Warwick<br>
-    Version 13 · August 2026 · numerical engine unchanged since Version 11 · public copy: <a href="https://ibrahimdiabmd-beep.github.io/tavi-simulation/TAVI_Exploratory_Simulation.html">ibrahimdiabmd-beep.github.io/tavi-simulation</a>
+    Version 14 · August 2026 · numerical engine unchanged since Version 11 · public copy: <a href="https://ibrahimdiabmd-beep.github.io/tavi-simulation/TAVI_Exploratory_Simulation.html">ibrahimdiabmd-beep.github.io/tavi-simulation</a>
   </div>
   <nav>
     <button class="on" data-p="p0">Start here</button>
@@ -434,6 +434,7 @@
 
   <details>
     <summary>Version history</summary>
+    <p><b>Version 14 (August 2026)</b> — presentation and wording only, no model logic, input or numerical output changed: corrected the plain-language explanation of the deaths equation (the remainder is the second group, modelled deaths), replaced the word “money” with “extra capacity” in the diminishing-returns note, neutralised the tone of the story page and added the November 2020 qualifier to the backlog figure, renamed the equal-sized-area allocation value from “population” to “equalArea” in the code, relabelled the conversion-anchor selector, aligned the guideline-currency status label with the dissertation (Derived), added the status label column and the two composite checks (arithmetic mean and shared-indicator subset) to the evidence-map page, and recorded the DGK counter recheck of 29 August 2026.</p>
     <p style="margin-bottom:0;"><b>Version 13 (August 2026)</b> — presentation only: shortened the version note, clarified that the waiting-list equations come from a published paper while this tool is not itself peer reviewed, and adjusted the story animation. No model logic, input or numerical output changed. <b>Version 12 (August 2026)</b> — final interpretive revision aligning scope, causal wording and diagnostic scoring with the dissertation; engine unchanged. <b>Version 11 (August 2026)</b> — added the 100,000-draw convergence check and the moment-matched lognormal sensitivity analysis, and made evidence coverage the primary score-page result. <b>Versions 1–10</b> — engine construction, checks against the published scenarios, and successive audit corrections.</p>
   </details>
 
@@ -473,8 +474,8 @@
   simulate valve durability, reintervention or patient-level treatment choice.</div>
 
   <div class="lever">
-    <label>Which rulebook are we following?</label>
-    <div class="hint">This sets the slider below to a sensible level for that rulebook. You can still override it.</div>
+    <label>Set the conversion anchor</label>
+    <div class="hint">This sets the slider below to one of the two illustrative anchors used in the dissertation. You can still override it.</div>
     <select id="regime" style="width:100%;padding:9px;font-size:15px;border:1px solid var(--line);border-radius:6px;">
       <option value="nice">Lower illustrative anchor — 15% (not a NICE estimate)</option>
       <option value="esc">Higher illustrative anchor — 40% (not an ESC/EACTS estimate)</option>
@@ -521,7 +522,7 @@
     <div class="hint">This is a policy choice, not a fact. The tool lets you test both.</div>
     <select id="rule" style="width:100%;padding:9px;font-size:15px;border:1px solid var(--line);border-radius:6px;">
       <option value="capacity">Give it to areas in proportion to what they already do</option>
-      <option value="population">Illustrative equal-sized-area rule (share by number of areas)</option>
+      <option value="equalArea">Illustrative equal-sized-area rule (share by number of areas)</option>
     </select>
   </div>
   <div class="effect" id="e2"></div>
@@ -698,7 +699,7 @@
     <table>
       <thead><tr><th style="width:26%">Pillar page</th><th style="width:22%">Operational domain</th><th>The question</th></tr></thead>
       <tbody>
-        <tr><td>1 · Guidance</td><td><b>Guidance</b></td><td>Who is eligible under the rulebook?</td></tr>
+        <tr><td>1 · Guidance</td><td><b>Guidance</b></td><td>Who is eligible under the applicable guideline?</td></tr>
         <tr><td>2 · Geography</td><td><b>Geography</b></td><td>Where is activity and access located?</td></tr>
         <tr><td>3 · Capacity</td><td><b>Capacity</b></td><td>Can the pathway physically deliver more?</td></tr>
         <tr><td>4 · Commissioning</td><td><b>Commissioning</b></td><td>How is approval and payment organised?</td></tr>
@@ -712,7 +713,7 @@
   <div class="note"><b>Currency and source note.</b> The TAVI-rate indicator uses the common-source 2023
   <a href="https://www.escardio.org/data-science/public-health-data/esc-atlas-of-cardiology/">ESC Atlas</a>
   values (UK 139.8 and Germany 311.8 per million). The German centre count uses the 65 certified centres shown by the
-  <a href="https://tavi.dgk.org/">DGK certification register</a> when accessed on 17 August 2026; the register labelled the list as current to 2 April 2026, and a DGK-certified centre
+  <a href="https://tavi.dgk.org/">DGK certification register</a> when accessed on 17 August 2026; the register labelled the list as current to 2 April 2026 (when rechecked on 29 August 2026 its home-page counter showed 66 centres, dated 13 August 2026, which leaves the rounded density at about 0.8 per million), and a DGK-certified centre
   is not definitionally identical to an English implanting centre. The DACH waiting-time judgement comes from
   the <a href="https://doi.org/10.3389/fcvm.2023.1227217">European TAVI Pathway Registry</a> and covers Germany,
   Austria and Switzerland, not Germany alone.</div>
@@ -741,7 +742,7 @@
   <h3>Three questions any examiner should ask</h3>
   <div class="card tight">
     <p><b>1. Why is no German four-domain score reported?</b> No comparable German commissioning value was
-    identified. Version 12 leaves that domain missing instead of treating the absence of an identified formal
+    identified. The tool leaves that domain missing instead of treating the absence of an identified formal
     cost-per-QALY threshold as evidence of more favourable commissioning.</p>
     <p><b>2. Can the remaining profiles rank the two systems?</b> No. The England/UK set has 13 populated indicators
     and Germany 6, drawn from different years and sometimes different definitions. Only four indicators are shared,
@@ -799,7 +800,7 @@
   <div class="card">
     <p><b>A3. Combining four available constructed domains into one number</b></p>
     <p class="eq">composite = (D₁ × D₂ × D₃ × D₄)<sup>1/4</sup></p>
-    <p><b>Why this and not a plain average.</b> A geometric mean reduces full compensation between domains. Version 12
+    <p><b>Why this and not a plain average.</b> A geometric mean reduces full compensation between domains. The tool
     calculates this secondary summary only for the England/UK evidence set, where all four domain scores are
     available. No German total is calculated because commissioning evidence is missing. This is a modelling choice,
     not proof that the domains are valid or exact bottlenecks.</p>
@@ -858,7 +859,7 @@
     <p><b>B4. How many die waiting</b></p>
     <p class="eq">m(t<sub>c</sub>) = W₀ − T<sub>e</sub> × t<sub>c</sub></p>
     <p><b>Why.</b> Everyone in the queue leaves it one of two ways: treated, or dead. The second term counts
-    those treated. Whatever is left is the first group.</p>
+    those treated. Whatever is left is the second group: modelled deaths.</p>
     <p style="margin-bottom:0;"><b>Source.</b> Stickels et al. (2022).</p>
   </div>
 
@@ -911,7 +912,7 @@
     <p><b>C4. Turning a published confidence interval into a spread of values</b></p>
     <p class="eq">standard deviation = (upper limit − lower limit) ÷ (2 × 1.96)</p>
     <p><b>Why.</b> This reconstructs a normal-distribution standard deviation from a reported 95% interval. The
-    Version 12 primary Monte Carlo retains the reconstructed normal distributions but rejects and redraws any non-positive
+    primary Monte Carlo retains the reconstructed normal distributions but rejects and redraws any non-positive
     backlog or mortality-hazard value, runs 10,000 simulations, and reports the mean with the 2.5th and 97.5th percentiles.
     A 100,000-draw convergence check tests numerical stability. A second 100,000-draw sensitivity analysis uses
     positive lognormal inputs matched to the same mean and standard deviation, testing whether conclusions depend on
@@ -925,7 +926,7 @@
     <p class="eq">partial procedure outlay = (W₀ − modelled deaths) × £26,145</p>
     <p><b>Why this was narrowed.</b> The professional-society threshold of 100 procedures per operator is an
     experience/caseload standard, not evidence that one additional consultant creates 100 procedures per year.
-    Version 12 retains the removal of consultant-equivalent counts and the £161,600 earnings proxy.</p>
+    The tool retains the removal of consultant-equivalent counts and the £161,600 earnings proxy.</p>
     <p style="margin-bottom:0;"><b>Boundary.</b> The remaining multiplication is descriptive only. It treats the
     modelled treated total at a single procedure price and omits TAVI/SAVR mix, avoided surgery, staff, labs,
     beds, nursing, devices, capital, QALYs, discounting and a common analytic horizon. It must not be used to rank
@@ -982,7 +983,7 @@
     <i>W₀</i> is how many are waiting at the start and <i>T<sub>e</sub></i> is the extra capacity created.</p>
     <p><b>m(t<sub>c</sub>) = W₀ − T<sub>e</sub> · t<sub>c</sub>.</b> Everyone in the queue is either treated or
     dies; this counts the second group.</p>
-    <p style="margin-bottom:0;">The logarithm is why doubling the money does not halve the deaths. Each extra
+    <p style="margin-bottom:0;">The logarithm is why doubling the extra capacity does not halve the deaths. Each extra
     unit of capacity helps slightly less than the one before.</p>
   </details>
 
@@ -1046,7 +1047,7 @@ function refresh(){
 
   var teNow=Te(g.cap,g.conv,g.rho);
   var spreadCap = spread(teNow,'capacity');
-  $('e2').innerHTML = g.rule==='population'
+  $('e2').innerHTML = g.rule==='equalArea'
     ? 'Under the illustrative equal-sized-area rule, backlog and new capacity use the same area-count shares, so every compartment clears at the same speed and the modelled spread is <b>0 days by construction</b>.'
     : 'Sharing capacity in proportion to what areas already do keeps the gap open. Best and worst areas would still be <b>'+(spreadCap!==null?fmt(spreadCap)+' days':'—')+' apart</b>.';
 
@@ -1078,7 +1079,7 @@ var REG=[['Lowest access',30/106,50],['Middle',54/106,112],['Highest access',22/
 function tiers(te,rule){
   var tw=0,tp=0; REG.forEach(function(r){ tw+=r[1]*r[2]; tp+=r[1]; });
   return REG.map(function(r){
-    var share = rule==='population' ? r[1]/tp : (r[1]*r[2])/tw;
+    var share = rule==='equalArea' ? r[1]/tp : (r[1]*r[2])/tw;
     var s=solve(W0*r[1], mu, te*share);
     return {name:r[0], tc:s.tc*365, deaths:s.deaths};
   });
@@ -1093,7 +1094,7 @@ function results(){
   var g=get(), te=Te(g.cap,g.conv,g.rho), s=solve(W0,mu,te);
   $('settings').innerHTML='<b>Your settings:</b> '+$('conv').value+' in 100 patients switched · +'
     +$('cap').value+'% capacity · '+$('rho').value+'% throughput-realisation loss · capacity shared '
-    +(g.rule==='population'?'by the illustrative equal-sized-area rule':'in proportion to current activity')+'.';
+    +(g.rule==='equalArea'?'by the illustrative equal-sized-area rule':'in proportion to current activity')+'.';
   var days=isFinite(s.tc)? s.tc*365 : null;
   $('rTc').textContent = days!==null ? fmt(days)+' days' : 'never';
   $('rTcN').textContent = days!==null ? 'about '+(days/365).toFixed(1)+' years' : 'nothing is being added';
@@ -1300,11 +1301,11 @@ var DOM=[
  {k:'Guidance', pillar:'Pillar 1', rows:[
    {p:'Treatment-selection framework (risk-led = 2, age-led with clinical conditions = 4)', uk:2, de:4, ord:true, st:'assum'},
    {p:'Explicit age threshold in the applicable national framework (lower is better)', uk:null, de:70, w:75, b:65, st:'conf'},
-   {p:'How current the guideline is vs latest trials (1–5)', uk:2, de:5, ord:true, st:'conf'}]},
+   {p:'How current the guideline is vs latest trials (1–5)', uk:2, de:5, ord:true, st:'der'}]},
  {k:'Geography', pillar:'Pillar 2', rows:[
    {p:'TAVI rate per million people (ESC Atlas 2023; common source)', uk:139.8, de:311.8, w:50, b:320, st:'conf'},
    {p:'Variation between areas, fold (lower is better)', uk:15, de:null, w:20, b:1, st:'conf'},
-   {p:'Centres per million (England implanting vs Germany 65 DGK-certified when accessed 17 Aug 2026; non-equivalent definitions)', uk:0.63, de:0.78, w:0.3, b:1, st:'cav'},
+   {p:'Centres per million (England implanting vs Germany 65 DGK-certified when accessed 17 Aug 2026, home-page counter 66 on 13 Aug 2026; non-equivalent definitions)', uk:0.63, de:0.78, w:0.3, b:1, st:'cav'},
    {p:'Odds of treatment, poorest vs richest (1 = equal)', uk:0.73, de:null, w:0.5, b:1, st:'cav'}]},
  {k:'Capacity', pillar:'Pillar 3', rows:[
    {p:'Referral-to-treatment days (lower is better)', uk:155, de:null, w:210, b:126, st:'conf'},
@@ -1334,6 +1335,12 @@ function comp(c){
   if(v.some(function(x){return x===null;})) return null;
   return Math.exp(v.reduce(function(p,x){return p+Math.log(x);},0)/v.length);
 }
+function compArith(c){
+  var v=DOM.map(function(d){return domScore(d,c);});
+  if(v.some(function(x){return x===null;})) return null;
+  return v.reduce(function(p,x){return p+x;},0)/v.length;
+}
+var STL={conf:'Confirmed',cav:'Confirmed with caveat',der:'Derived',assum:'Assumption-needed'};
 function compCommon(c){
   var vals=DOM.map(function(d){
     var rs=d.rows.filter(function(r){return sc(r,'uk')!==null && sc(r,'de')!==null;});
@@ -1362,14 +1369,18 @@ function compCommon(c){
   document.getElementById('weak').textContent=weakest;
   document.getElementById('scoreNote').innerHTML='<b>Evidence first:</b> 13 of 15 selected indicators are populated for England/UK and 6 of 15 for Germany. Only 4 are shared, across guidance and geography. The England/UK four-domain diagnostic summary is <b>'
     +cu.toFixed(2)+'</b>. No German four-domain total is calculated because no comparable commissioning value was identified. The lowest England/UK domain is <b>'
-    +weakest.toLowerCase()+'</b>. These outputs expose the chosen inputs and anchors; they do not estimate national access, rank countries or identify causal effects.';
-  var t='<table><thead><tr><th>Indicator</th><th>UK</th><th>Germany</th><th>UK score</th><th>DE score</th></tr></thead><tbody>';
+    +weakest.toLowerCase()+'</b>. These outputs expose the chosen inputs and anchors; they do not estimate national access, rank countries or identify causal effects.'
+    +' <b>Checks:</b> replacing the geometric mean with an arithmetic mean gives <b>'+compArith('uk').toFixed(2)
+    +'</b>; the restricted check on the 4 indicators shared by both evidence sets (2 guidance, 2 geography) gives England/UK <b>'
+    +compCommon('uk').toFixed(2)+'</b> and Germany <b>'+compCommon('de').toFixed(2)
+    +'</b>. Both checks are descriptive: the shared subset has no capacity or commissioning measure and is not used to rank the two systems.';
+  var t='<table><thead><tr><th>Indicator</th><th>UK</th><th>Germany</th><th>UK score</th><th>DE score</th><th>Status</th></tr></thead><tbody>';
   DOM.forEach(function(d){
-    t+='<tr><td colspan="5" style="background:#f2f4f7;font-weight:700;">'+d.k+' — from '+d.pillar+'</td></tr>';
+    t+='<tr><td colspan="6" style="background:#f2f4f7;font-weight:700;">'+d.k+' — from '+d.pillar+'</td></tr>';
     d.rows.forEach(function(r){
       var u=sc(r,'uk'), g=sc(r,'de');
       t+='<tr><td>'+r.p+'</td><td>'+(r.uk===null?'n/a':r.uk)+'</td><td>'+(r.de===null?'n/a':r.de)
-        +'</td><td>'+(u===null?'—':u.toFixed(2))+'</td><td>'+(g===null?'—':g.toFixed(2))+'</td></tr>';
+        +'</td><td>'+(u===null?'—':u.toFixed(2))+'</td><td>'+(g===null?'—':g.toFixed(2))+'</td><td>'+(STL[r.st]||'')+'</td></tr>';
     });
   });
   document.getElementById('fullTable').innerHTML=t+'</tbody></table>';
